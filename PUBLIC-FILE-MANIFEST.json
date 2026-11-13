@@ -86,8 +86,8 @@
   },
   {
     "path": "public/app.js",
-    "sha256": "5591d893b13627e5fcb881c06e7d6ee080585880f132c13736986146fe4d92d7",
-    "bytes": 62966
+    "sha256": "a9ebad79e627075526d14bd63f1f8cefd2f59468c73d8f5e47b829cc0c85b1e9",
+    "bytes": 63200
   },
   {
     "path": "public/cloud-progress.js",
@@ -121,8 +121,8 @@
   },
   {
     "path": "public/index.html",
-    "sha256": "4521e94801b47786d7038783d1816e185db14528115bd65767546cf0658a4d34",
-    "bytes": 4844
+    "sha256": "6cb3255e0e9540714f119d84761a5c7eb79a5f1a1761eef1b39ec550c13636b1",
+    "bytes": 5001
   },
   {
     "path": "public/learning-ux.js",
@@ -136,8 +136,8 @@
   },
   {
     "path": "public/local-config.js",
-    "sha256": "8447c9ac5e6f12aa9d216aa001660faf92450f06b3b5cb9937b122c40127d037",
-    "bytes": 1227
+    "sha256": "ed7773689a9bd8f122c3fab0dd763b3ca96dae0347474a218db7be8f482c47b1",
+    "bytes": 1189
   },
   {
     "path": "public/playground.js",
@@ -161,8 +161,8 @@
   },
   {
     "path": "public/settings.js",
-    "sha256": "b10cacb51ddf5691a28207d4676ffce5824c2d639286b65ea89e6249ff527f2e",
-    "bytes": 6951
+    "sha256": "76abc551dd9afe7e0d3068532dfdbd7aab0ed62f0c24c7475ed2eb36363d170e",
+    "bytes": 6990
   },
   {
     "path": "public/style.css",
@@ -271,8 +271,8 @@
   },
   {
     "path": "public/updates.html",
-    "sha256": "31362fc5e35d574ef642d8bf3fd2473c31fd2ea8f174805af75970d5fcc39223",
-    "bytes": 7994
+    "sha256": "9a4daa493e41a58bfd101625e553f625e3d38d52f0cdb8d5b957678249e7055f",
+    "bytes": 7988
   },
   {
     "path": "public/vendor/LICENSES.txt",

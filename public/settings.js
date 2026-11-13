@@ -15,7 +15,7 @@ export function setupSettings({getConfig,getApiKey,onSave,onClear,onReset,toast}
     if(u.username||u.password||u.search||u.hash)throw new Error('地址中不要包含密钥或查询参数，请使用 API Key 栏。');
     const local=h=>['localhost','127.0.0.1','[::1]'].includes(h);
     if(u.protocol!=='https:'&&!(u.protocol==='http:'&&local(u.hostname)))throw new Error('远程接口请使用 HTTPS。');
-    if(c.proxyUrl){let p;try{p=new URL(c.proxyUrl);}catch{throw new Error('HTTP 代理地址无效。');}if(p.protocol!=='http:'||!local(p.hostname)||p.username||p.password||p.search||p.hash||p.pathname!=='/')throw new Error('代理请填写本机无认证 HTTP 地址，例如 http://127.0.0.1:7897。');}
+    if(c.proxyUrl){let p;try{p=new URL(c.proxyUrl);}catch{throw new Error('HTTP 代理地址无效。');}if(p.protocol!=='http:'||!local(p.hostname)||p.username||p.password||p.search||p.hash||p.pathname!=='/')throw new Error('代理请填写学习服务所在设备的无认证 HTTP 地址，例如 http://127.0.0.1:7897。');}
     if(requireKey&&!$('#api-key').value.trim()&&!local(u.hostname))throw new Error('请先填写该接口的 API Key。');
   }
   function renderModels(){
@@ -33,8 +33,8 @@ export function setupSettings({getConfig,getApiKey,onSave,onClear,onReset,toast}
     $('#fetch-models').disabled=true;$('#fetch-models').textContent='正在获取…';
     try{
       const r=await fetch('/api/models',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({config:{...c,apiKey:$('#api-key').value.trim()}}),signal:controller.signal});
-      if(r.status===404||r.status===405)throw new Error('本地服务尚未更新，请关闭旧启动窗口，重新双击“启动学习.bat”后再试。');
-      let data;try{data=await r.json();}catch{throw new Error('本地服务返回异常，请重启软件后再试。');}
+      if(r.status===404||r.status===405)throw new Error('模型服务版本尚未更新，请更新或重启学习服务后刷新页面。');
+      let data;try{data=await r.json();}catch{throw new Error('学习服务返回异常，请稍后重试。');}
       if(!r.ok)throw new Error(data.error||'获取模型失败。');if(token!==generation)return;
       if(!Array.isArray(data.models))throw new Error('接口未返回有效模型列表。');
       models=data.models.filter(m=>m&&typeof m.id==='string'&&m.id).map(m=>({id:m.id,name:typeof m.name==='string'?m.name:m.id}));
@@ -59,15 +59,15 @@ export function setupSettings({getConfig,getApiKey,onSave,onClear,onReset,toast}
     const controls=[...$('#settings-form').elements],previous=controls.map(el=>el.disabled);
     controls.forEach(el=>el.disabled=true);
     try{await action();onSuccess();}
-    catch(error){status(error.message||'保存失败，请检查本地服务后重试。',true);}
+    catch(error){status(error.message||'保存失败，请检查学习服务后重试。',true);}
     finally{controls.forEach((el,index)=>el.disabled=previous[index]);saving=false;}
   }
   $('#settings-form').onsubmit=e=>{
     e.preventDefault();const c=readForm();try{validate(c);}catch(err){status(err.message,true);return;}
     const key=$('#api-key').value.trim();
-    void persist(()=>onSave(c,key),'正在保存到本机 JSON 文件…',()=>{$('#settings-dialog').close();toast('配置和密钥已保存到本机，刷新后自动恢复。');});
+    void persist(()=>onSave(c,key),'正在保存配置…',()=>{$('#settings-dialog').close();toast('配置和密钥已由学习服务保存，刷新后自动恢复。');});
   };
-  $('#clear-key').onclick=()=>{void persist(onClear,'正在清除本机保存的密钥…',()=>{$('#api-key').value='';resetList('本机保存的密钥已清除，接口地址与模型保留。');toast('本机密钥已清除。');});};
-  $('#reset-config').onclick=()=>{void persist(onReset,'正在恢复本机默认配置…',()=>{resetList();$('#settings-dialog').close();toast('本机配置已恢复默认，保存的密钥已清除。');});};
+  $('#clear-key').onclick=()=>{void persist(onClear,'正在清除保存的密钥…',()=>{$('#api-key').value='';resetList('保存的密钥已清除，接口地址与模型保留。');toast('已保存的密钥已清除。');});};
+  $('#reset-config').onclick=()=>{void persist(onReset,'正在恢复默认配置…',()=>{resetList();$('#settings-dialog').close();toast('配置已恢复默认，保存的密钥已清除。');});};
   return {open};
 }
