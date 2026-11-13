@@ -1,8 +1,8 @@
 [
   {
     "path": ".gitignore",
-    "sha256": "b853d601dcbbd636db3b4d39aef5da30fbb321b3c84049cc0cecf5b459126813",
-    "bytes": 403
+    "sha256": "a50a4388290afb884bf4faec026495f2809dfd6890374dd08c49858af14a4c84",
+    "bytes": 404
   },
   {
     "path": "LICENSE",
@@ -16,13 +16,13 @@
   },
   {
     "path": "PUBLIC-RELEASE.json",
-    "sha256": "4e841f6150e0d467ac34998abcf0be1f354dabc74d49a3db8775ab6f9c1d1c5e",
-    "bytes": 130
+    "sha256": "3ae1e23a90a12fad5400295af4dad74555bd8a42c5727af3b05d027f52522d14",
+    "bytes": 186
   },
   {
     "path": "README.md",
-    "sha256": "501f9b51dd2af554c3c09064e1b594e3aaa577b39b5548b0482b85d3fc792b5e",
-    "bytes": 2607
+    "sha256": "68b114978dbf6ab6471362177c9df060e4ed962f9c693f7efcd8770d30d06cba",
+    "bytes": 3459
   },
   {
     "path": "lib/config.mjs",
@@ -50,9 +50,14 @@
     "bytes": 5064
   },
   {
+    "path": "lib/progress-http.mjs",
+    "sha256": "8cef6a2156befb16a7c3fa9f81ff01ed77b77a53781e9f229a7fc1e2230018dc",
+    "bytes": 1505
+  },
+  {
     "path": "lib/progress.mjs",
-    "sha256": "0445be469faa40b92e4403e86248d6073b7722f777cc17f208fab00a93beb423",
-    "bytes": 3072
+    "sha256": "a09b9fdd609f15938e9252669214e6a4e1fa0de3a004d4f627da530aeb5d3aee",
+    "bytes": 9937
   },
   {
     "path": "lib/proxy.mjs",
@@ -81,18 +86,28 @@
   },
   {
     "path": "package.json",
-    "sha256": "c8a246f1913b6b8543bbd64aaf3daa963db479afcb38f7c5880781499a8a020d",
-    "bytes": 303
+    "sha256": "7df53d0a73d6ad6a0cb081cfc02ec82869cab0fe179a191dc1cd757760feb696",
+    "bytes": 304
   },
   {
     "path": "public/app.js",
-    "sha256": "a9ebad79e627075526d14bd63f1f8cefd2f59468c73d8f5e47b829cc0c85b1e9",
-    "bytes": 63200
+    "sha256": "bbdaf1141f1aa5b19f7f8a32f57771cbf300c860363a1db661dee7fe6059d9a5",
+    "bytes": 72022
+  },
+  {
+    "path": "public/backup-manager.css",
+    "sha256": "60fecf3991c96984d25a15d29064c028305b7b656dd0e41efb7d82c5165c3285",
+    "bytes": 2829
+  },
+  {
+    "path": "public/backup-manager.js",
+    "sha256": "d0669569be1d10a9723179716ecd87ca966d0a9d917c3f9fddbec4e0e9f32170",
+    "bytes": 9305
   },
   {
     "path": "public/cloud-progress.js",
-    "sha256": "1d4e56df9d030b159a11ac2cbf5b5de0ae538b5faa207fefe390fe039fadeed4",
-    "bytes": 6238
+    "sha256": "0975bfe92b3a0d2fb7d5e408fe68152cc4f5faff56b08b1ccd4530e4a4dc6568",
+    "bytes": 13717
   },
   {
     "path": "public/data/frameworks.json",
@@ -121,8 +136,18 @@
   },
   {
     "path": "public/index.html",
-    "sha256": "6cb3255e0e9540714f119d84761a5c7eb79a5f1a1761eef1b39ec550c13636b1",
-    "bytes": 5001
+    "sha256": "ab1905f9c880ad79155f01a779652de132eee4eb2a208e4e7cefaa64734e70d6",
+    "bytes": 5111
+  },
+  {
+    "path": "public/learning-center.css",
+    "sha256": "dc112bd96d0c83f349491f025fb2a9a6666b7fe848f46d2347e1680bac96effa",
+    "bytes": 6251
+  },
+  {
+    "path": "public/learning-center.js",
+    "sha256": "5f18ad22480447c3d047d0ac87998b8e1c3c080c0da69be4a1478c61cb144d93",
+    "bytes": 22820
   },
   {
     "path": "public/learning-ux.js",
@@ -271,8 +296,8 @@
   },
   {
     "path": "public/updates.html",
-    "sha256": "9a4daa493e41a58bfd101625e553f625e3d38d52f0cdb8d5b957678249e7055f",
-    "bytes": 7988
+    "sha256": "e4f80fd67481cb866cf3f34d2fab7ef539d57ef4f7918bfea99337c48f1062ec",
+    "bytes": 8856
   },
   {
     "path": "public/vendor/LICENSES.txt",
@@ -321,8 +346,8 @@
   },
   {
     "path": "server.mjs",
-    "sha256": "e564472e4d19cff1f7ea873543d16ae2dd4cc26c449b42d620ca3ae382b86c7f",
-    "bytes": 8741
+    "sha256": "c38a5a1c3254375cc5d1204361955e126766f0f7382571e92e0e7f6ee0d198a7",
+    "bytes": 8907
   },
   {
     "path": "start-learning.ps1",
@@ -330,9 +355,14 @@
     "bytes": 10502
   },
   {
+    "path": "tests/backup-manager-ui.test.mjs",
+    "sha256": "94e04633f4c7fd5f4c3d73b95958646ea58c2ea7cb8adb512865b2915bdb0507",
+    "bytes": 3774
+  },
+  {
     "path": "tests/cloud-progress.test.mjs",
-    "sha256": "dd84ae1c7ea6b0c7ca52a9df5d73fd89afb9fba7aad96469ea2307f96e794dd0",
-    "bytes": 7682
+    "sha256": "f5a8d2d074e4eb44e6535f4b7ab1b05221a7218803fa63e5aef094a97415db01",
+    "bytes": 16291
   },
   {
     "path": "tests/dom-runner.test.mjs",
@@ -370,6 +400,11 @@
     "bytes": 3963
   },
   {
+    "path": "tests/learning-center.test.mjs",
+    "sha256": "ddeb52d99dcb43c5d049d6bf4de4f11eadb1447ece9a5cd49d1ddc78c7c8c5c7",
+    "bytes": 9276
+  },
+  {
     "path": "tests/learning-ux.test.mjs",
     "sha256": "145e8447290d171eb955f08061b5b5d2547e062f2651479c117e50bc0ff3383a",
     "bytes": 3404
@@ -398,6 +433,16 @@
     "path": "tests/playground.test.mjs",
     "sha256": "6240ea1b8cdcb471b0ce89bcf10865f13bd5b9c65b64a62e91ed3fb361c37dfb",
     "bytes": 2236
+  },
+  {
+    "path": "tests/progress-history.test.mjs",
+    "sha256": "1763e72624c2328dc3cf0114f039bd2b5942d59ce3cfaecdf9d9315eccb2d8bc",
+    "bytes": 9943
+  },
+  {
+    "path": "tests/progress-http.test.mjs",
+    "sha256": "ee8d43f0e00c445b45106c724eb52d502b8779223e2e43116972ac6253855da9",
+    "bytes": 4020
   },
   {
     "path": "tests/proxy.test.mjs",

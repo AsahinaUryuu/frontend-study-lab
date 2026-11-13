@@ -16,7 +16,7 @@ coverage/
 outputs/
 screenshots/
 evidence/
-public/resources/
+public/resources/*
 public/source.pdf
 *.pdf
 *.mp3

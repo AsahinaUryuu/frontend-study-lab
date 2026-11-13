@@ -2,5 +2,7 @@
   "application": "frontend",
   "privateStateIncluded": false,
   "officialMediaBundled": false,
+  "reviewedPdfFiles": [],
+  "videoFilesBundled": false,
   "publication": "source-only"
 }

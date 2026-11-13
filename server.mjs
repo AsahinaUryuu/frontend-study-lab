@@ -8,6 +8,7 @@ import { listModels } from './lib/models.mjs';
 import { tutorReply } from './lib/tutor.mjs';
 import { createLocalConfigStore } from './lib/local-config.mjs';
 import {createProgressStore,MAX_PROGRESS_BYTES} from './lib/progress.mjs';
+import {handleProgressHistory} from './lib/progress-http.mjs';
 import {createRemoteAccess,requireSameOrigin,privateConfig,hydrateModelRequest} from './lib/remote-access.mjs';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
@@ -66,7 +67,8 @@ export function createApp({ publicDir = path.join(directory, 'public'), fetchImp
       if (requested.includes('\0') || requested.includes('\\') || requested.split('/').some(p => p === '..' || p.startsWith('.'))) {
         throw new GradeError('不可访问此路径。', 403);
       }
-      if (requested === '/api/health' && req.method === 'GET') return json(res, 200, { ok: true, service: 'frontend-academy', version:'1.9.0' });
+      if (requested === '/api/health' && req.method === 'GET') return json(res, 200, { ok: true, service: 'frontend-academy', version:'1.10.0' });
+      if(await handleProgressHistory(req,res,{requested,store:progressStore,readBody,json}))return;
       if(requested==='/api/progress'){
         if(req.method==='GET'){requireSameOrigin(req,{requireOrigin:false});return json(res,200,await progressStore.read());}
         if(req.method!=='POST')throw new GradeError('学习记录使用 GET 或 POST。',405);

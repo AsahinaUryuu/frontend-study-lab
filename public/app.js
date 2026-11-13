@@ -1,3 +1,5 @@
+import {mountLearningCenter,lessonCenterEntry} from './learning-center.js';
+import {installBackupManager,summarizeProgress} from './backup-manager.js';
 import {collectUIPreferences,restoreUIPreferences} from './ui-preferences.js';
 import {createCloudProgress} from './cloud-progress.js';
 import {installTabletUX} from './tablet-ux.js';
@@ -40,7 +42,7 @@ let apiKey = '', config = { provider: 'openai', baseUrl: 'https://api.openai.com
 let grading = new Set();
 let toastTimer, activeEditor = null, activePlayground = null;
 let runExamples = {}, activeCodeFile='javascript', changingEditor=false;
-let tutor=null,tutorFocus=null,cloud=null,preferenceSnapshot='';
+let tutor=null,tutorFocus=null,cloud=null,backupManager=null,activeCenter=null,reviewReturn='',preferenceSnapshot='';
 function portableProgress(){return {...progress,_preferences:collectUIPreferences(localStorage)};}
 function restorePresentation(raw){
  restoreUIPreferences(localStorage,raw);reading=applyReadingPreferences(document.documentElement,localStorage);
@@ -50,8 +52,48 @@ function restorePresentation(raw){
 function savePreferenceChanges(){const next=JSON.stringify(collectUIPreferences(localStorage));if(next!==preferenceSnapshot){preferenceSnapshot=next;cloud?.save();}}
 
 const syncBadge=document.createElement('button');syncBadge.type='button';syncBadge.className='button secondary small progress-sync';syncBadge.textContent='正在连接记录';syncBadge.setAttribute('aria-live','polite');document.querySelector('.top-actions').prepend(syncBadge);
-let syncState='loading';
-syncBadge.onclick=async()=>{if(!cloud)return;if(syncState==='conflict'){const blob=new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),progress:portableProgress()},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='知行-冲突前本机记录.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);if(confirm('本机记录已导出备份。现在载入服务器版本？当前设备未同步的修改会由服务器版本替换。')){try{await cloud.loadLatest({discardLocal:true});route();}catch(error){toast(error.message);}}}else{try{await cloud.flush();}catch(error){toast(error.message);}}};
+let syncState='loading',syncMessage='',recoveryCount=0,recoveryDialog=null,recoveryBusy=false;
+function syncStatus(state,message){syncState=state;syncMessage=message||'';renderSyncBadge();}
+function renderSyncBadge(){syncBadge.textContent=({loading:'正在同步',saved:'记录已同步',pending:'正在保存',offline:'未同步 · 重试',conflict:'记录冲突 · 处理',recovery:'恢复副本 · 查看'})[syncState]||'同步与恢复';if(recoveryCount&&['saved','recovery'].includes(syncState))syncBadge.textContent=`恢复副本 · ${recoveryCount}`;syncBadge.title=(syncMessage||syncBadge.textContent)+'；点击查看同步状态与浏览器恢复副本';syncBadge.dataset.state=syncState;}
+function downloadProgress(value,filename){const url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function progressExport(value){return {version:1,exportedAt:new Date().toISOString(),progress:value};}
+function renderRecoveryList(){
+ if(!recoveryDialog)return;const items=cloud.getRecoveryDrafts();
+ recoveryDialog.querySelector('.backup-list').innerHTML=items.length?items.map(item=>{const s=summarizeProgress(item.progress);return `<article class="backup-item"><div><strong>${item.isCurrent?'本页未同步草稿':item.matchesServer?'与服务器一致的保留副本':'其他标签或已关闭标签的副本'}</strong><time>${item.updatedAt?esc(new Date(item.updatedAt).toLocaleString()):'旧版恢复副本'}</time><small>${s.lessons} 个课程记录 · ${s.messages} 条对话 · 版本 ${item.revision}${item.conflict?' · 待处理冲突':''}</small></div><button type="button" data-recovery-download="${esc(item.id)}">下载单份</button><button type="button" data-recovery-restore="${esc(item.id)}" ${item.isCurrent?'disabled':''}>恢复到本页</button></article>`;}).join(''):'<div class="backup-empty">当前浏览器没有未同步恢复副本。正常保存的记录可在「记录还原点」中查看。</div>';
+ recoveryDialog.querySelector('[data-recovery-all]').disabled=!items.length||recoveryBusy;
+ if(recoveryBusy)for(const button of recoveryDialog.querySelectorAll('button'))button.disabled=true;
+}
+function openRecoveryDialog(){
+ if(!cloud)return;
+ if(!recoveryDialog){
+  recoveryDialog=document.createElement('dialog');recoveryDialog.className='backup-dialog';recoveryDialog.setAttribute('aria-labelledby','recovery-title');
+  recoveryDialog.innerHTML='<header><div><h2 id="recovery-title">同步与恢复副本</h2><p>检查本页保存状态，找回其他标签留下的草稿</p></div><button type="button" class="backup-close" aria-label="关闭恢复副本">×</button></header><div class="backup-body"><p class="backup-help">浏览器恢复副本包含尚未同步的课程、笔记和对话。恢复只会复制到本页，来源副本仍保留；如果服务器已有新记录，会先提示冲突。单份下载的 JSON 可通过「导入记录」重新使用。</p><div class="backup-toolbar"><button type="button" data-recovery-current>下载本页记录</button><button type="button" data-recovery-retry>重试保存</button><button type="button" data-recovery-server>载入服务器版本</button><button type="button" data-recovery-all>下载全部副本合辑</button><button type="button" data-recovery-refresh>刷新列表</button><button type="button" data-recovery-history>服务器还原点</button></div><p class="backup-status" role="status" aria-live="polite"></p><div class="backup-list"></div></div>';
+  document.body.append(recoveryDialog);
+  const setStatus=message=>{recoveryDialog.querySelector('.backup-status').textContent=message;};
+  recoveryDialog.querySelector('.backup-close').onclick=()=>{if(!recoveryBusy)recoveryDialog.close();};
+  recoveryDialog.addEventListener('cancel',event=>{if(recoveryBusy)event.preventDefault();});
+  recoveryDialog.addEventListener('click',async event=>{
+   const button=event.target.closest('button');if(!button||button.disabled||button.classList.contains('backup-close')||recoveryBusy)return;
+   try{
+    if(button.hasAttribute('data-recovery-refresh')){renderRecoveryList();setStatus(syncMessage||'列表已更新。');return;}
+    if(button.hasAttribute('data-recovery-current')){downloadProgress(progressExport(portableProgress()),'知行-本页学习记录.json');setStatus('本页记录已下载。');return;}
+    if(button.hasAttribute('data-recovery-all')){downloadProgress({version:1,kind:'zhixing-recovery-bundle',exportedAt:new Date().toISOString(),drafts:cloud.getRecoveryDrafts()},'知行-全部浏览器恢复副本.json');setStatus('已下载全部副本合辑；需要直接导入学习记录时，请使用对应行的「下载单份」。');return;}
+    if(button.dataset.recoveryDownload){const item=cloud.getRecoveryDrafts().find(x=>x.id===button.dataset.recoveryDownload);if(!item)throw new Error('这份副本已不存在，请刷新列表。');downloadProgress(progressExport(item.progress),'知行-恢复副本-'+item.id+'.json');setStatus('单份记录已下载，可通过「导入记录」使用。');return;}
+    if(grading.size||tutor?.isBusy())throw new Error('请等待 AI 请求结束或先停止追问，再替换本页记录。');
+    if(button.hasAttribute('data-recovery-history')){recoveryDialog.close();await backupManager?.open();return;}
+    if(button.hasAttribute('data-recovery-server')){downloadProgress(progressExport(portableProgress()),'知行-载入服务器前本页记录.json');if(!confirm('已下载本页记录。现在载入服务器版本并替换本页内容？其他标签的恢复副本会保留。'))return;}
+    if(button.dataset.recoveryRestore&&!confirm('将选中的恢复副本复制到本页？本页未同步内容会另存为恢复副本；如果服务器已更新，不会自动覆盖服务器。'))return;
+    recoveryBusy=true;for(const b of recoveryDialog.querySelectorAll('button'))b.disabled=true;setStatus('正在处理，请稍候…');
+    if(button.hasAttribute('data-recovery-retry')){await cloud.flush();const current=cloud.getState();setStatus(current.ready&&!current.dirty&&!current.conflict?'本页记录已保存。':syncMessage||'当前记录尚未保存，请先检查同步提示。');}
+    else if(button.hasAttribute('data-recovery-server')){await cloud.loadLatest({discardLocal:true});route();setStatus('已载入服务器版本；其他恢复副本保持不变。');}
+    else if(button.dataset.recoveryRestore){await cloud.recoverDraft(button.dataset.recoveryRestore,{discardLocal:true});route();setStatus(cloud.getState().conflict?'副本已恢复到本页；服务器已有更新，请先下载两边需要保留的内容，再选择版本。':'副本已恢复到本页，来源副本仍保留。');}
+   }catch(error){setStatus(error.message||'操作失败，恢复副本仍保留。');}
+   finally{recoveryBusy=false;for(const b of recoveryDialog.querySelectorAll('button'))b.disabled=false;renderRecoveryList();}
+  });
+ }
+ renderRecoveryList();recoveryDialog.querySelector('.backup-status').textContent=syncMessage||'可查看、下载或选择恢复副本。';if(!recoveryDialog.open)recoveryDialog.showModal();
+}
+syncBadge.onclick=openRecoveryDialog;
 function disposeEditor(){ activePlayground?.destroy(); activePlayground=null; activeEditor?.destroy(); activeEditor=null; }
 function toast(message) { $('#toast').textContent = message; $('#toast').classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => $('#toast').classList.remove('show'), 3600); }
 function save() { try { localStorage.setItem(KEY, JSON.stringify(progress)); cloud?.save(); return true; } catch { toast('浏览器无法保存记录，请立即导出备份。'); return false; } }
@@ -65,26 +107,31 @@ function renderSidebar() {
   const total = completed(), percent = Math.round(total / lessons.length * 100) || 0;
   $('#sidebar').innerHTML = `<button class="sidebar-close icon-button" aria-label="关闭课程目录" data-close-menu>×</button><a href="#" class="brand"><span class="brand-mark">知</span><span>知行 <small>FRONTEND LAB</small></span></a>
   <button class="sidebar-home ${!currentId && !currentChapter && !currentView ? 'selected' : ''}" data-home>◫ <span>学习总览</span><span>↗</span></button>
+  <button class="sidebar-home ${currentView==='review'?'selected':''}" data-review>↻ <span>学习回顾中心</span><span>→</span></button>
   <button class="sidebar-home question-nav ${currentView==='questions'?'selected':''}" data-questions>≡ <span>知识点索引</span><small>${questions.length}</small></button>
   <div class="sidebar-label">课程目录 <span>${lessons.length} 个教学板块</span></div>
   <nav aria-label="课程目录">${CHAPTERS.map(c => { const list=lessons.filter(l=>l.chapterId===c.id); const open=currentChapter===c.id || chapter(lessons.find(l=>l.id===currentId)?.chapterId)?.id===c.id;return `<div class="chapter-group"><button class="chapter-nav ${open?'active':''}" data-chapter="${c.id}" aria-expanded="${open}"><span class="chapter-symbol ${c.color}">${esc(c.icon)}</span><span>${c.name}</span><small>${list.filter(l=>progress[l.id]?.completed).length}/${list.length}</small><span class="chevron">${open?'⌄':'›'}</span></button>${open?`<div class="lesson-nav">${list.map((l,i)=>`<button data-lesson="${l.id}" class="${currentId===l.id?'selected':''}" title="${esc(l.tutorial.title)}"><span class="lesson-dot ${progress[l.id]?.completed?'done':''}">${progress[l.id]?.completed?'✓':String(i+1).padStart(2,'0')}</span><span>${esc(l.tutorial.title)}</span></button>`).join('')}</div>`:''}</div>`; }).join('')}</nav>
-  <div class="sidebar-bottom"><div class="progress-label"><span>我的学习进度</span><b>${percent}%</b></div><div class="progress-track"><i style="width:${percent}%"></i></div><p>已完成 ${total} / ${lessons.length} 个板块</p><div class="data-actions"><button data-export>导出记录</button><button data-import>导入记录</button></div></div>`;
+  <div class="sidebar-bottom"><div class="progress-label"><span>我的学习进度</span><b>${percent}%</b></div><div class="progress-track"><i style="width:${percent}%"></i></div><p>已完成 ${total} / ${lessons.length} 个板块</p><div class="data-actions"><button data-export>导出记录</button><button data-import>导入记录</button><button data-backup-manager>记录还原点</button></div></div>`;
 }
 function go(id,questionId='') {
   const hash=id?`#lesson/${encodeURIComponent(id)}${questionId?'/'+encodeURIComponent(questionId):''}`:'';
   if(location.hash===hash)route();else location.hash=hash;
 }
 function route() {
-  disposeEditor();tutorFocus=null;
-  let hash='';try{hash=decodeURIComponent(location.hash.slice(1));}catch{toast('课程地址无效，已返回学习总览。');}
+  disposeEditor();activeCenter?.destroy();activeCenter=null;tutorFocus=null;reviewReturn='';
+  const raw=location.hash.slice(1),split=raw.indexOf('?'),params=new URLSearchParams(split<0?'':raw.slice(split+1));
+  let entry=null,hash='';try{hash=decodeURIComponent(split<0?raw:raw.slice(0,split));}catch{toast('课程地址无效，已返回学习总览。');}
   currentId='';currentChapter='';currentView='';currentQuestion='';
-  if(hash==='questions'){currentView='questions';renderQuestions();}
+  if(hash==='review'){currentView='review';try{activeCenter=mountLearningCenter($('#main'),{lessons,chapters:CHAPTERS,progress,params,toast});}catch(error){$('#main').innerHTML=`<div class="empty"><h1>回顾中心暂时无法打开</h1><p>${esc(error.message)}</p><p>原学习记录仍保留，可回到课堂继续学习。</p><button class="button secondary" data-home>返回学习总览</button><button class="button primary" data-review>重新加载回顾</button></div>`;}}
+  else if(hash==='questions'){currentView='questions';renderQuestions();}
   else if(hash.startsWith('lesson/')) {
     const [,id,qid]=hash.split('/'),l=lessons.find(l=>l.id===id);
-    if(l){currentId=id;currentChapter=l.chapterId;currentQuestion=l.deepDives?.some(q=>q.id===qid)?qid:'';currentStage=resumeStage(state(id),currentQuestion);wrongOnly=false;state(id).visited=true;state(id).lastSeen=Date.now();save();renderLesson();}
+    if(l){currentId=id;currentChapter=l.chapterId;currentQuestion=l.deepDives?.some(q=>q.id===qid)?qid:'';entry=lessonCenterEntry(params,l);reviewReturn=entry.returnHref;currentStage=entry.questionId?'practice':entry.stage||resumeStage(state(id),currentQuestion);wrongOnly=false;state(id).visited=true;state(id).lastSeen=Date.now();save();renderLesson();}
     else renderHome();
   }else{currentChapter=CHAPTERS.some(c=>c.id===hash)?hash:'';renderHome();}
   renderSidebar();document.body.classList.remove('menu-open');window.scrollTo(0,0);tutor?.refresh();
+  if(entry?.questionId)focusQuizQuestion($('#quiz-form'),entry.questionId);
+  if(entry?.openNotes){const notes=$('#lesson-notes');if(notes){notes.closest('details').open=true;notes.scrollIntoView({block:'center'});notes.focus({preventScroll:true});}}
   if(currentQuestion){const detail=document.getElementById('source-'+currentQuestion);if(detail){detail.open=true;detail.scrollIntoView({block:'start'});}}
 }
 function renderQuestions() {
@@ -107,10 +154,11 @@ function renderHome() {
   const recent=lessons.filter(l=>progress[l.id]?.visited&&!progress[l.id]?.completed).sort((a,b)=>(progress[b.id]?.lastSeen||0)-(progress[a.id]?.lastSeen||0))[0] || lessons.find(l=>!progress[l.id]?.completed)||lessons[0];
   const list=lessons.filter(l=>(!c||l.chapterId===c.id)&&(!query||[l.tutorial.title,l.tutorial.intro,l.title,l.question,...l.tags,...(l.deepDives||[]).map(x=>x.title)].join(' ').toLowerCase().includes(query.toLowerCase()))&&(filter==='all'||(filter==='unfinished'&&!progress[l.id]?.completed)||(filter==='wrong'&&wrong(l))||(filter==='bookmarked'&&progress[l.id]?.bookmarked)||(filter==='recent'&&progress[l.id]?.visited)));
   const ordered=sortCourses(list,progress,filter==='recent'?'recent':catalogOrder);
-  $('#main').innerHTML = `<div class="page-home"><div class="page-heading"><div><div class="eyebrow">LEARN. PRACTICE. UNDERSTAND.</div><h1>${c?esc(c.name)+' · '+esc(c.subtitle):'让知识，真正成为你的。'}</h1><p>${c?'从一个个具体问题出发，把这一章学扎实。':'将 182 页面试资料拆成小课，从理解到动手，每次前进一步。'}</p></div><span class="edition">循序学习 · 1.9.0 ${deploymentLabel}版</span></div>
+  $('#main').innerHTML = `<div class="page-home"><div class="page-heading"><div><div class="eyebrow">LEARN. PRACTICE. UNDERSTAND.</div><h1>${c?esc(c.name)+' · '+esc(c.subtitle):'让知识，真正成为你的。'}</h1><p>${c?'从一个个具体问题出发，把这一章学扎实。':'将 182 页面试资料拆成小课，从理解到动手，每次前进一步。'}</p></div><span class="edition">循序学习 · 1.10.0 ${deploymentLabel}版</span></div>
   ${!c?`<section class="hero"><div class="hero-copy"><div class="hero-label"><span></span> 今天，从弄懂一个概念开始</div><h2>把“背过”，<br>变成<span>“会写”。</span></h2><p>先学概念和用法，跟着例子走一遍。<br>再用提问、练习与反馈，检验自己是否学会。</p><button class="button cream" data-lesson="${recent.id}">${progress[recent.id]?.visited?'继续学习':'开始第一课'} <span>→</span></button><div class="hero-next">${esc(recent.tutorial.title)} · ${esc(STAGES.find(s=>s[0]===resumeStage(progress[recent.id]))?.[1]||'基础教学')}</div></div><div class="hero-visual" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="code-card"><div class="code-top"><i></i><i></i><i></i><span>learning.js</span></div><pre><span class="code-purple">const</span> growth = {\n  understand: <span class="code-yellow">true</span>,\n  practice: <span class="code-yellow">everyDay</span>,\n  memorize: <span class="code-green">'with meaning'</span>\n};\n\n<span class="code-green">// 不止于记住答案</span>\n<span class="code-yellow">buildYourUnderstanding</span>();</pre></div><div class="floating-note"><span>✓</span><div>理解 + 练习<small>知识才能留下来</small></div></div></div></section>
   <div class="stats"><div><span class="stat-icon green">◫</span><div><b>9 <small>个</small></b><span>知识章节</span></div></div><div><span class="stat-icon amber">⌘</span><div><b>${lessons.length} <small>节</small></b><span>独立教学板块</span></div></div><div><span class="stat-icon blue">✎</span><div><b>${quizCount} <small>道</small></b><span>客观题 · 另有 ${lessons.length} 道实操</span></div></div><div><span class="stat-icon purple">✓</span><div><b>${done} <small>/ ${lessons.length}</small></b><span>已完成板块</span></div></div></div>`:''}
   <button class="question-index-banner" data-questions><span class="big-symbol green">≡</span><span><b>核心问题，一题一题学明白</b><small>${questions.length} 道课程问题 · 逐题讲解 · 按章检索</small></span><span>打开题目索引 →</span></button>
+  <button class="question-index-banner" data-review><span class="big-symbol amber">↻</span><span><b>回顾错题、待答与自己的笔记</b><small>跨课程检索 · 回到具体题目 · 导出课堂笔记</small></span><span>打开学习回顾 →</span></button>
   <section class="catalog"><div class="section-heading"><div><h2>${c?'本章学习路径':'你的知识地图'}</h2><p>${c?`${lessons.filter(l=>l.chapterId===c.id).length} 个独立板块 · 每课先学教材正文，再提问、练习、评阅和总结`:'9 个章节，按问题拆解。点击章节展开课程。'}</p></div><div class="catalog-controls"><select id="filter" aria-label="筛选课程"><option value="all" ${filter==='all'?'selected':''}>全部课程</option><option value="unfinished" ${filter==='unfinished'?'selected':''}>尚未完成</option><option value="wrong" ${filter==='wrong'?'selected':''}>需要复习</option><option value="bookmarked" ${filter==='bookmarked'?'selected':''}>我的收藏</option><option value="recent" ${filter==='recent'?'selected':''}>最近学习</option></select><select id="catalog-order" aria-label="课程排序" ${filter==='recent'?'disabled':''}><option value="path" ${catalogOrder==='path'?'selected':''}>按学习路径</option><option value="recent" ${catalogOrder==='recent'?'selected':''}>最近访问优先</option><option value="title" ${catalogOrder==='title'?'selected':''}>按课程标题</option></select><input type="search" id="search" placeholder="搜索知识点…" aria-label="搜索知识点" value="${esc(query)}"><button type="button" id="clear-search" class="text-button" ${!query&&filter==='all'?'hidden':''}>清除搜索与筛选</button></div></div><p class="catalog-results" role="status">找到 ${list.length} 节课程${filter==='recent'?' · 最近访问优先':''}</p>
   ${!c&&!query&&filter==='all'&&catalogOrder==='path'?`<div class="chapter-cards">${CHAPTERS.map((x,i)=>{const a=lessons.filter(l=>l.chapterId===x.id),n=a.filter(l=>progress[l.id]?.completed).length;return `<button class="chapter-card" data-chapter="${x.id}"><div class="card-top"><span class="big-symbol ${x.color}">${esc(x.icon)}</span><span class="card-index">CHAPTER ${String(i+1).padStart(2,'0')}</span></div><h3>${x.name}<span>↗</span></h3><p>${x.subtitle}</p><div class="card-meta"><span>${a.length} 个教学板块</span><span>${n}/${a.length} 已完成</span></div><div class="progress-track"><i style="width:${n/a.length*100}%"></i></div></button>`;}).join('')}</div>`:`<div class="lesson-list">${ordered.length?ordered.map((l,i)=>`<button class="lesson-row" data-lesson="${l.id}"><span class="row-index">${String(i+1).padStart(2,'0')}</span><div><h3>${progress[l.id]?.bookmarked?'★ ':''}${esc(l.tutorial.title)}</h3><p>${esc(l.tutorial.intro)}</p><span class="muted">${chapter(l.chapterId).name} · 可分次学习 · ${l.quiz.length} 道测验 + 1 道实操</span></div><span class="status ${progress[l.id]?.completed?'finished':''}">${status(l)}</span><span>→</span></button>`).join(''):`<div class="empty"><span>⌕</span><h3>${filter==='wrong'?'暂时没有需要复习的板块':'没有找到匹配的课程'}</h3><p>${filter==='wrong'?'提交测验后，答错的板块会自动出现在这里。':'试试其他关键词，或切回全部课程。'}</p></div>`}</div>`}
   </section><div class="source-note"><span>资料说明</span><p>围绕前端常见知识点编写教学、示例与练习。涉及历史 API 和版本差异的内容在相关小课说明。</p></div></div>`;
@@ -181,7 +229,7 @@ function activateStage(id,{scroll=true}={}) {
 }
 function lessonToolsMarkup(l,p){
   const index=lessons.indexOf(l),previous=lessons[index-1],next=lessons[index+1];
-  return `<div class="lesson-tools"><div class="lesson-tools-row"><button type="button" id="bookmark-lesson" class="button secondary small" aria-pressed="${!!p.bookmarked}">${p.bookmarked?'★ 已收藏':'☆ 收藏本课'}</button><div class="stage-navigation" aria-label="相邻关卡"><button type="button" id="previous-stage" class="text-button">← 上一关</button><span id="stage-navigation-label"></span><button type="button" id="next-stage" class="text-button">下一关 →</button></div><button type="button" id="lesson-back-top" class="text-button">回到本课顶部 ↑</button></div><div class="lesson-tools-row"><details class="lesson-reading"><summary>正文阅读设置</summary><div class="reading-controls"><label>字号 <input id="lesson-font" type="range" min="14" max="22" step="1" value="${reading.font}"><output id="lesson-font-label">${reading.font}px</output></label><label>行距 <select id="lesson-line"><option value="1.7" ${reading.line===1.7?'selected':''}>紧凑</option><option value="2" ${reading.line===2?'selected':''}>标准</option><option value="2.3" ${reading.line===2.3?'selected':''}>宽松</option></select></label><button type="button" id="lesson-reading-reset" class="text-button">恢复默认</button></div></details><details class="lesson-notes"><summary>我的课堂笔记${p.notes?.trim()?' · 已记录':''}</summary><label for="lesson-notes">记下自己的理解和待解决的问题</label><textarea id="lesson-notes" maxlength="10000" rows="5" placeholder="例如：这个概念能用在哪？我还没弄懂哪一步？">${esc(p.notes||'')}</textarea><p id="lesson-notes-status" role="status">${(p.notes||'').length} / 10,000 字符 · 随学习记录导出，不自动发送给模型</p></details></div><div class="lesson-neighbours">${previous?`<button type="button" class="text-button" data-lesson="${previous.id}">← 上一课：${esc(previous.tutorial.title)}</button>`:'<span>这是第一课</span>'}${next?`<button type="button" class="text-button" data-lesson="${next.id}">下一课：${esc(next.tutorial.title)} →</button>`:'<span>已到最后一课</span>'}</div></div>`;
+  return `<div class="lesson-tools">${reviewReturn?`<a class="text-button center-return" href="${esc(reviewReturn)}">← 返回学习回顾（保留筛选）</a>`:''}<div class="lesson-tools-row"><button type="button" id="bookmark-lesson" class="button secondary small" aria-pressed="${!!p.bookmarked}">${p.bookmarked?'★ 已收藏':'☆ 收藏本课'}</button><div class="stage-navigation" aria-label="相邻关卡"><button type="button" id="previous-stage" class="text-button">← 上一关</button><span id="stage-navigation-label"></span><button type="button" id="next-stage" class="text-button">下一关 →</button></div><button type="button" id="lesson-back-top" class="text-button">回到本课顶部 ↑</button></div><div class="lesson-tools-row"><details class="lesson-reading"><summary>正文阅读设置</summary><div class="reading-controls"><label>字号 <input id="lesson-font" type="range" min="14" max="22" step="1" value="${reading.font}"><output id="lesson-font-label">${reading.font}px</output></label><label>行距 <select id="lesson-line"><option value="1.7" ${reading.line===1.7?'selected':''}>紧凑</option><option value="2" ${reading.line===2?'selected':''}>标准</option><option value="2.3" ${reading.line===2.3?'selected':''}>宽松</option></select></label><button type="button" id="lesson-reading-reset" class="text-button">恢复默认</button></div></details><details class="lesson-notes"><summary>我的课堂笔记${p.notes?.trim()?' · 已记录':''}</summary><label for="lesson-notes">记下自己的理解和待解决的问题</label><textarea id="lesson-notes" maxlength="10000" rows="5" placeholder="例如：这个概念能用在哪？我还没弄懂哪一步？">${esc(p.notes||'')}</textarea><p id="lesson-notes-status" role="status">${(p.notes||'').length} / 10,000 字符 · 随学习记录导出，不自动发送给模型</p></details></div><div class="lesson-neighbours">${previous?`<button type="button" class="text-button" data-lesson="${previous.id}">← 上一课：${esc(previous.tutorial.title)}</button>`:'<span>这是第一课</span>'}${next?`<button type="button" class="text-button" data-lesson="${next.id}">下一课：${esc(next.tutorial.title)} →</button>`:'<span>已到最后一课</span>'}</div></div>`;
 }
 function refreshStageNavigation(){
   const index=STAGES.findIndex(stage=>stage[0]===currentStage),label=$('#stage-navigation-label');if(!label)return;
@@ -265,7 +313,7 @@ function renderLesson() {
     save();selectCodeFile(activeCodeFile);activePlayground?.markDirty();renderFeedback(l,p);
   };
   $('#grade-code').onclick=()=>gradeCode(l,p);
-  $('#reset-lesson').onclick=()=>{if(grading.has(l.id)||tutor?.isBusy()){toast('请等待 AI 请求结束或先停止追问。');return;}if(!confirm('重置本课的草稿、答案、笔记、收藏、评测、助教对话和完成标记？此操作无法撤销。'))return;delete progress[l.id];currentStage="textbook";save();renderLesson();renderSidebar();toast('本课记录已重置。');};
+  $('#reset-lesson').onclick=async()=>{if(grading.has(l.id)||tutor?.isBusy()){toast('请等待 AI 请求结束或先停止追问。');return;}if(!confirm('重置本课的草稿、答案、笔记、收藏、评测、助教对话和完成标记？执行前会先保存一个记录还原点。'))return;try{if(!backupManager)throw new Error('记录还原点尚未准备好，请稍后重试。');await backupManager.checkpoint();}catch(error){toast(error.message||'创建还原点失败，已保留本课记录。');return;}delete progress[l.id];save();if(currentId===l.id){currentStage="textbook";renderLesson();}else route();renderSidebar();toast('本课记录已重置。');};
   $('#complete-lesson').onclick=()=>{p.completed=!p.completed;save();renderSidebar();renderLesson();toast(p.completed?'已记录，继续保持。':'已取消完成标记。');};
 }
 function renderFeedback(l,p) {
@@ -344,8 +392,9 @@ document.addEventListener('click',event=>{
 });
 $('#menu-toggle').onclick=()=>document.body.classList.toggle('menu-open');
 installTabletUX({toast});
-document.addEventListener('click',async e=>{if(e.target.closest('[data-close-menu]')){document.body.classList.remove('menu-open');return;}if(e.target.closest('.skip-link')){e.preventDefault();$('#main').focus();$('#main').scrollIntoView();return;}const b=e.target.closest('[data-lesson],[data-chapter],[data-home],[data-questions],[data-export],[data-import],[data-scroll],[data-stage],[data-read-textbook],[data-book-anchor],.copy-code');if(!b)return;
+document.addEventListener('click',async e=>{if(e.target.closest('[data-close-menu]')){document.body.classList.remove('menu-open');return;}if(e.target.closest('.skip-link')){e.preventDefault();$('#main').focus();$('#main').scrollIntoView();return;}const b=e.target.closest('[data-lesson],[data-chapter],[data-home],[data-questions],[data-review],[data-export],[data-import],[data-scroll],[data-stage],[data-read-textbook],[data-book-anchor],.copy-code');if(!b)return;
   if(b.hasAttribute('data-lesson'))go(b.dataset.lesson,b.dataset.question);
+  if(b.hasAttribute('data-review')){if(location.hash==='#review')route();else location.hash='review';}
   if(b.hasAttribute('data-questions')){if(location.hash==='#questions')route();else location.hash='questions';}
   if(b.hasAttribute('data-chapter')){query='';filter='all';saveCatalog();location.hash=b.dataset.chapter; if(location.hash.slice(1)===currentChapter&&!currentId)route();}
   if(b.hasAttribute('data-home')){query='';filter='all';saveCatalog();currentChapter='';go('');}
@@ -357,7 +406,7 @@ document.addEventListener('click',async e=>{if(e.target.closest('[data-close-men
   if(b.hasAttribute('data-export')){const blob=new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),progress:portableProgress()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='知行-学习记录.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('学习记录已导出，不包含接口密钥。');}
   if(b.hasAttribute('data-import')){if(grading.size||tutor?.isBusy()){toast('AI 请求正在进行，请结束或停止后再导入学习记录。');return;}$('#import-file').click();}
 });
-$('#import-file').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(grading.size||tutor?.isBusy())throw new Error('请等待 AI 请求结束或停止后再导入。');if(file.size>20000000)throw new Error('记录文件过大，请选择小于 20 MB 的 JSON 文件。');const parsed=JSON.parse(await file.text());const imported=validateProgress(parsed,lessons);if(!confirm(`导入 ${Object.keys(imported).length} 个板块的学习记录？同名板块的现有记录将被覆盖。`))return;progress={...progress,...imported};if(parsed.progress?._preferences)restorePresentation(parsed.progress._preferences);save();route();toast('学习记录已导入。');}catch(err){toast(err.message||'无法读取记录文件。');}finally{e.target.value='';}};
+$('#import-file').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(grading.size||tutor?.isBusy())throw new Error('请等待 AI 请求结束或停止后再导入。');if(file.size>20000000)throw new Error('记录文件过大，请选择小于 20 MB 的 JSON 文件。');const parsed=JSON.parse(await file.text());const imported=validateProgress(parsed,lessons);if(!confirm(`导入 ${Object.keys(imported).length} 个板块的学习记录？同名板块的现有记录将被覆盖。`))return;if(!backupManager)throw new Error('记录还原点尚未准备好，请稍后重试。');await backupManager.checkpoint();progress={...progress,...imported};if(parsed.progress?._preferences)restorePresentation(parsed.progress._preferences);save();route();toast('学习记录已导入。');}catch(err){toast(err.message||'无法读取记录文件。');}finally{e.target.value='';}};
 window.addEventListener('hashchange',route);
 try {
   const groups=await Promise.all(['/data/frameworks.json','/data/platform.json'].map(async url=>{const r=await fetch(url);if(!r.ok)throw new Error('课程文件加载失败');return r.json();}));
@@ -367,8 +416,9 @@ try {
   const runResponse=await fetch('/run-examples.json');if(!runResponse.ok)throw new Error('运行示例加载失败');runExamples=await runResponse.json();
   for(const l of lessons){if(!books[l.id])throw new Error('缺少教材正文：'+l.title);l.tutorial=books[l.id];}
   try{const raw=JSON.parse(localStorage.getItem(KEY)||'{}');progress=validateProgress({version:1,progress:raw},lessons);}catch{progress={};}
-  cloud=createCloudProgress({getProgress:portableProgress,applyProgress:raw=>{const {_preferences,...records}=raw||{};progress=validateProgress({version:1,progress:records},lessons);localStorage.setItem(KEY,JSON.stringify(progress));if(_preferences)restorePresentation(_preferences);},onStatus:(state,message)=>{syncState=state;syncBadge.textContent=({loading:'正在同步',saved:'记录已同步',pending:'正在保存',offline:'未同步 · 重试',conflict:'记录冲突 · 处理'})[state]||message;syncBadge.title=message||syncBadge.textContent;syncBadge.dataset.state=state;},onError:error=>toast(error.message)});
+  cloud=createCloudProgress({getProgress:portableProgress,applyProgress:raw=>{const {_preferences,...records}=raw||{};progress=validateProgress({version:1,progress:records},lessons);localStorage.setItem(KEY,JSON.stringify(progress));if(_preferences)restorePresentation(_preferences);},onStatus:syncStatus,onRecovery:items=>{recoveryCount=items.filter(item=>!item.isCurrent&&!item.matchesServer).length;renderSyncBadge();if(recoveryDialog?.open)renderRecoveryList();},onError:error=>toast(error.message)});
   try{await cloud.init();}catch(error){toast(error.message||'服务器记录暂未连接，已保留本机学习记录。');}
+  backupManager=installBackupManager({prepare:async()=>{if(grading.size||tutor?.isBusy())throw new Error('请等待 AI 评阅结束或先停止助教回复，再操作还原点。');await cloud.flush();const current=cloud.getState();return current.ready&&!current.dirty&&!current.conflict;},onRestored:async()=>{await cloud.loadLatest({discardLocal:true});route();}});
   preferenceSnapshot=JSON.stringify(collectUIPreferences(localStorage));
   for(const event of ['input','change','click','pointerup','keyup'])document.addEventListener(event,()=>setTimeout(savePreferenceChanges,0));
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){savePreferenceChanges();void cloud.flush().catch(()=>{});}});
