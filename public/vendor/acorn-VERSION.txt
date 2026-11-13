@@ -1,0 +1,3 @@
+Acorn 8.19.0
+Source: https://registry.npmjs.org/acorn/-/acorn-8.19.0.tgz
+MIT license; vendored unmodified dist/acorn.mjs as acorn.js.

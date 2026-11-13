@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>知行 1.8.3 · 更新说明</title>
+<style>body{font:16px/1.9 system-ui,"Microsoft YaHei",sans-serif;background:#f5f8f2;color:#284336;margin:0}main{max-width:850px;margin:auto;padding:40px 24px 80px}h1{font-size:32px;line-height:1.4}h2{font-size:21px;margin:0 0 14px}section{padding:24px;margin:22px 0;background:white;border:1px solid #dce5d7;border-radius:14px}li{margin:8px 0}a{color:#1c684e}small{color:#697f61}.notice{padding:16px;border-left:4px solid #61966c;background:#eaf3e5}code{padding:2px 5px;background:#edf3e8;border-radius:4px}nav{display:flex;gap:18px;flex-wrap:wrap}button{font:inherit}summary{cursor:pointer;font-weight:600}@media(max-width:600px){main{padding:24px 15px}section{padding:17px}h1{font-size:27px}}</style></head><body><main>
+<small>知行 · 本地前端学习工作台</small><h1>1.8.3：更简洁的助教输入</h1><section><h2>只保留常用操作</h2><p>固定 Enter 发送、Shift+Enter 换行。移除快捷键检测、重新录制、诊断日志和发送方式选择。草稿菜单保留清空、撤销和失败重试，侧栏与放大窗口同步。</p></section><p><small>以下为历史更新记录；其中旧快捷键排查功能和发送模式选择已移除。</small></p><h2>1.8.2：Enter 发送，Shift+Enter 换行</h2><section><h2>统一助教发送按法</h2><p>侧栏和放大阅读均默认 Enter 发送、Shift+Enter 换行。升级首次打开自动更新之前保存的按法，之后仍可自行选择并保存。中文输入法确认候选不会发送，单按 Ctrl 或 Ctrl+Shift 不再插入换行。</p></section><h2>1.8.1：让正文占据主要空间</h2><section><h2>紧凑助教与按键诊断</h2><ul><li>标题与课程信息合为一行，阅读工具更紧凑。</li><li>输入区默认缩短；输入设置、草稿工具和阅读设置按需展开。</li><li>按键检测新增可复制的原始事件记录，帮助定位 Ctrl 为什么被识别成换行，不记录问题正文。</li></ul></section><h2>1.8.0：让学习和追问更顺手</h2><p>这次围绕启动、助教、阅读和练习完成了 <strong>45 项</strong>具体改进。原有模型配置、课程、代码草稿和学习记录继续保留。</p><nav><a href="/">返回学习软件</a><a href="#tutor">助教与输入</a><a href="#reader">放大阅读</a><a href="#learning">学习与练习</a></nav>
+<section><h2>启动与恢复</h2><ol>
+<li>再次双击启动文件，会识别并关闭同目录的旧服务，再启动新版本。</li>
+<li>能够清理本软件遗留的独立 BAT 启动窗口，包括之前启动失败后停留的窗口。</li>
+<li>连续双击时串行处理启动请求，避免同时争抢端口。</li>
+<li>服务通过健康检查后再打开浏览器，减少启动时空白页和连接失败。</li>
+<li>端口被其他软件占用时给出明确提示；启动错误写入本机日志，便于排查。</li>
+</ol></section>
+<section id="tutor"><h2>助教与输入</h2><ol start="6">
+<li>Ctrl 在更早的按键处理阶段接管，阻止后续输入框监听器和原生换行动作覆盖发送操作。</li>
+<li>新增“检测按键”：显示实际收到的键、修饰键和将执行的操作；检测期间不发送问题，草稿只读。</li>
+<li>新增“重新录制发送键”：按实际收到的 Ctrl 或 Enter 保存发送方式，适配按键映射。</li>
+<li>发送方式可在单按 Ctrl、Ctrl+Enter、Enter 三种模式间选择，并在刷新后保留。</li>
+<li>输入框随内容自动增高，到达上限后内部滚动，避免长问题难以编辑。</li>
+<li>显示问题字数、保存结果和接近长度上限的提示；空问题不能点击发送。</li>
+<li>清空草稿后可撤销；把历史问题放回输入框时也能恢复此前草稿。</li>
+<li>历史问题可“编辑后重发”，先修改草稿，再由自己决定发送。</li>
+<li>侧栏中的整条问题和回答均可复制；回答保留原始 Markdown。</li>
+<li>请求失败后保留问题并提供重试入口，不会重复写入失败消息。</li>
+<li>等待回复时显示已等待秒数，并继续提供停止操作。</li>
+<li>阅读旧消息时，新回复不强制抢走滚动位置；可点击“最新”跳转。</li>
+</ol><p class="notice">默认仍为<strong>单按并松开 Ctrl 发送、Ctrl+Shift 换行</strong>。若你的系统把实体 Ctrl 映射成其他按键，可打开输入框下方“输入设置 · 快捷键检测”，先查看实际事件，再重新录制。这里不会记录问题正文或把按键数据发给模型。</p></section>
+<section id="reader"><h2>放大弹窗阅读</h2><ol start="18">
+<li>正文字号可在 12–26px 调整，支持 A− / A+、滑块和恢复默认；刷新后记忆。</li>
+<li>行距可选紧凑、标准、宽松，并保存偏好。</li>
+<li>明亮、纸张、深色三种正文配色，可保存。</li>
+<li>舒适行宽与铺满窗口可切换，适应长文和宽代码。</li>
+<li>长代码可自动折行，复制时仍是完整原代码。</li>
+<li>可查找当前对话，高亮关键词，显示数量并跳转上一个、下一个匹配。</li>
+<li>按会话记住阅读位置，关闭重开或当前标签刷新后恢复。</li>
+<li>常驻“开头”和“最新”按钮，并显示阅读旧回答时收到的新消息数量。</li>
+<li>弹窗可复制整条回答为 Markdown。</li>
+<li>当前对话可导出为 Markdown 文件，只包含当前会话已提交消息。</li>
+</ol><p>所有阅读设置集中在折叠工具栏内。输入区继续与侧栏共享，草稿、发送、停止和错误状态同步。</p></section>
+<section id="learning"><h2>学习与练习</h2><ol start="28">
+<li>返回或刷新课程时继续上次关卡，首页“继续学习”也显示对应环节。</li>
+<li>课程可以收藏，并通过“我的收藏”筛选集中复习。</li>
+<li>增加“最近学习”，按最近访问顺序找回课程。</li>
+<li>课程可按学习路径、最近访问或标题排序，筛选与排序偏好会记忆。</li>
+<li>搜索结果显示匹配数量，并可一键清除搜索和筛选。</li>
+<li>每课增加自动保存的个人笔记，随学习记录一起导入、导出。</li>
+<li>教材正文字号可调整并记忆。</li>
+<li>教材行距可调整并记忆，阅读设置可恢复默认。</li>
+<li>增加上一关、下一关按钮，显示当前关卡位置。</li>
+<li>增加上一课、下一课入口，减少回目录寻找的次数。</li>
+<li>练习显示已答题数和剩余题数，并提供带作答状态的题号导航。</li>
+<li>可直接跳到第一道未答题，全部完成后按钮自动禁用。</li>
+<li>有未答题时先在练习内提醒，由你选择继续完成或明确提交当前答案。</li>
+<li>反馈同时展示当次提交答案、参考答案和解析，修改草稿不会改写提交记录。</li>
+<li>反馈可只看错题与未答题，全部答对时显示对应提示。</li>
+<li>仅重做错题时保留正确答案和原评测记录。</li>
+<li>每题反馈提供返回修改入口，直接定位到对应答案框。</li>
+<li>原书逐题讲解支持全部展开 / 收起，并增加返回本课顶部入口。</li>
+</ol></section>
+<section><h2>数据与验证说明</h2><p>升级不重置学习记录，不改写你的 API Key。新增笔记与收藏包含在学习记录导出中；阅读和按键偏好保存在当前浏览器。</p><p>本次验证使用本机模拟回复与自动化测试，没有使用真实模型额度。按键检测支持进一步区分“网页处理错误”和“系统实际发来其他按键”这两种情况；本次未能完成你所用 Chrome 的实体键盘复测。</p><p><small>版本：1.8.0 · 85 节课程 · 425 道客观题 · 85 道代码实操</small></p></section>
+</main></body></html>

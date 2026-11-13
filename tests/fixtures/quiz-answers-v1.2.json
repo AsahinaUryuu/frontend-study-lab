@@ -1,0 +1,4035 @@
+[
+  {
+    "id": "js-types-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "null",
+      "object",
+      "undefined",
+      "boolean"
+    ]
+  },
+  {
+    "id": "js-types-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "typeof",
+      "instanceof Array",
+      "Array.isArray",
+      "比较构造函数名称"
+    ]
+  },
+  {
+    "id": "js-types-q3",
+    "type": "fill",
+    "answer": [
+      "bigint"
+    ]
+  },
+  {
+    "id": "js-types-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "打印“进入”",
+      "不打印",
+      "抛出语法错误",
+      "打印 false"
+    ]
+  },
+  {
+    "id": "js-types-q5",
+    "type": "fill",
+    "answer": [
+      "isArray"
+    ]
+  },
+  {
+    "id": "js-equality-q1",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "NaN === NaN",
+      "Object.is(0, -0)",
+      "Object.is(NaN, NaN)",
+      "{} === {}"
+    ]
+  },
+  {
+    "id": "js-equality-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "true",
+      "false",
+      "抛错",
+      "取决于 x"
+    ]
+  },
+  {
+    "id": "js-equality-q3",
+    "type": "fill",
+    "answer": [
+      "==="
+    ]
+  },
+  {
+    "id": "js-equality-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "4",
+      "3",
+      "2",
+      "1"
+    ]
+  },
+  {
+    "id": "js-equality-q5",
+    "type": "fill",
+    "answer": [
+      "is"
+    ]
+  },
+  {
+    "id": "js-prototype-q1",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "undefined",
+      "Object 本身",
+      "null",
+      "window"
+    ]
+  },
+  {
+    "id": "js-prototype-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "in",
+      "Object.hasOwn",
+      "for...in",
+      "读取属性是否 truthy"
+    ]
+  },
+  {
+    "id": "js-prototype-q3",
+    "type": "fill",
+    "answer": [
+      "getPrototypeOf"
+    ]
+  },
+  {
+    "id": "js-prototype-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "undefined",
+      "1",
+      "2",
+      "抛错"
+    ]
+  },
+  {
+    "id": "js-prototype-q5",
+    "type": "fill",
+    "answer": [
+      "getPrototypeOf"
+    ]
+  },
+  {
+    "id": "js-copy-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "obj={n:2}",
+      "obj.n=2",
+      "再次声明 const obj",
+      "把 obj 改成 null"
+    ]
+  },
+  {
+    "id": "js-copy-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "递归克隆",
+      "复制嵌套引用",
+      "冻结嵌套对象",
+      "删除嵌套对象"
+    ]
+  },
+  {
+    "id": "js-copy-q3",
+    "type": "fill",
+    "answer": [
+      "浅拷贝",
+      "浅复制"
+    ]
+  },
+  {
+    "id": "js-copy-q4",
+    "type": "choice",
+    "answer": 3,
+    "options": [
+      "1",
+      "undefined",
+      "抛错",
+      "2"
+    ]
+  },
+  {
+    "id": "js-copy-q5",
+    "type": "fill",
+    "answer": [
+      "freeze"
+    ]
+  },
+  {
+    "id": "js-objects-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "true",
+      "false",
+      "1",
+      "抛错"
+    ]
+  },
+  {
+    "id": "js-objects-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "Object.keys",
+      "for...in",
+      "Reflect.ownKeys",
+      "JSON.stringify"
+    ]
+  },
+  {
+    "id": "js-objects-q3",
+    "type": "fill",
+    "answer": [
+      "false"
+    ]
+  },
+  {
+    "id": "js-objects-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "{...obj}",
+      "Object.assign({},obj)",
+      "Object.create(Object.getPrototypeOf(obj),Object.getOwnPropertyDescriptors(obj))",
+      "JSON.parse(JSON.stringify(obj))"
+    ]
+  },
+  {
+    "id": "js-objects-q5",
+    "type": "fill",
+    "answer": [
+      "hasOwn"
+    ]
+  },
+  {
+    "id": "js-this-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "call",
+      "JSON.stringify",
+      "Object.keys",
+      "Promise.resolve"
+    ]
+  },
+  {
+    "id": "js-this-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "创建普通对象",
+      "返回 undefined",
+      "抛 TypeError",
+      "自动变成普通函数"
+    ]
+  },
+  {
+    "id": "js-this-q3",
+    "type": "fill",
+    "answer": [
+      "bind",
+      "Function.prototype.bind"
+    ]
+  },
+  {
+    "id": "js-this-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "得到空对象",
+      "得到数字 1",
+      "抛出 TypeError",
+      "this 自动变成 window"
+    ]
+  },
+  {
+    "id": "js-this-q5",
+    "type": "fill",
+    "answer": [
+      "bind"
+    ]
+  },
+  {
+    "id": "js-proxy-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "true",
+      "false",
+      "只要没有陷阱就是 true",
+      "取决于字段数量"
+    ]
+  },
+  {
+    "id": "js-proxy-q2",
+    "type": "fill",
+    "answer": [
+      "receiver"
+    ]
+  },
+  {
+    "id": "js-proxy-q3",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "静默成功",
+      "修改 target 后返回 false",
+      "抛 TypeError",
+      "自动重试"
+    ]
+  },
+  {
+    "id": "js-proxy-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "绕过代理",
+      "递归触发同一个陷阱",
+      "自动把值冻结",
+      "只对 Symbol 有效"
+    ]
+  },
+  {
+    "id": "js-proxy-q5",
+    "type": "fill",
+    "answer": [
+      "deleteProperty"
+    ]
+  },
+  {
+    "id": "js-json-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "[]",
+      "[null,null]",
+      "[undefined,NaN]",
+      "抛错"
+    ]
+  },
+  {
+    "id": "js-json-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "{\"x\":null,\"y\":1}",
+      "{\"y\":1}",
+      "undefined",
+      "抛错"
+    ]
+  },
+  {
+    "id": "js-json-q3",
+    "type": "fill",
+    "answer": [
+      "string"
+    ]
+  },
+  {
+    "id": "js-json-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "null",
+      "false",
+      "BigInt",
+      "空数组"
+    ]
+  },
+  {
+    "id": "js-json-q5",
+    "type": "fill",
+    "answer": [
+      "replacer"
+    ]
+  },
+  {
+    "id": "js-regexp-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "true",
+      "false",
+      "undefined",
+      "抛错"
+    ]
+  },
+  {
+    "id": "js-regexp-q2",
+    "type": "fill",
+    "answer": [
+      "lastIndex"
+    ]
+  },
+  {
+    "id": "js-regexp-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "/cat/",
+      "/^cat$/",
+      "/[cat]/",
+      "/cat*/"
+    ]
+  },
+  {
+    "id": "js-regexp-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "把输入直接拼进正则",
+      "text.includes(input)",
+      "给正则加 g",
+      "eval(input)"
+    ]
+  },
+  {
+    "id": "js-regexp-q5",
+    "type": "fill",
+    "answer": [
+      "i"
+    ]
+  },
+  {
+    "id": "js-loading-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "都加 async",
+      "都加 defer 并按顺序放置",
+      "只靠网速",
+      "都不写 src"
+    ]
+  },
+  {
+    "id": "js-loading-q2",
+    "type": "fill",
+    "answer": [
+      "async"
+    ]
+  },
+  {
+    "id": "js-loading-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "忽略 import",
+      "递归获取模块依赖图",
+      "只按全局变量查找",
+      "要求手写 XMLHttpRequest"
+    ]
+  },
+  {
+    "id": "js-loading-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "HTML 解析",
+      "外部 defer 经典脚本",
+      "普通图片加载完成",
+      "常规模块脚本的执行安排"
+    ]
+  },
+  {
+    "id": "js-loading-q5",
+    "type": "fill",
+    "answer": [
+      "readyState"
+    ]
+  },
+  {
+    "id": "js-dom-bom-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "ECMAScript 数值运算",
+      "DOM",
+      "DNS",
+      "文件系统"
+    ]
+  },
+  {
+    "id": "js-dom-bom-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "screen.width",
+      "window.innerWidth",
+      "history.length",
+      "navigator.language"
+    ]
+  },
+  {
+    "id": "js-dom-bom-q3",
+    "type": "fill",
+    "answer": [
+      "textContent"
+    ]
+  },
+  {
+    "id": "js-dom-bom-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "document 总是空对象",
+      "Worker 没有页面 DOM",
+      "只能读取不能写入",
+      "需要先 JSON.parse"
+    ]
+  },
+  {
+    "id": "js-dom-bom-q5",
+    "type": "fill",
+    "answer": [
+      "函数",
+      "函数对象",
+      "function"
+    ]
+  },
+  {
+    "id": "js-fetch-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "直接拒绝",
+      "兑现为 Response",
+      "自动重试",
+      "进程退出"
+    ]
+  },
+  {
+    "id": "js-fetch-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "clearTimeout(fetch)",
+      "AbortController",
+      "Promise.cancel",
+      "delete fetch"
+    ]
+  },
+  {
+    "id": "js-fetch-q3",
+    "type": "fill",
+    "answer": [
+      "ok",
+      "response.ok"
+    ]
+  },
+  {
+    "id": "js-fetch-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "立即因 404 拒绝",
+      "永远不返回",
+      "兑现为 Response，需检查 ok",
+      "自动改为 200"
+    ]
+  },
+  {
+    "id": "js-fetch-q5",
+    "type": "fill",
+    "answer": [
+      "AbortController"
+    ]
+  },
+  {
+    "id": "js-url-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "a+b",
+      "a b",
+      "a%2Bb",
+      "抛错"
+    ]
+  },
+  {
+    "id": "js-url-q2",
+    "type": "fill",
+    "answer": [
+      "getAll",
+      "getAll()"
+    ]
+  },
+  {
+    "id": "js-url-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "url.search='?q='+value",
+      "url.searchParams.set('q',value)",
+      "url.searchParams.set('q',encodeURIComponent(value))",
+      "删除 & 后拼接"
+    ]
+  },
+  {
+    "id": "js-url-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "完整网页 URL 的所有结构",
+      "单个 URI 组成部分",
+      "JavaScript 代码安全执行",
+      "HTML 标签过滤"
+    ]
+  },
+  {
+    "id": "js-url-q5",
+    "type": "fill",
+    "answer": [
+      "append",
+      "append()"
+    ]
+  },
+  {
+    "id": "js-iteration-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "数组元素值",
+      "可枚举字符串属性名",
+      "只拿到数字索引",
+      "全部 Symbol"
+    ]
+  },
+  {
+    "id": "js-iteration-q2",
+    "type": "fill",
+    "answer": [
+      "iterator"
+    ]
+  },
+  {
+    "id": "js-iteration-q3",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "Object.entries",
+      "JSON.parse",
+      "Reflect.get",
+      "Promise.resolve"
+    ]
+  },
+  {
+    "id": "js-iteration-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "原序列",
+      "空数组",
+      "自动重新执行",
+      "SyntaxError"
+    ]
+  },
+  {
+    "id": "js-iteration-q5",
+    "type": "fill",
+    "answer": [
+      "done"
+    ]
+  },
+  {
+    "id": "js-modules-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "初始值",
+      "新值",
+      "undefined",
+      "随机值"
+    ]
+  },
+  {
+    "id": "js-modules-q2",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "import()",
+      "require.async() 标准方法",
+      "export()",
+      "JSON.parse()"
+    ]
+  },
+  {
+    "id": "js-modules-q3",
+    "type": "fill",
+    "answer": [
+      "exports"
+    ]
+  },
+  {
+    "id": "js-modules-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "更新后的绑定值",
+      "永远为 0",
+      "独立深复制",
+      "自动变成字符串"
+    ]
+  },
+  {
+    "id": "js-modules-q5",
+    "type": "fill",
+    "answer": [
+      "exports"
+    ]
+  },
+  {
+    "id": "js-closure-q1",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "1 2 3",
+      "1 1 1",
+      "1 2 1",
+      "2 2 2"
+    ]
+  },
+  {
+    "id": "js-closure-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "一定",
+      "只在 Chrome 中",
+      "不一定，取决于可达引用与实际需要",
+      "只要有 let 就会"
+    ]
+  },
+  {
+    "id": "js-closure-q3",
+    "type": "fill",
+    "answer": [
+      "词法",
+      "静态"
+    ]
+  },
+  {
+    "id": "js-closure-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "1 1",
+      "2 2",
+      "2 1",
+      "1 2"
+    ]
+  },
+  {
+    "id": "js-closure-q5",
+    "type": "fill",
+    "answer": [
+      "let"
+    ]
+  },
+  {
+    "id": "js-event-loop-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "1 2 3",
+      "1 3 2",
+      "2 1 3",
+      "3 1 2"
+    ]
+  },
+  {
+    "id": "js-event-loop-q2",
+    "type": "fill",
+    "answer": [
+      "微任务",
+      "microtask"
+    ]
+  },
+  {
+    "id": "js-event-loop-q3",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "调用时同步执行",
+      "全部推迟到下一轮任务",
+      "只有调用 then 才执行",
+      "浏览器绘制后"
+    ]
+  },
+  {
+    "id": "js-event-loop-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "自动转为 Worker",
+      "后续任务和渲染长期得不到机会",
+      "自动提升帧率",
+      "Promise 不再运行"
+    ]
+  },
+  {
+    "id": "js-event-loop-q5",
+    "type": "fill",
+    "answer": [
+      "all"
+    ]
+  },
+  {
+    "id": "js-promise-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "原值",
+      "undefined",
+      "Promise 本身",
+      "一定报错"
+    ]
+  },
+  {
+    "id": "js-promise-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "拒绝",
+      "一直 pending",
+      "以 3 兑现",
+      "取消"
+    ]
+  },
+  {
+    "id": "js-promise-q3",
+    "type": "fill",
+    "answer": [
+      "rejected"
+    ]
+  },
+  {
+    "id": "js-promise-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "E",
+      "7",
+      "undefined",
+      "不会执行 then"
+    ]
+  },
+  {
+    "id": "js-promise-q5",
+    "type": "fill",
+    "answer": [
+      "allSettled"
+    ]
+  },
+  {
+    "id": "js-async-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "数字 1",
+      "以 1 兑现的 Promise",
+      "undefined",
+      "生成器"
+    ]
+  },
+  {
+    "id": "js-async-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "自动全部取消",
+      "继续运行，除非另行取消",
+      "自动重试",
+      "变同步"
+    ]
+  },
+  {
+    "id": "js-async-q3",
+    "type": "fill",
+    "answer": [
+      "all"
+    ]
+  },
+  {
+    "id": "js-async-q4",
+    "type": "choice",
+    "answer": 3,
+    "options": [
+      "数字 3",
+      "undefined",
+      "迭代器",
+      "一个 Promise"
+    ]
+  },
+  {
+    "id": "js-async-q5",
+    "type": "fill",
+    "answer": [
+      "of"
+    ]
+  },
+  {
+    "id": "js-memory-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "立即被回收",
+      "可能仍被保留",
+      "一定导致页面崩溃",
+      "会自动移出数组"
+    ]
+  },
+  {
+    "id": "js-memory-q2",
+    "type": "fill",
+    "answer": [
+      "clearInterval",
+      "clearInterval()"
+    ]
+  },
+  {
+    "id": "js-memory-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "是",
+      "否，取决于引用生命周期",
+      "只有箭头函数会",
+      "只有递归会"
+    ]
+  },
+  {
+    "id": "js-memory-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一次内存读数",
+      "多轮操作后的保留对象与引用路径",
+      "代码行数",
+      "CPU 型号"
+    ]
+  },
+  {
+    "id": "js-memory-q5",
+    "type": "fill",
+    "answer": [
+      "WeakMap"
+    ]
+  },
+  {
+    "id": "vue-reactivity-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "Proxy",
+      "轮询所有变量",
+      "DOM diff 就是响应式",
+      "CSS 选择器"
+    ]
+  },
+  {
+    "id": "vue-reactivity-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "JSON.parse",
+      "toRefs",
+      "Object.keys",
+      "String"
+    ]
+  },
+  {
+    "id": "vue-reactivity-q3",
+    "type": "fill",
+    "answer": [
+      "value"
+    ]
+  },
+  {
+    "id": "vue-reactivity-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "1",
+      "2",
+      "undefined",
+      "语法错误"
+    ]
+  },
+  {
+    "id": "vue-reactivity-q5",
+    "type": "fill",
+    "answer": [
+      "toRefs"
+    ]
+  },
+  {
+    "id": "vue-props-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "直接 props.count++",
+      "发出事件由父级处理",
+      "访问父级 DOM 改文本",
+      "修改 window"
+    ]
+  },
+  {
+    "id": "vue-props-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "change:value",
+      "update:modelValue",
+      "input:model",
+      "set"
+    ]
+  },
+  {
+    "id": "vue-props-q3",
+    "type": "fill",
+    "answer": [
+      "Emits"
+    ]
+  },
+  {
+    "id": "vue-props-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一定语法报错",
+      "可能改到共享对象，仍应通过事件让父级更新",
+      "父级永远不受影响",
+      "自动创建深拷贝"
+    ]
+  },
+  {
+    "id": "vue-props-q5",
+    "type": "fill",
+    "answer": [
+      "update:modelValue"
+    ]
+  },
+  {
+    "id": "vue-architecture-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "各自保存并互相轮询",
+      "提升到共同父组件",
+      "写进 DOM 属性当数据库",
+      "所有状态都放 window"
+    ]
+  },
+  {
+    "id": "vue-architecture-q2",
+    "type": "fill",
+    "answer": [
+      "computed"
+    ]
+  },
+  {
+    "id": "vue-architecture-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "Vue 不支持计数",
+      "JavaScript 内存重新初始化",
+      "浏览器删除所有服务器数据",
+      "props 自动持久化失败"
+    ]
+  },
+  {
+    "id": "vue-architecture-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "只能构建 SPA",
+      "只能客户端渲染",
+      "可用于渐进增强、SPA 和 SSR 等场景",
+      "用了组件就不能 SSR"
+    ]
+  },
+  {
+    "id": "vue-architecture-q5",
+    "type": "fill",
+    "answer": [
+      "事件",
+      "emit",
+      "emits"
+    ]
+  },
+  {
+    "id": "vue-slots-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "子级全部变量",
+      "父级作用域",
+      "window 全局",
+      "不存在作用域"
+    ]
+  },
+  {
+    "id": "vue-slots-q2",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "slot props",
+      "直接改父级原型",
+      "localStorage",
+      "querySelector"
+    ]
+  },
+  {
+    "id": "vue-slots-q3",
+    "type": "fill",
+    "answer": [
+      "header"
+    ]
+  },
+  {
+    "id": "vue-slots-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "自动读取 secret",
+      "自动读取子组件 this",
+      "不能仅凭插槽位置取得该局部变量",
+      "Vue 自动创建同名 prop"
+    ]
+  },
+  {
+    "id": "vue-slots-q5",
+    "type": "fill",
+    "answer": [
+      "slot"
+    ]
+  },
+  {
+    "id": "vue-nexttick-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "旧值",
+      "新值",
+      "Promise",
+      "undefined"
+    ]
+  },
+  {
+    "id": "vue-nexttick-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "所有网络结束",
+      "本轮 Vue DOM 更新完成",
+      "所有图片加载完",
+      "下一秒到达"
+    ]
+  },
+  {
+    "id": "vue-nexttick-q3",
+    "type": "fill",
+    "answer": [
+      "nextTick"
+    ]
+  },
+  {
+    "id": "vue-nexttick-q4",
+    "type": "choice",
+    "answer": 3,
+    "options": [
+      "全部图片已加载",
+      "CSS 动画已结束",
+      "所有请求已成功",
+      "本轮已排入的 Vue DOM 更新完成"
+    ]
+  },
+  {
+    "id": "vue-nexttick-q5",
+    "type": "fill",
+    "answer": [
+      "nextTick"
+    ]
+  },
+  {
+    "id": "vue-router-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "会",
+      "不会",
+      "只在 POST 会",
+      "取决于 Vue"
+    ]
+  },
+  {
+    "id": "vue-router-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "删除路由",
+      "为页面路径配置入口回退",
+      "更换所有 key",
+      "关闭浏览器缓存"
+    ]
+  },
+  {
+    "id": "vue-router-q3",
+    "type": "fill",
+    "answer": [
+      "popstate"
+    ]
+  },
+  {
+    "id": "vue-router-q4",
+    "type": "choice",
+    "answer": 3,
+    "options": [
+      "组件样式",
+      "nextTick 次数",
+      "浏览器缓存大小",
+      "服务器的前端路由回退配置"
+    ]
+  },
+  {
+    "id": "vue-router-q5",
+    "type": "fill",
+    "answer": [
+      "pushState"
+    ]
+  },
+  {
+    "id": "vue-composition-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "总是共享",
+      "函数内创建 ref 时不共享",
+      "取决于返回变量名字",
+      "只要同文件就共享"
+    ]
+  },
+  {
+    "id": "vue-composition-q2",
+    "type": "fill",
+    "answer": [
+      "composable",
+      "组合式函数"
+    ]
+  },
+  {
+    "id": "vue-composition-q3",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "前者保留 ref 引用",
+      "前者总会深拷贝",
+      "后者禁止数字",
+      "两者完全相同"
+    ]
+  },
+  {
+    "id": "vue-composition-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "无法拥有生命周期",
+      "名字冲突与来源不清",
+      "只能使用数字",
+      "不能复用代码"
+    ]
+  },
+  {
+    "id": "vue-composition-q5",
+    "type": "fill",
+    "answer": [
+      "setup",
+      "<script setup>"
+    ]
+  },
+  {
+    "id": "vue-assets-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "/public/logo.png",
+      "/logo.png",
+      "必须 import public",
+      "dist/public/logo.png"
+    ]
+  },
+  {
+    "id": "vue-assets-q2",
+    "type": "fill",
+    "answer": [
+      "v-cloak"
+    ]
+  },
+  {
+    "id": "vue-assets-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "给整页加 v-cloak",
+      "预留图片宽高或比例",
+      "移除 alt",
+      "把图片放进 localStorage"
+    ]
+  },
+  {
+    "id": "vue-assets-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "手写 dist 哈希文件名",
+      "在源码中 import 资源",
+      "猜服务器路径",
+      "依赖 Windows 不区分大小写"
+    ]
+  },
+  {
+    "id": "vue-assets-q5",
+    "type": "fill",
+    "answer": [
+      "base"
+    ]
+  },
+  {
+    "id": "vue-render-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "PNG 图片",
+      "渲染函数",
+      "SQL",
+      "HTTP 报文"
+    ]
+  },
+  {
+    "id": "vue-render-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "总能更快",
+      "节点频繁重建与状态丢失",
+      "永久关闭更新",
+      "自动缓存"
+    ]
+  },
+  {
+    "id": "vue-render-q3",
+    "type": "fill",
+    "answer": [
+      "patch",
+      "补丁",
+      "打补丁"
+    ]
+  },
+  {
+    "id": "vue-render-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "节点每次都被当成新身份，状态可能重置",
+      "所有节点永久复用",
+      "自动减少全部 DOM 操作",
+      "只改变显示文本"
+    ]
+  },
+  {
+    "id": "vue-render-q5",
+    "type": "fill",
+    "answer": [
+      "LIS"
+    ]
+  },
+  {
+    "id": "vue-list-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "v-for",
+      "v-if",
+      "随机",
+      "总是报语法错误"
+    ]
+  },
+  {
+    "id": "vue-list-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "数组索引",
+      "Math.random()",
+      "user.id",
+      "全部使用 1"
+    ]
+  },
+  {
+    "id": "vue-list-q3",
+    "type": "fill",
+    "answer": [
+      "computed"
+    ]
+  },
+  {
+    "id": "vue-list-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "v-for 总是先执行",
+      "v-if 优先，可能访问不到循环变量",
+      "自动生成 computed",
+      "只影响 CSS"
+    ]
+  },
+  {
+    "id": "vue-list-q5",
+    "type": "fill",
+    "answer": [
+      "computed"
+    ]
+  },
+  {
+    "id": "vue-lifecycle-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "onCreated",
+      "onUnmounted",
+      "destroyed() 全局函数",
+      "onTick"
+    ]
+  },
+  {
+    "id": "vue-lifecycle-q2",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "deactivated",
+      "永久删除",
+      "服务器渲染",
+      "编译阶段"
+    ]
+  },
+  {
+    "id": "vue-lifecycle-q3",
+    "type": "fill",
+    "answer": [
+      "clearInterval"
+    ]
+  },
+  {
+    "id": "vue-lifecycle-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "数据不会随新 id 更新",
+      "组件一定重新挂载",
+      "Vue 会自动重复请求",
+      "请求自动变成 computed"
+    ]
+  },
+  {
+    "id": "vue-lifecycle-q5",
+    "type": "fill",
+    "answer": [
+      "onUnmounted"
+    ]
+  },
+  {
+    "id": "vue-async-data-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "JSON 不支持用户对象",
+      "请求完成顺序和发起顺序不同",
+      "Vue 不支持异步",
+      "所有接口都串行"
+    ]
+  },
+  {
+    "id": "vue-async-data-q2",
+    "type": "fill",
+    "answer": [
+      "signal"
+    ]
+  },
+  {
+    "id": "vue-async-data-q3",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "让当前新请求的加载提示提前消失",
+      "自动取消新请求",
+      "改变 HTTP 状态码",
+      "完全没有影响"
+    ]
+  },
+  {
+    "id": "vue-async-data-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "只靠 catch 一定捕获",
+      "检查 response.ok 或 status",
+      "当作空成功数据",
+      "立即 JSON.stringify 请求"
+    ]
+  },
+  {
+    "id": "vue-async-data-q5",
+    "type": "fill",
+    "answer": [
+      "onCleanup"
+    ]
+  },
+  {
+    "id": "vue-keepalive-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一定完全销毁",
+      "停用但保留实例",
+      "变成普通 HTML 文件",
+      "自动保存到 localStorage"
+    ]
+  },
+  {
+    "id": "vue-keepalive-q2",
+    "type": "fill",
+    "answer": [
+      "onActivated",
+      "onActivated()"
+    ]
+  },
+  {
+    "id": "vue-keepalive-q3",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "onDeactivated",
+      "只用 onMounted",
+      "只用 onUpdated",
+      "computed"
+    ]
+  },
+  {
+    "id": "vue-keepalive-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "组件 name",
+      "DOM id",
+      "页面标题",
+      "接口 URL"
+    ]
+  },
+  {
+    "id": "vue-keepalive-q5",
+    "type": "fill",
+    "answer": [
+      "max"
+    ]
+  },
+  {
+    "id": "vue-store-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "mutation",
+      "action",
+      "template key",
+      "getter 中修改状态"
+    ]
+  },
+  {
+    "id": "vue-store-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "会自动同步磁盘",
+      "不会，需要持久化策略",
+      "只保留数字",
+      "由 mutation 名称决定"
+    ]
+  },
+  {
+    "id": "vue-store-q3",
+    "type": "fill",
+    "answer": [
+      "commit"
+    ]
+  },
+  {
+    "id": "vue-store-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "mutation 未加 async",
+      "Vuex 默认只管理本次运行内存，需另做恢复",
+      "getters 必须写 localStorage",
+      "浏览器不支持响应式"
+    ]
+  },
+  {
+    "id": "vue-store-q5",
+    "type": "fill",
+    "answer": [
+      "actions"
+    ]
+  },
+  {
+    "id": "react-events-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "stopPropagation",
+      "preventDefault",
+      "stopRender",
+      "return true"
+    ]
+  },
+  {
+    "id": "react-events-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "onClick={save()}",
+      "onClick={save}",
+      "onclick=\"save\"",
+      "onClick={null()}"
+    ]
+  },
+  {
+    "id": "react-events-q3",
+    "type": "fill",
+    "answer": [
+      "stopPropagation",
+      "event.stopPropagation"
+    ]
+  },
+  {
+    "id": "react-events-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "不是，阻止默认行为不会自动停止冒泡",
+      "必然不执行",
+      "React 自动删除父处理器",
+      "只有事件池化时执行"
+    ]
+  },
+  {
+    "id": "react-events-q5",
+    "type": "fill",
+    "answer": [
+      "stopPropagation"
+    ]
+  },
+  {
+    "id": "react-hooks-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "天然共享",
+      "独立",
+      "只能调用一次",
+      "自动持久化"
+    ]
+  },
+  {
+    "id": "react-hooks-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "if 里面",
+      "顶层，条件放回调内",
+      "for 循环内",
+      "点击事件内调用 Hook"
+    ]
+  },
+  {
+    "id": "react-hooks-q3",
+    "type": "fill",
+    "answer": [
+      "use"
+    ]
+  },
+  {
+    "id": "react-hooks-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "也加一",
+      "重新挂载",
+      "仍为 0",
+      "Hook 会报共享冲突"
+    ]
+  },
+  {
+    "id": "react-hooks-q5",
+    "type": "fill",
+    "answer": [
+      "useContext"
+    ]
+  },
+  {
+    "id": "react-render-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "DOM 节点",
+      "React 元素描述",
+      "Greeting 的类实例",
+      "HTML 字符串"
+    ]
+  },
+  {
+    "id": "react-render-q2",
+    "type": "fill",
+    "answer": [
+      "type"
+    ]
+  },
+  {
+    "id": "react-render-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一定要求",
+      "不一定，取决于 JSX 转换配置",
+      "所有 import 都可以删除",
+      "必须换成 class"
+    ]
+  },
+  {
+    "id": "react-render-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "是",
+      "否，React 会根据结果提交必要变化",
+      "只有字符串会保留",
+      "只要调用 useState 就会重建"
+    ]
+  },
+  {
+    "id": "react-render-q5",
+    "type": "fill",
+    "answer": [
+      "花括号",
+      "{}"
+    ]
+  },
+  {
+    "id": "react-refs-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "会",
+      "不会",
+      "只在严格模式会",
+      "取决于变量名"
+    ]
+  },
+  {
+    "id": "react-refs-q2",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "state",
+      "局部普通变量即可",
+      "document.title",
+      "不需要保存"
+    ]
+  },
+  {
+    "id": "react-refs-q3",
+    "type": "fill",
+    "answer": [
+      "current"
+    ]
+  },
+  {
+    "id": "react-refs-q4",
+    "type": "choice",
+    "answer": 3,
+    "options": [
+      "一定会",
+      "自动调用 render",
+      "会整页刷新",
+      "不会由这次 ref 修改触发重新渲染"
+    ]
+  },
+  {
+    "id": "react-refs-q5",
+    "type": "fill",
+    "answer": [
+      "current"
+    ]
+  },
+  {
+    "id": "react-state-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "0",
+      "1",
+      "3",
+      "报错"
+    ]
+  },
+  {
+    "id": "react-state-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "count++",
+      "setCount(c=>c+1)",
+      "setCount=count+1",
+      "直接改 DOM"
+    ]
+  },
+  {
+    "id": "react-state-q3",
+    "type": "fill",
+    "answer": [
+      "纯净",
+      "纯函数"
+    ]
+  },
+  {
+    "id": "react-state-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "1",
+      "0",
+      "3",
+      "2"
+    ]
+  },
+  {
+    "id": "react-state-q5",
+    "type": "fill",
+    "answer": [
+      "useState"
+    ]
+  },
+  {
+    "id": "react-props-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "各自复制",
+      "最近公共父级",
+      "DOM 属性中",
+      "每个组件的静态变量"
+    ]
+  },
+  {
+    "id": "react-props-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "只有 defaultValue",
+      "value 与 onChange",
+      "只有 ref",
+      "只有 key"
+    ]
+  },
+  {
+    "id": "react-props-q3",
+    "type": "fill",
+    "answer": [
+      "props"
+    ]
+  },
+  {
+    "id": "react-props-q4",
+    "type": "choice",
+    "answer": 3,
+    "options": [
+      "各自维护一份 state",
+      "通过 ref 互相改内部变量",
+      "使用全局任意变量",
+      "把条件提升到共同父级并传值与回调"
+    ]
+  },
+  {
+    "id": "react-props-q5",
+    "type": "fill",
+    "answer": [
+      "children"
+    ]
+  },
+  {
+    "id": "react-types-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "直接改 props.quantity",
+      "调用父级传入的回调",
+      "修改 DOM 再推断值",
+      "把 props 保存到全局并修改"
+    ]
+  },
+  {
+    "id": "react-types-q2",
+    "type": "fill",
+    "answer": [
+      "unknown"
+    ]
+  },
+  {
+    "id": "react-types-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "自动验证所有字段",
+      "不会因此增加运行时校验",
+      "自动冻结对象",
+      "自动补齐缺失字段"
+    ]
+  },
+  {
+    "id": "react-types-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "React 保证执行生产校验",
+      "React 内置检查已移除，旧写法会被忽略",
+      "自动变为 TypeScript",
+      "只检查嵌套对象"
+    ]
+  },
+  {
+    "id": "react-types-q5",
+    "type": "fill",
+    "answer": [
+      "浅",
+      "浅层",
+      "一"
+    ]
+  },
+  {
+    "id": "react-effects-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "新 setup 后旧 cleanup",
+      "旧 cleanup 后新 setup",
+      "只 cleanup",
+      "只执行一次"
+    ]
+  },
+  {
+    "id": "react-effects-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "总放 Effect",
+      "直接在渲染中计算",
+      "写到 window",
+      "修改 props"
+    ]
+  },
+  {
+    "id": "react-effects-q3",
+    "type": "fill",
+    "answer": [
+      "cleanup",
+      "清理函数"
+    ]
+  },
+  {
+    "id": "react-effects-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "先连 B 永不离 A",
+      "先清理 A，再建立 B",
+      "只在卸载时改变",
+      "直接修改依赖数组"
+    ]
+  },
+  {
+    "id": "react-effects-q5",
+    "type": "fill",
+    "answer": [
+      "useLayoutEffect"
+    ]
+  },
+  {
+    "id": "react-lifecycle-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "render",
+      "componentWillUnmount",
+      "constructor",
+      "getDerivedStateFromProps"
+    ]
+  },
+  {
+    "id": "react-lifecycle-q2",
+    "type": "fill",
+    "answer": [
+      "componentDidMount"
+    ]
+  },
+  {
+    "id": "react-lifecycle-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "新旧连接都永久保留",
+      "清理旧连接，再建立新连接",
+      "只更新标题",
+      "只在卸载时处理"
+    ]
+  },
+  {
+    "id": "react-lifecycle-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "证明生产环境也一定执行两次",
+      "检查副作用清理是否完整",
+      "自动缓存所有网络响应",
+      "禁止函数组件"
+    ]
+  },
+  {
+    "id": "react-lifecycle-q5",
+    "type": "fill",
+    "answer": [
+      "渲染",
+      "render"
+    ]
+  },
+  {
+    "id": "react-router-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "总会",
+      "不会因这次调用自动触发",
+      "只有 URL 较短时触发",
+      "会变成 hashchange"
+    ]
+  },
+  {
+    "id": "react-router-q2",
+    "type": "fill",
+    "answer": [
+      "popstate"
+    ]
+  },
+  {
+    "id": "react-router-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "把链接变成没有 href 的 div",
+      "在保留链接语义的同时进行客户端导航",
+      "阻止所有跳转",
+      "向服务器新建文件"
+    ]
+  },
+  {
+    "id": "react-router-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "React useState",
+      "服务器 History 路由兜底配置",
+      "CSS z-index",
+      "JSON 缩进"
+    ]
+  },
+  {
+    "id": "react-router-q5",
+    "type": "fill",
+    "answer": [
+      "useParams",
+      "useParams()"
+    ]
+  },
+  {
+    "id": "react-redux-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "纯函数",
+      "总执行 HTTP",
+      "直接操作 DOM",
+      "依赖当前时间随机生成"
+    ]
+  },
+  {
+    "id": "react-redux-q2",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "next(action)",
+      "window(action)",
+      "render(action)",
+      "JSON(action)"
+    ]
+  },
+  {
+    "id": "react-redux-q3",
+    "type": "fill",
+    "answer": [
+      "action"
+    ]
+  },
+  {
+    "id": "react-redux-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "自动触发更多更新所以更好",
+      "只能用于数字",
+      "破坏不可变状态及引用比较假设",
+      "等价于 Toolkit 草稿写法"
+    ]
+  },
+  {
+    "id": "react-redux-q5",
+    "type": "fill",
+    "answer": [
+      "next"
+    ]
+  },
+  {
+    "id": "react-key-q1",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "Math.random()",
+      "index",
+      "稳定业务 id",
+      "当前时间"
+    ]
+  },
+  {
+    "id": "react-key-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "足够",
+      "不够，要额外传 id 或对象",
+      "取决于大小写",
+      "只在类组件足够"
+    ]
+  },
+  {
+    "id": "react-key-q3",
+    "type": "fill",
+    "answer": [
+      "key"
+    ]
+  },
+  {
+    "id": "react-key-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "永久保留",
+      "因身份改变而重新初始化",
+      "自动合并 A 与 B",
+      "变成全局 state"
+    ]
+  },
+  {
+    "id": "react-key-q5",
+    "type": "fill",
+    "answer": [
+      "key"
+    ]
+  },
+  {
+    "id": "react-persistence-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "React 自动删除数据库",
+      "内存重新初始化，需要外部恢复来源",
+      "浏览器不支持数字",
+      "必须使用 class 才能保留"
+    ]
+  },
+  {
+    "id": "react-persistence-q2",
+    "type": "fill",
+    "answer": [
+      "URL",
+      "url"
+    ]
+  },
+  {
+    "id": "react-persistence-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "让页面白屏",
+      "捕获异常并使用有效默认值",
+      "eval 该字符串",
+      "忽略所有字段校验"
+    ]
+  },
+  {
+    "id": "react-persistence-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "只有性能影响",
+      "服务器无 window，且可能产生水合内容差异",
+      "自动改为 cookie",
+      "浏览器会帮忙等待"
+    ]
+  },
+  {
+    "id": "react-persistence-q5",
+    "type": "fill",
+    "answer": [
+      "version"
+    ]
+  },
+  {
+    "id": "performance-lazy-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "正常加载，必要时提高优先级",
+      "等用户滚动后再加载",
+      "只保存在 data-src",
+      "用定时器延迟 5 秒"
+    ]
+  },
+  {
+    "id": "performance-lazy-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "删除图片",
+      "避免重复观察回调中的处理",
+      "强制清除图片缓存",
+      "取消已经开始的请求"
+    ]
+  },
+  {
+    "id": "performance-lazy-q3",
+    "type": "fill",
+    "answer": [
+      "aspect-ratio"
+    ]
+  },
+  {
+    "id": "performance-lazy-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "把 root 设为弹窗的滚动容器",
+      "把 threshold 设为图片文件大小",
+      "只监听 window 的 scroll",
+      "把所有图片都隐藏"
+    ]
+  },
+  {
+    "id": "performance-lazy-q5",
+    "type": "fill",
+    "answer": [
+      "disconnect"
+    ]
+  },
+  {
+    "id": "performance-layout-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "DNS",
+      "绘制",
+      "HTML 分词",
+      "TLS 握手"
+    ]
+  },
+  {
+    "id": "performance-layout-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "一次读取所有尺寸再写入",
+      "一次追加节点集合",
+      "循环内先改宽度再读取布局尺寸",
+      "读取普通对象属性"
+    ]
+  },
+  {
+    "id": "performance-layout-q3",
+    "type": "fill",
+    "answer": [
+      "transform"
+    ]
+  },
+  {
+    "id": "performance-layout-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "每张卡片写宽度后再测量父容器",
+      "先测量一次容器，再循环赋值",
+      "给每张卡片分别调用 getComputedStyle 后再测量",
+      "先清空整个页面再添加卡片"
+    ]
+  },
+  {
+    "id": "performance-layout-q5",
+    "type": "fill",
+    "answer": [
+      "getBoundingClientRect"
+    ]
+  },
+  {
+    "id": "performance-rate-limit-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "尾触发防抖",
+      "节流",
+      "只执行初始化",
+      "随机延迟"
+    ]
+  },
+  {
+    "id": "performance-rate-limit-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "立即执行两次",
+      "取消旧计时并重新计时",
+      "永久禁用函数",
+      "忽略全部后续参数"
+    ]
+  },
+  {
+    "id": "performance-rate-limit-q3",
+    "type": "fill",
+    "answer": [
+      "clearTimeout",
+      "clearTimeout()"
+    ]
+  },
+  {
+    "id": "performance-rate-limit-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "0ms、100ms、200ms 各一次",
+      "300ms 一次",
+      "500ms 一次",
+      "600ms 执行三次"
+    ]
+  },
+  {
+    "id": "performance-rate-limit-q5",
+    "type": "fill",
+    "answer": [
+      "abort"
+    ]
+  },
+  {
+    "id": "performance-resources-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "自动只下载 200px 所需数据",
+      "仍下载被选中的完整资源",
+      "完全不下载图片",
+      "自动转换成 SVG"
+    ]
+  },
+  {
+    "id": "performance-resources-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "console.log()",
+      "import('./reports.js')",
+      "JSON.stringify()",
+      "document.title"
+    ]
+  },
+  {
+    "id": "performance-resources-q3",
+    "type": "fill",
+    "answer": [
+      "srcset"
+    ]
+  },
+  {
+    "id": "performance-resources-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "srcset 必然破坏 JavaScript",
+      "旧页面引用的哈希资源已被提前删除",
+      "所有动态 import 都不能缓存",
+      "HTTP/2 不允许加载多个文件"
+    ]
+  },
+  {
+    "id": "performance-resources-q5",
+    "type": "fill",
+    "answer": [
+      "sizes"
+    ]
+  },
+  {
+    "id": "engineering-modules-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "可以，多个模块可以合并输出",
+      "不可以，文件必须一一对应",
+      "必须输出三个文件",
+      "只能输出 CSS"
+    ]
+  },
+  {
+    "id": "engineering-modules-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "是否只能用于 Windows",
+      "前者调度任务，后者分析模块依赖和产物",
+      "前者不支持代码",
+      "后者不支持插件"
+    ]
+  },
+  {
+    "id": "engineering-modules-q3",
+    "type": "fill",
+    "answer": [
+      "module",
+      "模块"
+    ]
+  },
+  {
+    "id": "engineering-modules-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "能，动态导入会覆盖所有静态导入",
+      "能，只要文件名含 lazy",
+      "不能，还需分析入口的静态依赖与实际产物",
+      "不能，因为所有模块都必须在一个文件里"
+    ]
+  },
+  {
+    "id": "engineering-modules-q5",
+    "type": "fill",
+    "answer": [
+      "import"
+    ]
+  },
+  {
+    "id": "engineering-loaders-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "CSS 选择器",
+      "Plugin",
+      "HTML meta",
+      "路由参数"
+    ]
+  },
+  {
+    "id": "engineering-loaders-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "style 后 css",
+      "同时随机执行",
+      "css 后 style",
+      "只运行第一个"
+    ]
+  },
+  {
+    "id": "engineering-loaders-q3",
+    "type": "fill",
+    "answer": [
+      "apply",
+      "apply()"
+    ]
+  },
+  {
+    "id": "engineering-loaders-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "a → b → c",
+      "b → a → c",
+      "c → b → a",
+      "只调用 c"
+    ]
+  },
+  {
+    "id": "engineering-loaders-q5",
+    "type": "fill",
+    "answer": [
+      "pitch"
+    ]
+  },
+  {
+    "id": "engineering-babel-hmr-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "DNS 解析",
+      "AST 转换阶段",
+      "TLS 加密阶段",
+      "浏览器绘制阶段"
+    ]
+  },
+  {
+    "id": "engineering-babel-hmr-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一定够",
+      "不够，还需运行时 API 支持方案",
+      "无需运行 JS",
+      "改文件名即可"
+    ]
+  },
+  {
+    "id": "engineering-babel-hmr-q3",
+    "type": "fill",
+    "answer": [
+      "AST"
+    ]
+  },
+  {
+    "id": "engineering-babel-hmr-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "是否没有清理旧模块注册的监听器",
+      "是否把注释转换成 AST",
+      "是否所有模块都必须禁用缓存",
+      "是否必须把所有代码放在一个文件"
+    ]
+  },
+  {
+    "id": "engineering-babel-hmr-q5",
+    "type": "fill",
+    "answer": [
+      "dispose"
+    ]
+  },
+  {
+    "id": "engineering-git-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "git fetch",
+      "git reset --hard",
+      "git clean -fd",
+      "git push --force"
+    ]
+  },
+  {
+    "id": "engineering-git-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "保持每个提交哈希不变",
+      "将提交重放，产生新的提交身份",
+      "自动合并全部冲突",
+      "删除远端仓库"
+    ]
+  },
+  {
+    "id": "engineering-git-q3",
+    "type": "fill",
+    "answer": [
+      "git status"
+    ]
+  },
+  {
+    "id": "engineering-git-q4",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "git rebase --continue",
+      "git fetch --force",
+      "git init",
+      "git pull --all"
+    ]
+  },
+  {
+    "id": "engineering-git-q5",
+    "type": "fill",
+    "answer": [
+      "--abort"
+    ]
+  },
+  {
+    "id": "browser-security-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "innerHTML",
+      "textContent",
+      "document.write",
+      "eval"
+    ]
+  },
+  {
+    "id": "browser-security-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "浏览器发送 Cookie",
+      "JavaScript 读取该 Cookie",
+      "服务端读取 Cookie",
+      "所有跨站请求"
+    ]
+  },
+  {
+    "id": "browser-security-q3",
+    "type": "fill",
+    "answer": [
+      "服务端",
+      "服务器",
+      "服务器端",
+      "server"
+    ]
+  },
+  {
+    "id": "browser-security-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "已经解决，因为脚本无法读取 Cookie",
+      "没有，注入脚本仍可能操作页面并以当前身份发请求",
+      "已经解决，只要 URL 是 HTTPS",
+      "只需再把变量改为 const"
+    ]
+  },
+  {
+    "id": "browser-security-q5",
+    "type": "fill",
+    "answer": [
+      "textContent"
+    ]
+  },
+  {
+    "id": "browser-cache-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "no-cache",
+      "no-store",
+      "immutable",
+      "max-age=31536000"
+    ]
+  },
+  {
+    "id": "browser-cache-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "Content-Type",
+      "ETag",
+      "Location",
+      "Allow"
+    ]
+  },
+  {
+    "id": "browser-cache-q3",
+    "type": "fill",
+    "answer": [
+      "304"
+    ]
+  },
+  {
+    "id": "browser-cache-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "public",
+      "private",
+      "immutable",
+      "s-maxage=3600"
+    ]
+  },
+  {
+    "id": "browser-cache-q5",
+    "type": "fill",
+    "answer": [
+      "no-store"
+    ]
+  },
+  {
+    "id": "browser-rendering-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "布局",
+      "DNS",
+      "JSON 序列化",
+      "证书验证"
+    ]
+  },
+  {
+    "id": "browser-rendering-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一定能，因为自动新建线程",
+      "不能，同样可能占用主线程",
+      "只有数字循环可以",
+      "会禁止所有事件"
+    ]
+  },
+  {
+    "id": "browser-rendering-q3",
+    "type": "fill",
+    "answer": [
+      "Worker",
+      "Workers",
+      "worker"
+    ]
+  },
+  {
+    "id": "browser-rendering-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "能，微任务总在后台线程运行",
+      "能，Promise 自动分配多核",
+      "不一定，持续微任务仍可能推迟绘制与输入处理",
+      "一定不能执行任何 DOM 代码"
+    ]
+  },
+  {
+    "id": "browser-rendering-q5",
+    "type": "fill",
+    "answer": [
+      "postMessage"
+    ]
+  },
+  {
+    "id": "browser-events-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "A B C D",
+      "A D C B",
+      "C A D B",
+      "D C B A"
+    ]
+  },
+  {
+    "id": "browser-events-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "被点击图标",
+      "列表祖先",
+      "document 永远固定",
+      "按钮文字"
+    ]
+  },
+  {
+    "id": "browser-events-q3",
+    "type": "fill",
+    "answer": [
+      "preventDefault"
+    ]
+  },
+  {
+    "id": "browser-events-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "能，停止传播等于取消默认行为",
+      "不能，取消跳转应针对可取消事件调用 preventDefault",
+      "能，只要监听器在冒泡阶段",
+      "不能，所有链接默认行为都无法取消"
+    ]
+  },
+  {
+    "id": "browser-events-q5",
+    "type": "fill",
+    "answer": [
+      "currentTarget"
+    ]
+  },
+  {
+    "id": "network-methods-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "请求自动加密",
+      "不意图改变服务器状态",
+      "不需要鉴权",
+      "没有日志"
+    ]
+  },
+  {
+    "id": "network-methods-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "状态码总是相同",
+      "服务端预期效果与一次执行相同",
+      "完全不发网络包",
+      "只能使用 GET"
+    ]
+  },
+  {
+    "id": "network-methods-q3",
+    "type": "fill",
+    "answer": [
+      "PUT"
+    ]
+  },
+  {
+    "id": "network-methods-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "不能，状态码不同就不幂等",
+      "可以，重复操作的预期资源状态仍是不存在",
+      "不能，DELETE 永远不幂等",
+      "只有第二次返回 200 才符合"
+    ]
+  },
+  {
+    "id": "network-methods-q5",
+    "type": "fill",
+    "answer": [
+      "HEAD"
+    ]
+  },
+  {
+    "id": "network-http-versions-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "TCP 的有序字节流交付",
+      "CSS 层叠规则",
+      "JSON 格式",
+      "浏览器标题"
+    ]
+  },
+  {
+    "id": "network-http-versions-q2",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "QPACK",
+      "HPACK",
+      "JPEG",
+      "ZIP64"
+    ]
+  },
+  {
+    "id": "network-http-versions-q3",
+    "type": "fill",
+    "answer": [
+      "QUIC"
+    ]
+  },
+  {
+    "id": "network-http-versions-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "协议升级必然消除主线程计算耗时",
+      "仍需分析代码体积和执行成本",
+      "应禁用所有压缩以提高执行速度",
+      "只要请求数变少就不再需要测量"
+    ]
+  },
+  {
+    "id": "network-http-versions-q5",
+    "type": "fill",
+    "answer": [
+      "HPACK"
+    ]
+  },
+  {
+    "id": "network-https-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "连接的身份与目标站点不符",
+      "CSS 颜色错误",
+      "JS 变量重名",
+      "图片尺寸过大"
+    ]
+  },
+  {
+    "id": "network-https-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "纯 Base64",
+      "对称加密",
+      "明文",
+      "只用 URL 编码"
+    ]
+  },
+  {
+    "id": "network-https-q3",
+    "type": "fill",
+    "answer": [
+      "TLS"
+    ]
+  },
+  {
+    "id": "network-https-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "能，TLS 会过滤全部脚本",
+      "不能，传输保护不等于应用输入输出安全",
+      "能，只要证书未过期",
+      "不能，因为 HTTPS 不加密任何数据"
+    ]
+  },
+  {
+    "id": "network-https-q5",
+    "type": "fill",
+    "answer": [
+      "SAN"
+    ]
+  },
+  {
+    "id": "network-dns-tcp-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "查找域名关联记录",
+      "加密 HTTP 正文",
+      "执行 CSS",
+      "保证按钮可点击"
+    ]
+  },
+  {
+    "id": "network-dns-tcp-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "ACK、FIN、RST",
+      "SYN、SYN+ACK、ACK",
+      "GET、POST、PUT",
+      "DNS、CSS、DOM"
+    ]
+  },
+  {
+    "id": "network-dns-tcp-q3",
+    "type": "fill",
+    "answer": [
+      "字节",
+      "byte"
+    ]
+  },
+  {
+    "id": "network-dns-tcp-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "必定，因为 TCP 保留每次 send 的边界",
+      "不一定，TCP 是字节流，应用要设计消息边界",
+      "必定，只要两段长度相同",
+      "不一定，因为 TCP 完全不保证顺序"
+    ]
+  },
+  {
+    "id": "network-dns-tcp-q5",
+    "type": "fill",
+    "answer": [
+      "A"
+    ]
+  },
+  {
+    "id": "html-semantics-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "button",
+      "div",
+      "span",
+      "hr"
+    ]
+  },
+  {
+    "id": "html-semantics-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "想要的字号",
+      "内容层次",
+      "标签名称长度",
+      "随机选择"
+    ]
+  },
+  {
+    "id": "html-semantics-q3",
+    "type": "fill",
+    "answer": [
+      "label",
+      "<label>"
+    ]
+  },
+  {
+    "id": "html-semantics-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "是，浏览器会自动补全所有行为",
+      "否，还需自行处理焦点和键盘激活，通常优先原生 button",
+      "是，只要颜色像按钮",
+      "否，因为 role 完全没有语义作用"
+    ]
+  },
+  {
+    "id": "html-semantics-q5",
+    "type": "fill",
+    "answer": [
+      "button"
+    ]
+  },
+  {
+    "id": "html-document-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "<!doctype html>",
+      "<doctype></doctype>",
+      "<mode standard>",
+      "<!css html>"
+    ]
+  },
+  {
+    "id": "html-document-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "div",
+      "section",
+      "input",
+      "textarea"
+    ]
+  },
+  {
+    "id": "html-document-q3",
+    "type": "fill",
+    "answer": [
+      "zh-CN",
+      "zh-cn"
+    ]
+  },
+  {
+    "id": "html-document-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "标准模式",
+      "混杂模式",
+      "严格 JavaScript 模式",
+      "离线缓存模式"
+    ]
+  },
+  {
+    "id": "html-document-q5",
+    "type": "fill",
+    "answer": [
+      "charset"
+    ]
+  },
+  {
+    "id": "html-scripts-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "两个都 async",
+      "按顺序两个都 defer",
+      "随便哪个先完成",
+      "都写在字符串里"
+    ]
+  },
+  {
+    "id": "html-scripts-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "下载完成后还必须等 DOMContentLoaded",
+      "彼此顺序不保证",
+      "只用于 CSS",
+      "必定在 Worker 线程执行"
+    ]
+  },
+  {
+    "id": "html-scripts-q3",
+    "type": "fill",
+    "answer": [
+      "DOMContentLoaded"
+    ]
+  },
+  {
+    "id": "html-scripts-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "能，与外部 defer 脚本完全相同",
+      "不能，经典脚本 defer 的这个行为针对外部脚本",
+      "能，而且会放到 Worker",
+      "不能，因为内联脚本永远不执行"
+    ]
+  },
+  {
+    "id": "html-scripts-q5",
+    "type": "fill",
+    "answer": [
+      "module"
+    ]
+  },
+  {
+    "id": "html-graphics-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "SVG circle",
+      "Canvas fillRect",
+      "JPEG 图片",
+      "纯文本日志"
+    ]
+  },
+  {
+    "id": "html-graphics-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "自动生成的每个形状 DOM",
+      "应用自身的图形状态和逻辑",
+      "DNS",
+      "CSS @import"
+    ]
+  },
+  {
+    "id": "html-graphics-q3",
+    "type": "fill",
+    "answer": [
+      "viewBox"
+    ]
+  },
+  {
+    "id": "html-graphics-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "只改变外框，像素和绘图状态永远保留",
+      "画布会重置，需要重新设置状态并绘制",
+      "自动转成 SVG",
+      "所有点击区域会自动重建为 DOM"
+    ]
+  },
+  {
+    "id": "html-graphics-q5",
+    "type": "fill",
+    "answer": [
+      "devicePixelRatio"
+    ]
+  },
+  {
+    "id": "html-offline-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "AppCache manifest",
+      "Service Worker 与 Cache API",
+      "只设置 document.title",
+      "仅依赖 sessionStorage"
+    ]
+  },
+  {
+    "id": "html-offline-q2",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "event.waitUntil",
+      "event.preventDefault",
+      "window.onload",
+      "stopPropagation"
+    ]
+  },
+  {
+    "id": "html-offline-q3",
+    "type": "fill",
+    "answer": [
+      "caches"
+    ]
+  },
+  {
+    "id": "html-offline-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一定，安装完成会强制刷新全部标签页",
+      "不一定，生命周期中可能处于等待状态",
+      "一定，只要缓存名称相同",
+      "不一定，因为 Service Worker 永远不能更新"
+    ]
+  },
+  {
+    "id": "html-offline-q5",
+    "type": "fill",
+    "answer": [
+      "respondWith"
+    ]
+  },
+  {
+    "id": "css-display-q1",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "100px",
+      "110px",
+      "120px",
+      "80px"
+    ]
+  },
+  {
+    "id": "css-display-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "只包含 margin",
+      "内容、padding、border",
+      "内容、padding、border、margin",
+      "只包含内容"
+    ]
+  },
+  {
+    "id": "css-display-q3",
+    "type": "fill",
+    "answer": [
+      "inline-block"
+    ]
+  },
+  {
+    "id": "css-display-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "能，透明等于不存在",
+      "不能，透明本身不禁用命中测试",
+      "能，只要没有背景色",
+      "不能，因为 opacity 不影响外观"
+    ]
+  },
+  {
+    "id": "css-display-q5",
+    "type": "fill",
+    "answer": [
+      "none"
+    ]
+  },
+  {
+    "id": "css-units-center-q1",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "2px",
+      "16px",
+      "32px",
+      "由父宽度决定"
+    ]
+  },
+  {
+    "id": "css-units-center-q2",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "主轴水平分布",
+      "固定垂直方向",
+      "层叠顺序",
+      "文本颜色"
+    ]
+  },
+  {
+    "id": "css-units-center-q3",
+    "type": "fill",
+    "answer": [
+      "place-items"
+    ]
+  },
+  {
+    "id": "css-units-center-q4",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "都参考父元素宽度",
+      "都参考元素自身宽度",
+      "left 参考包含块，translateX 通常参考元素自身变换参考盒",
+      "都参考视口高度"
+    ]
+  },
+  {
+    "id": "css-units-center-q5",
+    "type": "fill",
+    "answer": [
+      "column"
+    ]
+  },
+  {
+    "id": "css-bfc-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "flow-root",
+      "none",
+      "contents",
+      "inline"
+    ]
+  },
+  {
+    "id": "css-bfc-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "所有 margin 永远不折叠",
+      "可阻止跨某些边界折叠，但内部相邻块仍可能折叠",
+      "只影响颜色",
+      "只在图片上有效"
+    ]
+  },
+  {
+    "id": "css-bfc-q3",
+    "type": "fill",
+    "answer": [
+      "Formatting",
+      "formatting"
+    ]
+  },
+  {
+    "id": "css-bfc-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "把菜单 z-index 改成无限大",
+      "改用 display:flow-root 并重新检查布局",
+      "把 float 数量翻倍",
+      "对所有后代设置 opacity:0.99"
+    ]
+  },
+  {
+    "id": "css-bfc-q5",
+    "type": "fill",
+    "answer": [
+      "float"
+    ]
+  },
+  {
+    "id": "css-stacking-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "能，因为9999更大",
+      "不能，外部先比较父上下文",
+      "取决于文字长度",
+      "只在移动端能"
+    ]
+  },
+  {
+    "id": "css-stacking-q2",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "opacity:0.9",
+      "color:red",
+      "font-weight:400",
+      "margin:0"
+    ]
+  },
+  {
+    "id": "css-stacking-q3",
+    "type": "fill",
+    "answer": [
+      "var(--z-modal)"
+    ]
+  },
+  {
+    "id": "css-stacking-q4",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "继续加十个零",
+      "检查双方祖先的层叠上下文及裁剪条件",
+      "把所有选择器改成 ID 选择器",
+      "只检查字体大小"
+    ]
+  },
+  {
+    "id": "css-stacking-q5",
+    "type": "fill",
+    "answer": [
+      "1000"
+    ]
+  },
+  {
+    "id": "performance-animation-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "回调次数",
+      "已经过的时间比例",
+      "固定 16ms 假设",
+      "每帧随机步长"
+    ]
+  },
+  {
+    "id": "performance-animation-q2",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "清空图片缓存",
+      "删除全部样式",
+      "cancelAnimationFrame 最近的请求编号",
+      "循环读取 offsetWidth"
+    ]
+  },
+  {
+    "id": "performance-animation-q3",
+    "type": "fill",
+    "answer": [
+      "requestAnimationFrame"
+    ]
+  },
+  {
+    "id": "performance-animation-q4",
+    "type": "fill",
+    "answer": [
+      "prefers-reduced-motion"
+    ]
+  },
+  {
+    "id": "performance-animation-q5",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "自动切到 GPU 执行",
+      "一定每 16ms 执行",
+      "受阻塞而不能及时执行",
+      "强制终止同步循环"
+    ]
+  },
+  {
+    "id": "performance-fragment-q1",
+    "type": "choice",
+    "answer": 0,
+    "options": [
+      "0",
+      "1",
+      "3",
+      "不确定且永远无法读取"
+    ]
+  },
+  {
+    "id": "performance-fragment-q2",
+    "type": "fill",
+    "answer": [
+      "textContent"
+    ]
+  },
+  {
+    "id": "performance-fragment-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "连续创建离线节点",
+      "每次写样式后立即读 offsetWidth",
+      "保存节点引用",
+      "给对象添加字段"
+    ]
+  },
+  {
+    "id": "performance-fragment-q4",
+    "type": "fill",
+    "answer": [
+      "createDocumentFragment"
+    ]
+  },
+  {
+    "id": "performance-fragment-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "能，因为零内存",
+      "不能，还要考虑实际节点数量和布局",
+      "能，因为自动虚拟滚动",
+      "能，因为总在 Worker 中运行"
+    ]
+  },
+  {
+    "id": "engineering-build-speed-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "只看 dist 文件数量",
+      "同配置下冷缓存与热缓存耗时",
+      "只看网速",
+      "只看 CPU 型号"
+    ]
+  },
+  {
+    "id": "engineering-build-speed-q2",
+    "type": "fill",
+    "answer": [
+      "filesystem"
+    ]
+  },
+  {
+    "id": "engineering-build-speed-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "是，线程无限免费",
+      "否，启动和通信可能抵消收益",
+      "是，与任务量无关",
+      "只要超过一个文件就必然"
+    ]
+  },
+  {
+    "id": "engineering-build-speed-q4",
+    "type": "fill",
+    "answer": [
+      "include"
+    ]
+  },
+  {
+    "id": "engineering-build-speed-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一律跳过以提速",
+      "给该依赖建立必要的转译例外",
+      "删除错误日志",
+      "只减小图片"
+    ]
+  },
+  {
+    "id": "browser-storage-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "每条写一个 Cookie",
+      "IndexedDB",
+      "拼接超长 URL",
+      "只使用 DOM 属性"
+    ]
+  },
+  {
+    "id": "browser-storage-q2",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "让 HTTP 自动变 HTTPS",
+      "限制页面脚本直接读取 Cookie",
+      "永远阻止 CSRF",
+      "禁止服务端读取"
+    ]
+  },
+  {
+    "id": "browser-storage-q3",
+    "type": "fill",
+    "answer": [
+      "getItem"
+    ]
+  },
+  {
+    "id": "browser-storage-q4",
+    "type": "fill",
+    "answer": [
+      "stringify"
+    ]
+  },
+  {
+    "id": "browser-storage-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "让整个页面崩溃",
+      "提供默认值并按需要提示",
+      "把错误字符串当代码执行",
+      "删除全部 Cookie"
+    ]
+  },
+  {
+    "id": "browser-tabs-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一定收到两次",
+      "不会从自身发送收到自身事件",
+      "只有大消息会",
+      "取决于消息字符串长度"
+    ]
+  },
+  {
+    "id": "browser-tabs-q2",
+    "type": "fill",
+    "answer": [
+      "close"
+    ]
+  },
+  {
+    "id": "browser-tabs-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "写入该值的同一窗口",
+      "符合条件的其他文档",
+      "任何网站所有页面",
+      "服务器进程"
+    ]
+  },
+  {
+    "id": "browser-tabs-q4",
+    "type": "fill",
+    "answer": [
+      "origin"
+    ]
+  },
+  {
+    "id": "browser-tabs-q5",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "完整密码",
+      "完整访问令牌",
+      "{type:\"logout\"}",
+      "浏览器全部存储备份"
+    ]
+  },
+  {
+    "id": "browser-processes-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "GPU",
+      "通常仍是页面主线程",
+      "独立服务器",
+      "自动创建 Worker"
+    ]
+  },
+  {
+    "id": "browser-processes-q2",
+    "type": "fill",
+    "answer": [
+      "postMessage"
+    ]
+  },
+  {
+    "id": "browser-processes-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "正常找到页面节点",
+      "没有页面 document，不能直接操作 DOM",
+      "自动通知父页面",
+      "自动变成异步 DOM"
+    ]
+  },
+  {
+    "id": "browser-processes-q4",
+    "type": "fill",
+    "answer": [
+      "terminate"
+    ]
+  },
+  {
+    "id": "browser-processes-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "压缩网络图片",
+      "匹配请求与返回结果",
+      "绕过同源策略",
+      "保证所有 CPU 无限快"
+    ]
+  },
+  {
+    "id": "browser-threats-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "origin.includes(\"trusted.com\")",
+      "origin === \"https://trusted.com\"",
+      "只检查有 origin 字段",
+      "任何 HTTPS 都信任"
+    ]
+  },
+  {
+    "id": "browser-threats-q2",
+    "type": "fill",
+    "answer": [
+      "source"
+    ]
+  },
+  {
+    "id": "browser-threats-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "不需要，用户看不到",
+      "需要，攻击者可以直接构造请求",
+      "只有手机需要",
+      "只有 POST 需要"
+    ]
+  },
+  {
+    "id": "browser-threats-q4",
+    "type": "fill",
+    "answer": [
+      "frame-ancestors"
+    ]
+  },
+  {
+    "id": "browser-threats-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "所有业务逻辑无漏洞",
+      "正确验证证书条件下的链路机密性与完整性",
+      "第三方脚本永不恶意",
+      "自动防止所有 XSS"
+    ]
+  },
+  {
+    "id": "network-headers-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "Accept",
+      "Content-Type",
+      "ETag",
+      "Location"
+    ]
+  },
+  {
+    "id": "network-headers-q2",
+    "type": "fill",
+    "answer": [
+      "Accept"
+    ]
+  },
+  {
+    "id": "network-headers-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "立即因状态码抛异常",
+      "得到 Response，需要检查 ok/status",
+      "自动重试无限次",
+      "返回空字符串"
+    ]
+  },
+  {
+    "id": "network-headers-q4",
+    "type": "fill",
+    "answer": [
+      "ETag"
+    ]
+  },
+  {
+    "id": "network-headers-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "能，任意头都可开放",
+      "不能，Set-Cookie 有专门限制",
+      "只在 GET 时能",
+      "只要 JSON 就能"
+    ]
+  },
+  {
+    "id": "network-layers-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "物理层",
+      "传输层",
+      "应用层",
+      "表示层"
+    ]
+  },
+  {
+    "id": "network-layers-q2",
+    "type": "fill",
+    "answer": [
+      "IP"
+    ]
+  },
+  {
+    "id": "network-layers-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "按钮 CSS",
+      "证书与访问域名",
+      "JSON 字段名",
+      "图片懒加载"
+    ]
+  },
+  {
+    "id": "network-layers-q4",
+    "type": "fill",
+    "answer": [
+      "DNS"
+    ]
+  },
+  {
+    "id": "network-layers-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "所有业务都成功",
+      "HTTP 传输层面的成功不等于业务成功",
+      "DNS 必然失败",
+      "TCP 一定未连接"
+    ]
+  },
+  {
+    "id": "html-drag-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "load",
+      "dragover",
+      "resize",
+      "scroll"
+    ]
+  },
+  {
+    "id": "html-drag-q2",
+    "type": "fill",
+    "answer": [
+      "dataTransfer"
+    ]
+  },
+  {
+    "id": "html-drag-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "可以，完全等同 drop",
+      "不可以，取消拖动也会结束",
+      "只要拖动一秒就可以",
+      "只有图片可以"
+    ]
+  },
+  {
+    "id": "html-drag-q4",
+    "type": "fill",
+    "answer": [
+      "text/plain"
+    ]
+  },
+  {
+    "id": "html-drag-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "隐藏内容",
+      "提供可用的键盘或上下移动按钮",
+      "要求用户换鼠标",
+      "自动跳过所有项目"
+    ]
+  },
+  {
+    "id": "css-loading-q1",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "link 天然优先级最高",
+      "@import 天然优先级最高",
+      "引入方式不单独决定最终级联结果",
+      "只有文件名决定优先级"
+    ]
+  },
+  {
+    "id": "css-loading-q2",
+    "type": "fill",
+    "answer": [
+      "stylesheet"
+    ]
+  },
+  {
+    "id": "css-loading-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "自动泄露密码",
+      "资源发现产生依赖链",
+      "CSS 不能应用",
+      "所有样式变内联"
+    ]
+  },
+  {
+    "id": "css-loading-q4",
+    "type": "fill",
+    "answer": [
+      "@layer"
+    ]
+  },
+  {
+    "id": "css-loading-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "必然",
+      "不一定，构建工具可能展开或重组",
+      "永远不会",
+      "只有文件名大写才会"
+    ]
+  },
+  {
+    "id": "css-features-sprites-q1",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "144×48",
+      "72×24",
+      "24×72",
+      "48×144"
+    ]
+  },
+  {
+    "id": "css-features-sprites-q2",
+    "type": "fill",
+    "answer": [
+      "background-position"
+    ]
+  },
+  {
+    "id": "css-features-sprites-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "请求少就必然最快",
+      "比较实际下载、解码和缓存代价",
+      "永远保留合图",
+      "只看选择器长度"
+    ]
+  },
+  {
+    "id": "css-features-sprites-q4",
+    "type": "fill",
+    "answer": [
+      "@supports"
+    ]
+  },
+  {
+    "id": "css-features-sprites-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "一个固定且所有浏览器一致的完整版本",
+      "历史常用称呼，现代 CSS 按模块持续演进",
+      "只包含动画",
+      "等于 JavaScript 3"
+    ]
+  },
+  {
+    "id": "css-hairline-q1",
+    "type": "choice",
+    "answer": 2,
+    "options": [
+      "1",
+      "2",
+      "3",
+      "永远无法定义"
+    ]
+  },
+  {
+    "id": "css-hairline-q2",
+    "type": "fill",
+    "answer": [
+      "transform-origin"
+    ]
+  },
+  {
+    "id": "css-hairline-q3",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "让整个页面都变小",
+      "避免同时缩放文字和内容",
+      "强制关闭缓存",
+      "让事件冒泡停止"
+    ]
+  },
+  {
+    "id": "css-hairline-q4",
+    "type": "fill",
+    "answer": [
+      "none"
+    ]
+  },
+  {
+    "id": "css-hairline-q5",
+    "type": "choice",
+    "answer": 1,
+    "options": [
+      "能，任何 DPR 都一样",
+      "不能，DPR、缩放和栅格化都会影响",
+      "只能在桌面保证",
+      "用了 HTTPS 就能"
+    ]
+  }
+]

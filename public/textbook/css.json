@@ -1,0 +1,474 @@
+{
+  "css-display": {
+    "title": "用盒子理解页面：内容、尺寸与排列",
+    "intro": "浏览器要把标题、图片和按钮摆到页面上，需要先知道每块内容占多大位置。CSS 盒模型帮助我们描述尺寸，display 则决定元素如何参与排列；这两个工具一起构成布局的起点。",
+    "objectives": [
+      "认识内容、内边距、边框和外边距。",
+      "能计算常见盒模型下元素的实际占用。",
+      "区分块级、行内、行内块与常见隐藏方式。"
+    ],
+    "prerequisites": [
+      "认识 HTML 标签与 class 属性。",
+      "知道 CSS 用“属性: 值”描述样式即可。"
+    ],
+    "sections": [
+      {
+        "title": "把一个元素从里到外拆开",
+        "paragraphs": [
+          "把页面元素想成一张装内容的卡片：最里面的 content 是文字或图片所在区域，padding 是内容到边框之间的留白，border 是围住它的边框，margin 是卡片与外面其他东西之间的间隔。四者职责不同，增加内边距和增加外边距看起来都能“腾地方”，但背景、点击区域和尺寸计算并不一样。",
+          "默认的 content-box 把 width 解释为内容宽度。若内容宽 200px，左右 padding 各 12px，左右 border 各 1px，边框盒就宽 226px；margin 还在它外面。box-sizing:border-box 则把这 226px 内的各层一起纳入 width，适合希望直接控制卡片总宽度的布局。"
+        ]
+      },
+      {
+        "title": "display 决定怎样参加布局",
+        "paragraphs": [
+          "普通文档流可以理解为浏览器按照内容先后排列元素的默认过程。block 通常从新行开始，inline 跟随文字排在同一行；inline-block 在外部像行内内容，内部又能作为一个可设置常见宽高的盒子。div 和 span 的常见默认外观只是默认样式，不是不能改变的标签定律。",
+          "flex 和 grid 会为容器的子元素建立不同的布局规则，分别常用于一维排列和行列网格。不要把 display 理解为单纯“显示或隐藏”的开关；它主要定义布局方式。普通非替换行内元素的 width、height 与块盒不同，而 img 等替换元素又有自己的尺寸规则，分析时需要明确对象。"
+        ]
+      },
+      {
+        "title": "看不见不等于没有布局和交互",
+        "paragraphs": [
+          "display:none 让元素不生成布局盒，后面的内容会重新排列；visibility:hidden 通常保留原来的位置；opacity:0 只把绘制结果变透明。选择隐藏方式前，先判断是否希望保留占位、是否需要过渡动画，以及用户能否继续通过鼠标或键盘操作它。",
+          "例如收起一段不再展示的说明，可以使用隐藏状态让布局收拢；淡出一个按钮时，仅降低透明度可能仍让按钮接收点击或获得焦点。尺寸问题、可见性问题和交互问题应该分别处理。开发者工具中的盒模型图可以帮助核对实际尺寸，避免只凭肉眼反复修改数值。"
+        ]
+      },
+      {
+        "title": "用工具栏和卡片墙区分 Flex 与 Grid",
+        "paragraphs": [
+          "工具栏通常关注一行里如何分配空间：输入框伸长、按钮保持自然宽度，不够放时允许换行，这适合 Flex。卡片墙则往往要求不同行共享列边界，这适合 Grid。Flex 换行后，各行独立分配空间；它不会自动让第二行的项目对齐第一行每一列。选择布局方式时，先画出内容之间的约束关系。",
+          "“剩余空间可以分配”不代表长内容一定会缩小。Flex 项目和 Grid 轨道的自动最小尺寸可能让长标题撑开布局。工具栏输入项可以设置 min-width:0；需要允许轨道缩小时，网格列可写 minmax(0,1fr)，并为连续长字符串设置换行。不要用隐藏整个页面的水平溢出来掩盖具体项目的尺寸问题。"
+        ],
+        "code": {
+          "language": "html",
+          "source": "<style>\n  .toolbar { display:flex; flex-wrap:wrap; gap:12px; }\n  .toolbar input { flex:1 1 12rem; min-width:0; }\n  .cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }\n  .card { padding:16px; border:1px solid #aaa; overflow-wrap:anywhere; }\n  @media (max-width:32rem) { .cards { grid-template-columns:1fr; } }\n</style>\n<div class=\"toolbar\">\n  <input aria-label=\"搜索课程\" placeholder=\"搜索课程\">\n  <button type=\"button\">搜索</button>\n</div>\n<div class=\"cards\">\n  <article class=\"card\">数据类型</article>\n  <article class=\"card\">一个很长的课程标题也应当能够换行显示</article>\n  <article class=\"card\">DOM 事件</article>\n</div>",
+          "explanation": "先在宽预览中观察两列共享的列边界，再切换到 375px。把第二张卡片替换为一串没有空格的长英文，检查页面是否还能保持在视口内。删除 minmax 的 0 后比较结果，理解自动最小尺寸的作用。"
+        },
+        "points": [
+          "只有一行并不意味着必须使用 Flex；同时约束行列时优先考虑 Grid。",
+          "练习：让最后一张卡片跨越两列；再思考窄屏时需要怎样恢复单列跨度。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "把知识用起来：制作一个固定宽度商品卡片",
+      "scenario": "制作一个固定宽度商品卡片。要求卡片加上边框与内部留白仍为 240px，旁边还能放库存标签。",
+      "steps": [
+        "先明确“240px”指的是边框以内的整体，而不是纯内容区。",
+        "用 border-box 统一尺寸口径，再设置 padding 与 border。",
+        "用 inline-block 标签表达紧凑的小盒子，观察它与标题的排列。",
+        "在开发者工具中确认内容宽度与 margin，而不是只看 width 声明。"
+      ],
+      "code": {
+        "language": "html",
+        "source": "<style>\n.product { box-sizing: border-box; width: 240px;\n  padding: 16px; border: 2px solid #60815b; margin: 12px; }\n.badge { display: inline-block; padding: 4px 8px; background: #edf4e7; }\n</style>\n<article class=\"product\"><h2>笔记本</h2><span class=\"badge\">有货</span></article>",
+        "explanation": "product 的边框盒宽度为 240px，内容宽度为 240−32−4=204px；左右 margin 不计入这 240px。badge 可以与文字相邻，也能拥有清楚的内部留白。"
+      }
+    },
+    "checkpoint": {
+      "prompt": "两个元素都写 width:200px、padding:10px、border:1px，一个是 content-box，一个是 border-box，它们的边框盒各多宽？",
+      "answer": "前者是 222px，后者是 200px；后者内容区域缩为 178px。margin 始终要另外考虑。"
+    },
+    "takeaways": [
+      "先说清 width 的计算范围，再比较尺寸。",
+      "display 决定布局参与方式。",
+      "透明、隐藏和不可交互不是同一件事。"
+    ],
+    "references": [
+      {
+        "title": "MDN：Flex 基础",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Flexible_box_layout/Basic_concepts"
+      },
+      {
+        "title": "MDN：Grid 基础",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Grid_layout/Basic_concepts"
+      }
+    ]
+  },
+  "css-units-center": {
+    "title": "先找参考系：尺寸单位与水平垂直居中",
+    "intro": "同样一个“50%”，写在不同 CSS 属性里可能参考完全不同的尺寸。学会单位与布局轴线后，居中就不必靠猜 padding 或反复试数值。",
+    "objectives": [
+      "区分 px、%、em、rem 和视口单位。",
+      "理解 Flex 主轴、交叉轴与 Grid 对齐。",
+      "能解释一个居中方案为何生效。"
+    ],
+    "prerequisites": [
+      "知道元素有内容、边框和包含它的容器。",
+      "了解基础 CSS 选择器与盒模型。"
+    ],
+    "sections": [
+      {
+        "title": "相对单位必须说明相对谁",
+        "paragraphs": [
+          "px 是 CSS 使用的参考像素单位，不一定对应屏幕上一颗物理像素。rem 相对根元素的字体大小，适合统一页面尺度；em 用在 font-size 上时相对继承的字体大小，用于许多其他长度时相对元素自身字体。百分比的参考系取决于具体属性，不能统一背成“父元素宽度”。",
+          "例如根字体 16px 时，1.5rem 是 24px；容器宽 400px 时，子元素 width:50% 在常见正常布局下是 200px。vw、vh 按视口尺寸计算，但移动端地址栏变化会影响可见区域，较新的动态视口单位提供了另一种表达方式。选择单位应服务于设计意图，而不是追求全部写成同一种单位。"
+        ]
+      },
+      {
+        "title": "Flex 和 Grid 把对齐变成明确规则",
+        "paragraphs": [
+          "Flex 是沿一条主轴安排项目的布局方式。flex-direction:row 时主轴通常沿行方向，column 时沿列方向；justify-content 沿主轴分配剩余空间，align-items 处理交叉轴对齐。必须先确认轴向，不能把这两个属性永远翻译成“水平”和“垂直”。",
+          "Grid 把空间组织为行与列，place-items:center 可让项目在所属网格区域内两向居中。无论哪种方案，都需要存在可供分配的空间：容器高度刚好与子元素相同时，垂直居中可能看不出任何变化。先定义容器尺寸，再定义对齐，通常比给子元素手工累加偏移更清楚。"
+        ]
+      },
+      {
+        "title": "定位加变换用到了两个参考系",
+        "paragraphs": [
+          "绝对定位会把元素从普通流中取出，由其包含块决定定位参考。常见居中写法 left:50% 先把元素起点放在包含块中点，再用 translateX(-50%) 按元素自身变换参考盒宽度往回移一半。两个百分比不同，所以元素不需要预先知道固定宽度也能对齐。",
+          "这种方案适合某些覆盖式布局，但不应成为所有场景的默认选择。普通内容可以先考虑 Flex 或 Grid；绝对定位内容可能不撑开父容器，也可能覆盖邻居。验证居中时试着改变文字长度与容器大小，比只在一张固定截图里看着居中更能证明方案正确。"
+        ]
+      },
+      {
+        "title": "把固定截图改成能适应分屏的页面",
+        "paragraphs": [
+          "响应式页面需要适应可用空间，而不只是几种设备名称。相同的 iPad 可能处于横屏、竖屏或分屏：断点应放在内容开始拥挤的位置。先采用单列的基本样式，再在空间足够时增加列数；给内容设上限宽度，可以避免大屏上每行文字过长。元素上的 rem 长度相对根字体；媒体查询中的 em/rem 则基于浏览器初始字体大小，不会简单跟随页面给 html 设置的 font-size 改变。",
+          "高度也要考虑浏览器界面和内容增长。min-height 允许页面随内容变高；固定 height 加 overflow:hidden 则可能把长文和放大的文字截掉。100dvh 可以跟随动态视口变化，但仍需要实际测试软键盘、焦点元素和滚动容器。浏览器缩放与系统文字放大不是异常场景，不能用禁止用户缩放来隐藏布局问题。"
+        ],
+        "code": {
+          "language": "css",
+          "source": "/* 配套结构：main.page 内放一个 section.cards，包含多个 article */\n* { box-sizing:border-box; }\nbody { margin:0; }\n.page {\n  width:min(100%,68rem);\n  margin-inline:auto;\n  padding:1rem;\n  min-height:100vh;\n  min-height:100dvh;\n}\n.cards { display:grid; grid-template-columns:1fr; gap:1rem; }\nimg { max-width:100%; height:auto; }\n@media (min-width:48rem) {\n  .cards { grid-template-columns:repeat(2,minmax(0,1fr)); }\n}",
+          "explanation": "在 CSS 实操中准备上述 HTML 结构，依次使用 375、834、1210px 预览；再增加长标题、宽图片和十个卡片。检查的是内容仍能读完、控件仍可操作，而不是三个尺寸看起来完全相同。"
+        },
+        "points": [
+          "先测试最窄的可用区域，再逐步增宽找出需要变化的布局。",
+          "练习：通过 CSS 把 html 的 font-size 改为 20px，观察间距变大而 48rem 媒体查询断点不随之改变。再修改浏览器默认字体设置，比较两种操作的区别。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "把知识用起来：给空列表提示制作一个居中区域",
+      "scenario": "给空列表提示制作一个居中区域。提示文字可能变长，容器也会跟随页面宽度改变。",
+      "steps": [
+        "容器设置最小高度，让垂直方向有可分配空间。",
+        "建立 Grid 容器，用 place-items 对齐提示。",
+        "用 rem 表达留白，让间距跟随字体尺度。",
+        "换成长文字和较窄窗口，观察内容是否溢出或被固定高度裁掉。"
+      ],
+      "code": {
+        "language": "html",
+        "source": "<style>\n.stage { min-height: 260px; display: grid; place-items: center;\n  background: #edf3e7; padding: 1.5rem; }\n.message { padding: 1rem 1.5rem; background: white; max-width: 100%; }\n</style>\n<div class=\"stage\"><div class=\"message\">内容长一点，也保持居中。</div></div>",
+        "explanation": "Grid 的网格区域提供可用空间，place-items 控制内部对齐。min-height 建立足够的高度，但内容增多时仍允许容器扩展。"
+      }
+    },
+    "checkpoint": {
+      "prompt": "Flex 从 row 改为 column 后，justify-content:center 还表示水平方向居中吗？",
+      "answer": "不一定。它始终沿主轴对齐；改为 column 后，常见横排书写模式下主轴变成竖直方向。应先判断轴向，再判断物理方向。"
+    },
+    "takeaways": [
+      "相对单位先找参考系。",
+      "对齐属性先找主轴与可用空间。",
+      "优先用布局规则表达意图，再考虑手动偏移。"
+    ],
+    "references": [
+      {
+        "title": "MDN：长度与视口单位",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/length"
+      },
+      {
+        "title": "W3C：媒体查询中的单位参考系",
+        "url": "https://www.w3.org/TR/mediaqueries-4/#units"
+      }
+    ]
+  },
+  "css-bfc": {
+    "title": "理解普通流、浮动和独立的块布局区域",
+    "intro": "图片浮动后，文字会绕着它排，但父容器有时看起来失去了高度。理解浮动与 BFC 的职责，才能知道该建立什么布局规则，而不只是记一个“清除浮动”的技巧。",
+    "objectives": [
+      "知道普通流与 float 的基本作用。",
+      "理解 BFC 为什么影响浮动包含和边距折叠。",
+      "能用 flow-root 组织含浮动的内容块。"
+    ],
+    "prerequisites": [
+      "了解块级盒子、margin 与自动高度。",
+      "知道 CSS 属性可以改变元素布局方式。"
+    ],
+    "sections": [
+      {
+        "title": "普通流与浮动各自做什么",
+        "paragraphs": [
+          "普通流中的块通常按文档顺序排列，父容器的自动高度会受到正常流中内容的影响。float 最初用于让图片或小块内容靠一侧、文字在旁边环绕。浮动元素离开了普通流中的常规块排列方式，因此只有浮动子元素时，父容器的自动高度可能不像初学者预期那样被撑开。",
+          "这不表示浮动元素完全不影响周围内容：行内文字仍可能绕开它。浮动也不是现在做所有多列布局的首选，现代 Flex 和 Grid 更直接表达一维或二维布局。学习 float 仍有价值，因为文字环绕、历史页面维护和 BFC 的机制都与它有关。"
+        ]
+      },
+      {
+        "title": "BFC 是一套局部块布局规则",
+        "paragraphs": [
+          "BFC 是 Block Formatting Context，中文常称块格式化上下文，可以理解为浏览器计算某一片块布局时采用的独立区域规则。建立 BFC 的容器会在自身自动高度计算时考虑内部浮动，这是它能解决部分“父容器高度塌陷”现象的原因，而不是人为给父容器补一个固定高度。",
+          "BFC 边界也会影响某些外边距折叠，例如父子之间的竖直 margin 不再按原先方式穿过边界。但同一 BFC 内的相邻普通块之间仍可能发生折叠，所以不能说“开了 BFC，所有 margin 都不会合并”。它也不是屏蔽全部样式影响的封闭沙箱，字体继承等规则仍然存在。"
+        ]
+      },
+      {
+        "title": "用最贴合意图的方法建立边界",
+        "paragraphs": [
+          "display:flow-root 可以直接表达“在这里建立新的块格式化上下文”。历史代码常用 overflow:hidden 达到某些相似布局效果，但它同时会裁剪溢出的内容，可能导致下拉菜单或阴影消失。如果需求只是包含浮动，额外的裁剪并不一定是想要的效果。",
+          "排查时先确认具体问题：是内部浮动没计入高度，还是父子 margin 折叠，或只是内容溢出？随后选择对应规则。改变一次布局条件后检查整个块，包括环绕文本、后续内容和可见阴影，比背诵一串触发 BFC 的属性更容易解决实际问题。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "把知识用起来：制作一段带左侧头像的介绍",
+      "scenario": "制作一段带左侧头像的介绍。即使介绍只有一行，外框仍应包住较高的头像。",
+      "steps": [
+        "让头像向左浮动，并设置右侧间距供文字呼吸。",
+        "保持容器高度自动，不用猜测固定高度。",
+        "给容器设置 flow-root，让内部浮动参与其高度计算。",
+        "把文字改成一行和多行，对比外框与文字环绕的变化。"
+      ],
+      "code": {
+        "language": "html",
+        "source": "<style>\n.story { display: flow-root; padding: 16px; border: 1px solid #91a878; }\n.portrait { float: left; width: 72px; height: 72px;\n  margin-right: 16px; background: #b9cda6; }\n</style>\n<article class=\"story\"><div class=\"portrait\"></div><p>这段文字会环绕左侧方块。</p></article>",
+        "explanation": "portrait 使用浮动产生文字环绕，story 建立 flow-root 后会把内部浮动纳入自动高度。减少段落文字时，边框仍应容纳左侧方块。"
+      }
+    },
+    "checkpoint": {
+      "prompt": "为什么把 overflow:hidden 换成 flow-root 后，浮动仍被包含，但弹出内容不一定再被裁剪？",
+      "answer": "包含浮动与裁剪溢出是两件事。flow-root 直接建立 BFC，却不会仅凭这个 display 值加入 overflow:hidden 的裁剪行为。"
+    },
+    "takeaways": [
+      "浮动会改变普通流关系，但仍影响文字环绕。",
+      "BFC 是布局规则边界，不是万能隔离盒。",
+      "用 flow-root 表达包含浮动的意图更清楚。"
+    ]
+  },
+  "css-stacking": {
+    "title": "把页面看成分组的图层：层叠上下文与 z-index",
+    "intro": "页面元素不只在平面里排列，还会在重叠时有前后关系。理解哪些元素被分进同一组排序，才能解释为什么把 z-index 写得很大仍然可能被遮住。",
+    "objectives": [
+      "理解重叠顺序与层叠上下文。",
+      "知道 z-index 的比较范围和常见生效条件。",
+      "能按祖先关系检查弹层遮挡，而不是盲目增大数值。"
+    ],
+    "prerequisites": [
+      "知道 position:relative/absolute 表示定位方式。",
+      "认识 DOM 的父子与兄弟关系。"
+    ],
+    "sections": [
+      {
+        "title": "z-index 表达前后顺序，但有作用范围",
+        "paragraphs": [
+          "当多个盒子覆盖同一位置时，浏览器要决定先画谁、后画谁。z-index 是参与这种层叠排序的一个工具，常用于定位元素，以及特定 Flex 或 Grid 项目。更大的数字并不是在整个网页中无条件胜出，首先要看这些元素是否处在可直接比较的层叠环境中。",
+          "层叠上下文可以理解为一个内部先排好、整体再参加外部排序的分组。一个分组里最上层的元素，并不会仅靠自己的局部数字就越过外部更高的分组。这种分组思想比“z-index 是全局楼层号”的比喻准确得多。"
+        ]
+      },
+      {
+        "title": "哪些行为会建立新的分组",
+        "paragraphs": [
+          "常见情况包括定位元素设置非 auto 的 z-index、opacity 小于 1、transform 不是 none 等；这些并非全部条件，但已经能解释很多弹层问题。开发中为了做轻微位移动画添加 transform，也可能改变后代参与层叠的方式，因此视觉效果的调整有时会影响弹窗。",
+          "分析时沿元素的祖先向上检查，找出它所属的上下文，并与遮住它的元素所在分组比较。祖先上下文若在更低的组中，内部子元素改为 9999 仍可能无效。另一个常被混淆的原因是 overflow 裁剪：即使层级很高，内容也可能在容器边界外被截去。"
+        ]
+      },
+      {
+        "title": "设计统一的弹层位置与层级约定",
+        "paragraphs": [
+          "对于工具提示、菜单、遮罩和模态框，可以给项目建立有限且清楚的层级约定，避免各组件随意填写极大数字。有些弹层适合挂在统一的上层容器，框架中的 Portal 或 Teleport 可以帮助改变 DOM 挂载位置；这些方案解决的是结构关系，不只是换一个更大的数。",
+          "CSS 自定义属性能集中保存约定的层级值，但它本身不会改变层叠规则。原生对话框等顶层机制还有自己的行为，使用时也要理解焦点和交互。排查遮挡的顺序可以是：确认元素确实生成盒子、检查裁剪、识别上下文，再调整结构或数值。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "把知识用起来：复现一个明明写了大 z-index 却仍被遮住的提示框",
+      "scenario": "复现一个明明写了大 z-index 却仍被遮住的提示框。通过改变父级分组来观察真实比较顺序。",
+      "steps": [
+        "给两个兄弟区域设置不同层级，让它们有重叠空间。",
+        "把较低区域内部的子元素设为很大的 z-index。",
+        "观察遮挡，再修改父级层级而不是继续增大子级数字。",
+        "解释结果时分别指出父分组和内部排序的作用。"
+      ],
+      "code": {
+        "language": "html",
+        "source": "<style>\n.stage { position: relative; height: 150px; }\n.group-a { position: relative; z-index: 1; }\n.inside { position: absolute; z-index: 9999; width: 160px;\n  height: 100px; background: #c6d9b7; }\n.group-b { position: absolute; z-index: 2; top: 35px; left: 70px;\n  padding: 25px; background: #efdab3; }\n</style>\n<div class=\"stage\"><div class=\"group-a\"><div class=\"inside\">A 内部 9999</div></div>\n<div class=\"group-b\">B 的分组 2</div></div>",
+        "explanation": "A 因定位与 z-index:1 建立分组，内部的 9999 只在 A 内部参与排序。B 位于外部较高分组，因此重叠处会盖住 A 内部的方块。"
+      }
+    },
+    "checkpoint": {
+      "prompt": "如果问题来自 overflow:hidden 裁剪，把子元素 z-index 从 10 改成 10000 就一定能解决吗？",
+      "answer": "不能。裁剪与层叠排序不同，应检查容器的溢出规则或调整挂载结构。增大内部层级并不取消祖先的裁剪。"
+    },
+    "takeaways": [
+      "先看分组，再看组内数字。",
+      "动画和透明度也可能改变层叠关系。",
+      "裁剪、定位和层级应分别排查。"
+    ]
+  },
+  "css-loading": {
+    "title": "样式从哪里来：加载、选择器与级联顺序",
+    "intro": "同一个按钮可能被浏览器默认样式、组件样式和主题样式同时影响。CSS 需要先加载规则、找到匹配元素，再决定哪个值最终生效；这个决定过程就叫级联。",
+    "objectives": [
+      "知道 link 与 @import 怎样引入样式。",
+      "理解选择器、继承与级联不是同一概念。",
+      "能在明确条件下判断覆盖顺序并排查未生效的样式。"
+    ],
+    "prerequisites": [
+      "能写简单的 .class 选择器和 CSS 声明。",
+      "知道 HTML 文档中可以使用 style 标签。"
+    ],
+    "sections": [
+      {
+        "title": "先把样式资源交给浏览器",
+        "paragraphs": [
+          "CSS 可以放在 style 标签内，也可以通过 link rel=\"stylesheet\" 引入外部文件。外部文件便于多页面共享与独立缓存；内联样式适合小范围示例或特殊需求。浏览器看到资源地址后才能安排请求，所以在文档中直接声明依赖，通常比等脚本运行后再临时添加更容易及时发现资源。",
+          "@import 是 CSS 中引入其他样式表的语法，通常要写在普通样式规则之前。嵌套导入可能形成先下载一份、解析后才发现下一份的依赖链，影响加载时机；构建工具则可能在构建时处理这些导入，结果要以最终产物为准。不能简单把 @import 理解成 JavaScript 的模块导入。"
+        ]
+      },
+      {
+        "title": "匹配到元素之后，还要决定谁赢",
+        "paragraphs": [
+          "选择器决定规则匹配哪些元素；级联决定多个适用声明冲突时采用哪个值；继承则让某些属性在未单独指定时从父元素获得值。比如 color 常见继承，margin 通常不继承。把这三件事分开，才能理解“父级设了颜色为什么子级会变”和“为什么一个规则覆盖另一个规则”的区别。",
+          "在相同来源、重要性和级联层等条件下，选择器优先级参与比较，优先级相同时再考虑出现顺序。ID、类和类型选择器有不同权重，但遇到 !important 或级联层时不能只比较谁写得更长。初学阶段先在简单、相同条件的规则中推导结果，再逐步加入更多级联维度。"
+        ]
+      },
+      {
+        "title": "从最终计算值反查问题",
+        "paragraphs": [
+          "样式看似没生效时，先确认文件请求成功，再确认选择器真的匹配目标，最后查看开发者工具中的计算值和被覆盖声明。常见原因包括路径错误、类名不一致、规则被更高优先级覆盖，或属性在当前布局方式中不起预期作用。不要一上来就对所有声明加 !important。",
+          "组织样式时尽量使用含义清楚的类名，让组件有可预测的作用范围。主题变化可通过自定义属性集中表达；文件顺序和层级约定也应保持稳定。一个可维护的样式方案不仅要今天显示正确，还要让后来的人能解释为什么这一条规则胜出。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "把知识用起来：分析一条普通提示和其中的重要文字为何颜色不同",
+      "scenario": "分析一条普通提示和其中的重要文字为何颜色不同。只使用同一 style 中的简单规则，先理解覆盖与继承。",
+      "steps": [
+        "找到两条匹配 notice 的规则，分别列出它们声明的属性。",
+        "对冲突的 color 比较顺序，对不冲突的 padding 直接保留。",
+        "再看 strong 的独立声明，区分自身规则与父级继承。",
+        "交换两条 notice 的顺序，验证推导结果。"
+      ],
+      "code": {
+        "language": "html",
+        "source": "<style>\n.notice { color: #3f6b34; padding: 12px; }\n.notice { color: #845c25; }\n.notice strong { color: #a34a32; }\n</style>\n<p class=\"notice\">普通提示 <strong>重要部分</strong></p>",
+        "explanation": "两条 .notice 的比较条件相同，后面的颜色覆盖前面的颜色；padding 没有冲突仍然保留。strong 有自己的 color，因此不会沿用父元素的最终颜色。"
+      }
+    },
+    "checkpoint": {
+      "prompt": "如果两个相同选择器分别写 color 和 padding，后一个规则会把前一个规则的所有属性都清空吗？",
+      "answer": "不会。级联按属性决定值；没有冲突的声明可以同时生效，只有同一属性的竞争需要比较。"
+    },
+    "takeaways": [
+      "资源加载、选择器匹配和级联判断分步骤进行。",
+      "继承与覆盖不是同一机制。",
+      "先查计算值，再决定是否需要修改规则。"
+    ]
+  },
+  "css-features-sprites": {
+    "title": "用 CSS 表达设计：复用能力与图标资源策略",
+    "intro": "按钮、卡片、网格和小图标往往重复出现。CSS 不只负责“改颜色”，还提供布局、变量、圆角、渐变等能力；图片资源的组织方式则决定下载、缩放和维护的成本。",
+    "objectives": [
+      "了解常见 CSS 能力适合解决什么问题。",
+      "能用自定义属性统一视觉值。",
+      "理解雪碧图的原理及与其他图标方案的取舍。"
+    ],
+    "prerequisites": [
+      "知道背景、宽高、class 与基本盒模型。",
+      "能区分样式规则和实际图片文件。"
+    ],
+    "sections": [
+      {
+        "title": "先用平台已经提供的表达能力",
+        "paragraphs": [
+          "圆角可以使用 border-radius，简单渐变可以直接用 CSS 背景，行列布局可以交给 Flex 或 Grid。这些能力减少了为简单形状制作图片或用大量脚本计算位置的必要，但不是说图片和 JavaScript 都不再需要。先明确要表达的视觉或布局需求，再选最小且合适的工具。",
+          "所谓 CSS3 新特性通常是历史上的概括，今天 CSS 按多个模块持续发展，不是一份简单的版本开关。项目仍需结合目标浏览器检查具体能力。通过渐进增强，可以让基本内容先可用，再在支持新能力的环境里得到更好的效果，而不必让所有用户都依赖最先进的一项特性。"
+        ]
+      },
+      {
+        "title": "把重复的设计值提取为自定义属性",
+        "paragraphs": [
+          "CSS 自定义属性以两个连字符开头，例如 --accent，使用时通过 var(--accent) 引用。它们可以参与级联与继承，因此适合表达主题色、间距和组件局部配置。与把同一个颜色复制到十处相比，把设计意图集中命名更便于调整，也能减少遗漏。",
+          "自定义属性并不会自动知道设计系统应该是什么，也不会验证任意字符串一定适合某个 CSS 属性。需要给变量清楚命名，在合理范围声明，并在需要时提供回退值。组件可以覆盖局部变量，从而复用同一套规则而改变外观，不必再写一个几乎完全相同的选择器集合。"
+        ]
+      },
+      {
+        "title": "雪碧图把多个小图合进同一张图片",
+        "paragraphs": [
+          "雪碧图也称 sprite sheet：将多个小图合并到一个图片文件，元素设置固定可见区域，再用 background-position 让需要的小图落入这个窗口。这样可以复用同一资源，但图标位置、尺寸和缩放规则需要维护；只改其中一个图标也可能使整张图片的缓存失效。",
+          "是否采用雪碧图要看实际场景。现代网络复用减少了部分多请求成本，SVG 图标又有清晰缩放等优势；另一方面，固定像素风格的成套图案仍可能适合合图。不能把“请求数量少”直接等同于“总体验好”，还要比较总字节量、缓存更新、清晰度和使用方的维护复杂度。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "把知识用起来：为工具栏制作两种颜色的按钮",
+      "scenario": "为工具栏制作两种颜色的按钮。先用 CSS 复用布局与外观，再判断真实图标是否需要图片资源。",
+      "steps": [
+        "把重复出现的颜色和间距取成有意义的变量名。",
+        "用同一按钮类表达尺寸、圆角和文字。",
+        "通过局部变量覆盖主题色，避免复制全部样式。",
+        "若加入小图标，再比较 SVG、独立图片与雪碧图的维护成本。"
+      ],
+      "code": {
+        "language": "html",
+        "source": "<style>\n:root { --accent: #2d6b45; --gap: 12px; }\n.tools { display: flex; gap: var(--gap); flex-wrap: wrap; }\n.tool { border: 0; border-radius: 10px; padding: 10px 18px;\n  background: var(--accent, #345); color: white; }\n.tool.warm { --accent: #986a2a; }\n</style>\n<div class=\"tools\"><button class=\"tool\">保存</button>\n<button class=\"tool warm\">收藏</button></div>",
+        "explanation": "两个按钮复用同一规则。第二个通过局部变量覆盖颜色，容器用 Flex 与 gap 安排间隔；这些简单外观不需要制作两套图片。"
+      }
+    },
+    "checkpoint": {
+      "prompt": "如果雪碧图只用到其中一个小图，是否仍可能需要下载整张图片？这会影响什么判断？",
+      "answer": "通常会下载被引用的整张资源。优化不能只比较请求数，还要考虑未使用部分的字节量、缓存复用与更新频率。"
+    },
+    "takeaways": [
+      "根据需求选 CSS 能力，不追求版本口号。",
+      "自定义属性适合表达可复用的设计值。",
+      "图标资源策略应比较整体成本。"
+    ]
+  },
+  "css-hairline": {
+    "title": "让线条不过粗：CSS 像素、设备像素与 DPR",
+    "intro": "同样写 1px 的边框，在不同设备上可能显得粗细不同。先认识浏览器的布局单位与屏幕的像素密度，再理解为什么某些移动界面要使用更细的“发丝线”。",
+    "objectives": [
+      "区分 CSS 像素与设备像素。",
+      "理解 DPR 与缩放对显示的影响。",
+      "会在明确条件下用伪元素实现细线并验证效果。"
+    ],
+    "prerequisites": [
+      "知道 border、伪元素和 transform 的基本写法。",
+      "了解 CSS 中的 px 不必等于物理像素。"
+    ],
+    "sections": [
+      {
+        "title": "布局单位与屏幕采样不是一回事",
+        "paragraphs": [
+          "CSS 像素是网页布局使用的单位，设备像素则是屏幕显示图像的采样单位。devicePixelRatio 常用来描述两者之间的比例；在 DPR 为 2 的常见情形下，1 CSS px 的长度会对应约 2 个设备像素的跨度。因此一条 1px 边框可能比设计期望的一颗物理像素更厚。",
+          "这种关系还会受到浏览器缩放、设备设置和实际栅格化方式影响，不能把某个品牌手机永远等同于一个固定比例。所谓“1px 问题”通常是设计希望线条更细，而不是 CSS 的 px 属性失效。先确认目标效果和测试环境，再选择实现方法。"
+        ]
+      },
+      {
+        "title": "用伪元素把视觉线条与布局分开",
+        "paragraphs": [
+          "伪元素可以为一个真实元素添加可绘制的装饰内容，而不必增加额外 HTML 节点。做底部分隔线时，可以用绝对定位的 ::after 覆盖到容器底边，给它 1px 高度，再沿 Y 轴缩小。这样的 transform 改变视觉厚度，不会把容器本身的文字和布局一起压扁。",
+          "transform-origin 决定缩放的锚点。如果希望线条贴住底部，可以把原点设在底部。伪元素是装饰时应避免拦截点击；容器通常需要 position:relative 来建立定位参考。把这些职责逐个说明，比直接复制一段包含多个变换的“万能 1px 代码”更容易维护。"
+        ]
+      },
+      {
+        "title": "按密度选择策略，并承认渲染边界",
+        "paragraphs": [
+          "在 DPR 为 2 的环境把 1 CSS px 缩为一半，视觉上可接近一个设备像素；DPR 为 3 时则需要另一种比例。可以通过 resolution 媒体查询调整缩放，也可以评估小数边框等方案的兼容表现。不同浏览器的抗锯齿和坐标对齐会影响最终效果，数学比例不是所有环境下完全一致的视觉保证。",
+          "验证时不仅要看静态截图，还应检查不同缩放、浅深背景和滚动过程中的清晰度。正文内容和可点击区域不能为了细线而变得难用，装饰优化应有合理回退。没有细线增强时仍显示普通边框，通常比把关键信息依赖于一条几乎看不见的线更稳妥。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "把知识用起来：给设置列表添加底部分隔线",
+      "scenario": "给设置列表添加底部分隔线。要求装饰线更细，但文字大小、行高和可点击范围保持正常。",
+      "steps": [
+        "为每行建立定位参考，将底线放到伪元素中。",
+        "让伪元素不接收点击，并固定在行底部。",
+        "根据常见设备密度分别调整视觉缩放。",
+        "在不同密度与缩放条件下比较效果，必要时保留普通线作为回退。"
+      ],
+      "code": {
+        "language": "html",
+        "source": "<style>\n.row { position: relative; padding: 16px; }\n.row::after { content: \"\"; position: absolute; left: 0; right: 0; bottom: 0;\n  height: 1px; background: #8a9b7a; transform-origin: bottom; pointer-events: none; }\n@media (min-resolution: 2dppx) { .row::after { transform: scaleY(.5); } }\n@media (min-resolution: 3dppx) { .row::after { transform: scaleY(.333333); } }\n</style>\n<div class=\"row\">账户设置</div><div class=\"row\">消息通知</div>",
+        "explanation": "普通环境保留 1 CSS px 线；达到相应密度条件后缩放装饰伪元素。第三条规则位于后面，在 3dppx 及以上覆盖前面的比例；这只是针对常见密度的示例，应在目标设备验证。"
+      }
+    },
+    "checkpoint": {
+      "prompt": "为什么不直接把整个设置行 scaleY(.5) 来获得更细的边框？",
+      "answer": "这会连同文字和整体视觉一起压缩，并产生布局与显示不一致。应把装饰线独立出来，只缩放需要改变厚度的部分。"
+    },
+    "takeaways": [
+      "先区分 CSS 像素与设备像素。",
+      "装饰与内容布局分开处理。",
+      "密度规则需要实际显示验证，不能当作所有设备的固定结论。"
+    ]
+  }
+}

@@ -1,0 +1,274 @@
+{
+  "js-types": {
+    "title": "认识 JavaScript 的数据：值、变量与八种类型",
+    "intro": "程序处理的不是抽象的“代码”，而是商品价格、用户名、是否登录、购物车等具体信息。不同信息需要不同的表示方法：价格要参与计算，名字要拼接显示，登录状态要决定走哪条分支。这一课先学会认识和使用这些数据，再去讨论如何判断它们的类型。",
+    "objectives": [
+      "分清值、变量与数据类型，认识七种原始类型和对象类型。",
+      "知道每种类型表示什么、适合什么业务、基本写法是什么。",
+      "能为简单业务选择数据表示，并解释赋值、修改和显式转换的结果。"
+    ],
+    "prerequisites": [
+      "可以从本课开始，不需要先记住 typeof、原型链或面试答案。",
+      "示例中的 console.log(...) 用于显示结果；// 后的文字是注释，不会执行。",
+      "let 用来声明之后可以重新赋值的变量，const 用来声明不能重新赋值的绑定。"
+    ],
+    "sections": [
+      {
+        "title": "先认识三个词：值、变量、数据类型",
+        "paragraphs": [
+          "值是程序正在处理的具体数据，例如数字 18、文字“小林”、判断结果 true。变量是代码中给值起的名字，便于以后使用。数据类型则说明这个值属于哪一类、有哪些操作规则。写 let age = 18，相当于声明一个叫 age 的变量，并让它当前保存数字 18。等号在这里表示赋值，不是数学里证明左右相等。",
+          "JavaScript 的类型属于值，变量名本身不会永久限制只能存某一种类型。这叫动态类型：同一个 let 变量之后可以指向一个不同类型的值。但实际开发仍应让数据含义稳定，例如 age 一直表示年龄，别一会儿放数字、一会儿放错误提示。const 限制的是重新赋值，不会自动把一个对象内部所有属性都变成只读。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "let age = 18;\nconsole.log(age + 1); // 19\nage = \"十八岁\";\nconsole.log(age);     // 十八岁\n\nconst userName = \"小林\";\nconsole.log(userName); // 小林\n// userName = \"小陈\";  // 如果执行，会因重新赋值 const 绑定而报错",
+          "explanation": "第一段说明变量可以先保存数字，再保存文字。第二段用 const 表达名字绑定不会在这段程序中重新赋值；读取和使用它不受影响。"
+        }
+      },
+      {
+        "title": "先看全景：七种原始类型，加上一种对象类型",
+        "paragraphs": [
+          "JavaScript 语言层面有八种数据类型。七种原始类型是 undefined、null、boolean、number、bigint、string、symbol；另一种是 object。原始值本身不能被就地修改，例如给变量重新赋一个字符串，是让变量保存新值，不是把旧字符串内部改掉。对象则用于组织相关数据，可以拥有可修改的属性。",
+          "不要急着背英文列表。先把它们与实际用途连接起来：文字用 string，常规数值计算用 number，是或否用 boolean，没有结果可以用 null 表达，尚未得到的值常见 undefined。多个相关字段用 object 组织；BigInt 和 Symbol 则解决大整数与唯一标识等较专门的问题。"
+        ],
+        "table": {
+          "columns": [
+            "类型",
+            "它表示什么",
+            "最小例子",
+            "常见用途"
+          ],
+          "rows": [
+            [
+              "string",
+              "文本内容",
+              "\"小林\"、\"0018\"",
+              "用户名、提示语、保留前导零的编号"
+            ],
+            [
+              "number",
+              "常规数值，包括整数与小数",
+              "18、3.5",
+              "数量、尺寸、一般数值计算"
+            ],
+            [
+              "boolean",
+              "真或假",
+              "true、false",
+              "是否登录、是否满足提交条件"
+            ],
+            [
+              "undefined",
+              "尚未提供的值",
+              "let result;",
+              "尚未赋值、缺失属性、无返回值"
+            ],
+            [
+              "null",
+              "明确表示这里没有值",
+              "let selected = null",
+              "未选择对象、查询无结果"
+            ],
+            [
+              "bigint",
+              "超出常规安全整数范围的大整数",
+              "9007199254740993n",
+              "精确的大整数计数、特定整数运算"
+            ],
+            [
+              "symbol",
+              "唯一的标识值",
+              "Symbol(\"内部标记\")",
+              "避免属性名冲突、特定协议键"
+            ],
+            [
+              "object",
+              "有结构的数据或可调用能力",
+              "{name:\"小林\"}、[]",
+              "用户记录、列表、函数等"
+            ]
+          ]
+        }
+      },
+      {
+        "title": "String：用来表示文字，也可以表示“看起来像数字”的编号",
+        "paragraphs": [
+          "String（字符串）是文本序列。用单引号、双引号或反引号包住内容，就能写出字符串。文字“18”和数字 18 含义不同：前者是文本，后者通常用于运算。手机号、邮政编码、带前导零的编号往往应该存为字符串，因为我们要保留它们的文本形状，而不是拿它们做加减法。",
+          "字符串可以拼接、查找、截取和替换，处理结果通常是一个新字符串。反引号写出的模板字符串可以用 ${...} 把表达式结果插入文字。length 表示 UTF-16 代码单元的数量，不总等于人眼看到的字符数，某些表情会占多个单位；初学时先理解“文本有内容和长度”，以后再深入 Unicode。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const student = \"小林\";\nconst code = \"0018\";\nconst greeting = `你好，${student}`;\nconsole.log(greeting);        // 你好，小林\nconsole.log(code + 1);        // 00181：文本拼接\nconsole.log(student.replace(\"林\", \"陈\")); // 小陈\nconsole.log(student);         // 小林：原字符串没被修改",
+          "explanation": "code 虽然由数字字符组成，仍是字符串，所以加号在这里做拼接。replace 返回新文字，不会修改已有的原始字符串。"
+        }
+      },
+      {
+        "title": "Number：做常规运算，但要知道精度边界",
+        "paragraphs": [
+          "Number（数值）通常用来表示数量、长度、时间差及普通小数。JavaScript 不把整数和小数分成两个独立的 Number 类型；18 和 3.5 都属于 number。可以用 +、-、*、/ 进行四则运算，用 % 求余数，用比较运算得到布尔值。NaN 是“不是有效数值结果”的特殊 Number 值；Infinity 表示数值运算中的无穷大。",
+          "Number 采用二进制浮点表示，很多十进制小数只能近似保存，所以 0.1 + 0.2 不会恰好等于 0.3。安全整数范围是 -(2 的 53 次方减 1) 到 2 的 53 次方减 1；超出后不能保证每个相邻整数都能被区分。数量较小的金额示例可以先用整数“分”来计算；复杂的精确小数需求还需要专门的表示与舍入规则。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const priceCents = 1990;\nconst quantity = 3;\nconsole.log(priceCents * quantity); // 5970（分）\nconsole.log(0.1 + 0.2);             // 0.30000000000000004\nconsole.log(Number(\"hello\"));       // NaN\nconsole.log(Number.isNaN(Number(\"hello\"))); // true\nconsole.log(Number.isSafeInteger(9007199254740992)); // false",
+          "explanation": "第一段用整数表示价格，暂时避开这一步中的小数近似误差。Number.isNaN 用于检查 NaN，Number.isSafeInteger 检查数值是否处在安全整数范围。"
+        }
+      },
+      {
+        "title": "Boolean：让程序能够做决定",
+        "paragraphs": [
+          "Boolean（布尔值）只有 true 和 false 两个值，分别表示真和假。它常常来自一次比较，例如库存是否大于零、输入的长度是否足够、用户是否已经登录。if 会根据条件决定是否执行一段代码。布尔值让程序能把业务规则转换成清楚的分支，而不只是一行接一行地执行。",
+          "注意 false 不是字符串 \"false\"。条件表达式遇到非布尔值时，会按规则转换：false、0、-0、0n、空字符串、null、undefined、NaN 会变成假；普通对象、空数组、非空字符串（包括 \"0\" 和 \"false\"）都是真。为了让初学代码清楚，可以直接写 quantity > 0 这样的明确条件，而不是依赖复杂的隐式转换。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const stock = 3;\nconst canBuy = stock > 0;\nconsole.log(canBuy);        // true\nif (canBuy) console.log(\"可以购买\");\nconsole.log(Boolean(\"false\")); // true：这是一段非空文字\nconsole.log(Boolean([]));      // true：空数组也是对象\nconsole.log(Boolean(\"\"));      // false：空字符串",
+          "explanation": "比较的结果是布尔值，if 使用它选择行为。Boolean(...) 显式演示条件转换，不会按照文字的中文或英文意思猜测真假。"
+        }
+      },
+      {
+        "title": "Undefined：还没有得到一个值",
+        "paragraphs": [
+          "undefined 类型只有 undefined 这一个值。声明变量但还没赋值、读取对象不存在的属性、函数没有显式返回结果，都可能得到它。它通常表示程序还没有为这个位置提供值。比如用户信息正在加载，程序暂时还没有取得昵称，可以先保持未赋值，加载完成后再设置。",
+          "“变量已经声明但值是 undefined”和“这个变量根本没有声明”是两回事：直接读取未声明的变量会报 ReferenceError。你也可以显式赋值 undefined，但设计业务数据时最好约定清楚它代表什么。缺少字段时先做检查再使用，比直接读取更深的属性可靠。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "let nickname;\nconst profile = {};\nfunction sayHi() { console.log(\"你好\"); }\nconsole.log(nickname);        // undefined\nconsole.log(profile.avatar);  // undefined\nconst result = sayHi();       // 先输出 你好\nconsole.log(result);          // undefined：函数没有 return\n// console.log(notDeclared);  // 若执行，会报 ReferenceError",
+          "explanation": "前三种场景都得到了 undefined，但原因不同。函数可以执行动作却不返回业务结果；接收它的返回值仍会得到 undefined。"
+        }
+      },
+      {
+        "title": "Null：主动说明“这里没有对象或结果”",
+        "paragraphs": [
+          "null 类型也只有 null 一个值。它通常被程序员用来明确表示“目前没有”：没有选中的商品、没有查到匹配记录、当前用户尚未登录。与 undefined 的“未提供”相比，null 更像一个明确放进数据里的空值标记。具体含义是业务约定，不是语言强制所有程序采用的唯一规则。",
+          "null 不是空对象，也不是空字符串。空对象 {} 是一个真实存在的对象，只是暂时没有自有属性；空字符串 \"\" 是长度为零的文字。对 null 直接访问属性会报错，因此先判断是否有值，再读取它的字段。面试常问 typeof null 的历史结果，但那是后续识别工具的细节，不应该妨碍先理解 null 的用途。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "let selectedProduct = null;\nif (selectedProduct === null) console.log(\"请先选择商品\");\nselectedProduct = { name: \"笔记本\" };\nconsole.log(selectedProduct.name); // 笔记本\nselectedProduct = null;            // 用户取消选择\nconsole.log(selectedProduct?.name ?? \"未选择\"); // 未选择",
+          "explanation": "?. 是可选链：遇到 null 或 undefined 时停止继续读取并得到 undefined。?? 是空值回退：只有左侧为 null 或 undefined 时才使用右侧默认值。这里可以先记住其用途，后面再练习边界。"
+        }
+      },
+      {
+        "title": "BigInt：精确保存很大的整数",
+        "paragraphs": [
+          "BigInt（大整数）用于 Number 安全整数范围以外仍需精确处理的整数。可以在整数字面量后加 n，或者把十进制数字字符串交给 BigInt(...)。它适合较大的整数运算与计数，不表示小数，也不是解决所有数值问题的万能替代品。实际可处理的大小仍受内存和实现限制。",
+          "BigInt 和 Number 不能直接混在同一次算术运算中，例如 1n + 1 会报错，应该先明确选择一种表示。把不安全的 Number 再转成 BigInt，无法找回此前已经丢失的精度，所以大整数往往要从字符串直接构造。BigInt 的除法会截去小数部分；向 JSON 等格式传输时，也需要约定转换方式。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const largeId = BigInt(\"9007199254740993\");\nconsole.log(largeId + 1n); // 9007199254740994n\nconsole.log(5n / 2n);      // 2n：整数除法\n// console.log(largeId + 1); // 会报错，不能混合算术\nconsole.log(String(largeId)); // 9007199254740993",
+          "explanation": "输入原本就是文本时，可以保留所有数字后再构造 BigInt。若编号只用于展示和传输、根本不需要运算，直接保留字符串也可能更适合。"
+        }
+      },
+      {
+        "title": "Symbol：创建不会意外撞名的标识",
+        "paragraphs": [
+          "Symbol（符号）是一种原始值，可以用作对象的属性键。每次调用 Symbol(...) 都会创建新的唯一标识；括号中的文字只是便于调试的描述，不决定两个 Symbol 是否相同。比如两个库都想在同一个对象上放一个“内部状态”字段，用普通字符串可能互相覆盖，用各自的 Symbol 则可以减少这种命名冲突。",
+          "Symbol 不是保密机制，程序仍可通过相应 API 找到对象的符号键。也不要把它理解成给每个用户生成一个可存进数据库的字符串 ID。某些内置 Symbol 用于与语言协议配合，例如 Symbol.iterator 表示如何迭代；另有 Symbol.for 使用共享登记表，不具有“相同描述每次都新建”的行为。本课先掌握普通 Symbol 的独立性。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const tagA = Symbol(\"内部标记\");\nconst tagB = Symbol(\"内部标记\");\nconsole.log(tagA === tagB); // false\nconst item = { name: \"书\", [tagA]: \"来自模块 A\" };\nitem[tagB] = \"来自模块 B\";\nconsole.log(item[tagA]); // 来自模块 A\nconsole.log(item[tagB]); // 来自模块 B",
+          "explanation": "方括号 [tagA] 表示用变量当前保存的 Symbol 作为属性键，而不是创建一个名字叫 tagA 的字符串属性。两个描述相同的标记仍可以保存各自的数据。"
+        }
+      },
+      {
+        "title": "Object：把相关信息组织在一起",
+        "paragraphs": [
+          "Object（对象）用来组合有结构的数据。对象字面量用大括号书写，里面是属性名与属性值，例如 {name:\"小林\", age:18}。读取属性可以用点号或方括号，修改属性可以直接赋值。属性值也可以是另一个对象，因此能够描述用户、订单、地址等嵌套结构。",
+          "数组和函数也属于对象范畴。数组用有序位置组织多个值，适合商品列表；函数是可以调用的对象，适合表达可重复执行的操作。它们不是语言层面额外新增的两种数据类型，虽然某些识别工具会给出特别结果。选用数据结构时先想业务关系：一条记录用对象，一组有顺序的记录用数组，一个可调用动作写成函数。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const user = { name: \"小林\", age: 18 };\nconsole.log(user.name); // 小林\nuser.age = 19;\nconst cart = [{ name: \"书\", quantity: 2 }];\nconsole.log(cart[0].quantity); // 2：数组从下标 0 开始\nfunction double(value) { return value * 2; }\nconsole.log(double(user.age)); // 38",
+          "explanation": "const user 不能重新绑定到另一个对象，但当前对象的 age 属性可以修改。cart 是对象组成的数组；函数读取参数并用 return 把计算结果交给调用者。"
+        }
+      },
+      {
+        "title": "为什么两个变量有时会互相影响",
+        "paragraphs": [
+          "给另一个变量赋一个原始值时，两个变量各自保存相应值，之后给其中一个重新赋值不会改变另一个。对象赋值则可以让两个变量指向同一个对象，因此通过任一个变量修改这个对象的属性，另一个变量再读取时也会看到修改。这里要区分“改变量当前绑定的值”和“改同一个对象内部的属性”。",
+          "把对象传给函数也是按值传递，只是传递的值让函数能够访问同一个对象，不应笼统地说 JavaScript 有一种特殊的“按引用传参”。理解这些关系不需要先背栈与堆的口诀；内存布局属于实现层面的细节。后面的复制课程会进一步说明浅复制和深复制的范围。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "let first = 10;\nlet second = first;\nsecond = 20;\nconsole.log(first); // 10\n\nconst a = { score: 10 };\nconst b = a;\nb.score = 20;\nconsole.log(a.score); // 20：两个名字访问同一个对象",
+          "explanation": "前半段只重新赋值 second，first 未受影响。后半段通过 b 修改的是共享对象，所以 a 也能观察到新属性值。"
+        }
+      },
+      {
+        "title": "从会用走到会判断：先明确数据边界",
+        "paragraphs": [
+          "表单输入、URL 参数和服务器返回的数据，都可能与预想的类型不同。比如输入框中的 \"2\" 是文本，把它与数字 1 相加可能得到拼接结果。处理边界数据时，可以先明确转换，再校验转换结果是否满足业务要求。Number(...)、String(...)、Boolean(...) 分别表达显式转换，但“转得成功”不等于业务一定有效，例如负数也是数字，却可能不是合法购买数量。",
+          "typeof 是读取值的类型标签的运算符，适合检查多数原始值，但它不是所有业务校验的答案。对 null 先直接比较，对数组可以用 Array.isArray。认识类型、选择表示、校验业务范围是不同步骤。现在你已经知道各类数据用来做什么，下一关再讨论识别工具的边界以及如何组织面试回答。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const input = \"2\";\nconst quantity = Number(input);\nconst valid = Number.isInteger(quantity) && quantity > 0;\nconsole.log(input + 1);    // 21：原输入仍是字符串\nconsole.log(quantity + 1); // 3：转换后的数字\nconsole.log(valid);        // true\nconsole.log(typeof quantity); // number\nconsole.log(Array.isArray([quantity])); // true",
+          "explanation": "转换生成数字 quantity，并没有把 input 的原字符串变成数字。最后两行分别检查类型标签和数组身份，正式的识别问题会留到课堂提问中展开。"
+        }
+      },
+      {
+        "title": "把输入框的文字变成可靠的购买数量",
+        "paragraphs": [
+          "用户输入“2”时，输入框的 value 是字符串；空白、前后空格和“2件”也都可以以文字形式到达程序。先决定产品允许什么，再选择转换工具。例如只接受 1～99 的十进制整数，就应先拒绝空白和非数字文本，再转换并检查范围。Number(\"\") 会得到 0，parseInt(\"2件\", 10) 会得到 2；它们都没有替你确认用户是否填写了符合要求的数量。",
+          "把这条处理链拆成三个步骤会更容易排查：读取原始字符串 → 校验文字格式 → 转成数字并校验业务范围。商品编号“0012”虽然也只含数字，却可能必须保留前导零，因此不应套用数量转换函数。类型选择取决于这个值承担的作用，而不是它看起来像不像数字。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function readQuantity(raw) {\n  if (typeof raw !== \"string\") return null;\n  const text = raw.trim();\n  if (!/^\\d+$/.test(text)) return null;\n  const quantity = Number(text);\n  return Number.isSafeInteger(quantity) && quantity >= 1 && quantity <= 99\n    ? quantity\n    : null;\n}\n\nconsole.log(readQuantity(\" 2 \")); // 2\nconsole.log(readQuantity(\"\"));    // null\nconsole.log(readQuantity(\"2件\")); // null\nconsole.log(readQuantity(\"100\")); // null",
+          "explanation": "微实验：依次传入“0”“02”“2.5”和数字 2。结果为 null、2、null、null。本示例允许数量写成“02”；如果产品禁止前导零，需要另外收紧格式规则。null 在这里表示校验失败，不表示数量为零。"
+        },
+        "points": [
+          "不要把字符串转换成功与表单校验通过混为一谈。",
+          "练习：把最大数量改为 20，并解释为什么“商品编号”仍不应使用这个函数。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "跟着做：为一个购物车建立数据模型",
+      "scenario": "假设我们正在写一个简单购物车，需要保存商品名称、单价、数量、登录状态和优惠券。先决定每个信息的业务含义，再为它选类型，最后把它们组织成一条记录。",
+      "steps": [
+        "名称需要展示文字，用 string；商品编号需要保留前导零，也用 string。",
+        "单价以整数“分”表示，数量是普通正整数，因此都用 number。",
+        "是否登录只有是或否，用 boolean；明确没有优惠券时用 null，而不是随意放空对象。",
+        "把这些字段放进同一个对象，让一条购物车记录的结构清晰。多条记录再组成数组。",
+        "读取数值字段计算总价，用布尔条件决定是否能提交；修改数量后重新计算派生结果。"
+      ],
+      "code": {
+        "language": "javascript",
+        "source": "const cartItem = {\n  productId: \"0018\",\n  name: \"笔记本\",\n  priceCents: 1200,\n  quantity: 2,\n  loggedIn: true,\n  coupon: null\n};\nconst totalCents = cartItem.priceCents * cartItem.quantity;\nconst canSubmit = cartItem.loggedIn && cartItem.quantity > 0;\nconsole.log(totalCents); // 2400\nconsole.log(canSubmit);  // true\nconsole.log(`${cartItem.name} × ${cartItem.quantity}`); // 笔记本 × 2",
+        "explanation": "这段代码同时使用字符串、数字、布尔值、null 和对象。不是每个项目都必须用上全部八种类型；合理选择比刻意塞进 BigInt 或 Symbol 更重要。"
+      }
+    },
+    "checkpoint": {
+      "prompt": "一个表单返回 age=\"18\"、agreed=\"false\"，查询用户后暂时没有结果。你会怎样分别表示年龄、是否同意、没有结果？为什么不能简单对 \"false\" 调用 Boolean？",
+      "answer": "年龄若要运算，可将字符串显式转为 Number，再校验它是否为合理范围内的整数。是否同意应按接口约定把文字解析成真正的布尔值，例如 agreed === \"true\"，因为 Boolean(\"false\") 得到的是 true。没有查询结果可明确用 null 表示，并与“尚未查询”区分。输入格式和合法范围需要业务约定，不能只靠一次类型转换。"
+    },
+    "takeaways": [
+      "先辨认数据的业务含义，再选择类型；文字编号不一定该转成数字。",
+      "原始类型共有七种，对象类型是另一类；数组、函数是对象的具体形态。",
+      "变量重新赋值、对象属性修改、类型识别和业务校验是不同操作。"
+    ],
+    "references": [
+      {
+        "title": "MDN：数据类型与数据结构",
+        "url": "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Data_structures"
+      },
+      {
+        "title": "MDN：BigInt",
+        "url": "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/BigInt"
+      },
+      {
+        "title": "MDN：Symbol",
+        "url": "https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol"
+      },
+      {
+        "title": "MDN：Number 转换规则",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number"
+      }
+    ]
+  }
+}

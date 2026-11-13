@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#195c48">
+  <title>知行 · 前端学习实验室</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/editor.css">
+  <link rel="stylesheet" href="/tutor-panel.css">
+  <link rel="stylesheet" href="/tutor-markdown.css">
+  <link rel="stylesheet" href="/tutor-reader.css">
+  <link rel="stylesheet" href="/tablet.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳转到教学内容</a>
+  <aside id="sidebar" class="sidebar"></aside>
+  <div class="workspace">
+    <header class="topbar">
+      <button class="icon-button mobile-menu" id="menu-toggle" aria-label="展开课程目录">☰</button>
+      <div class="top-title">我的学习空间 <span> / </span> 前端循序学习课</div>
+      <div class="top-actions"><span class="local-badge"><i></i> 本地学习</span><button id="settings-open" disabled class="button secondary small">⚙ 评分接口</button></div>
+    </header>
+    <main id="main" tabindex="-1"><div class="loading">正在加载课程…</div></main>
+    <footer class="footer">知行 · FRONTEND LAB <span>理解一个概念，完成一次练习。</span> <a href="/updates.html" target="_blank" rel="noopener">1.9.0 更新说明 ↗</a></footer>
+  </div>
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <form id="settings-form">
+      <div class="dialog-head"><div><div class="eyebrow">YOUR AI REVIEWER</div><h2 id="settings-title">连接你的代码评审老师</h2></div><button type="button" class="icon-button" id="settings-close" aria-label="关闭设置">×</button></div>
+      <p class="muted">填写接口后可获取模型列表；选择模型并保存，即可评阅代码。基础课程与客观题无需联网。</p>
+      <label>接口格式<select id="provider"><option value="openai">OpenAI / OpenAI 兼容</option><option value="gemini">Google Gemini 原生格式</option></select></label>
+      <label>API 地址<input id="base-url" type="url" required spellcheck="false" placeholder="https://api.openai.com/v1"></label>
+      <p id="endpoint-help" class="field-help"></p>
+      <label>API Key<input id="api-key" type="password" autocomplete="off" spellcheck="false" placeholder="保存到本机 JSON，刷新后自动恢复"></label>
+      <p class="field-help">点击「保存到本机」后，与地址、模型一起保存在软件目录的 <code>local-config/ai-settings.json</code>。这是明文文件，不会包含在学习记录导出中；「清除密钥」会同时清除文件内的密钥。</p>
+      <label>HTTP 代理（可选）<input id="proxy-url" type="url" spellcheck="false" placeholder="例如 http://127.0.0.1:7897；留空则直连"></label>
+      <p class="field-help">用于获取模型和 AI 评阅，不修改系统代理。本地模型服务通常留空即可。</p>
+      <div class="model-fetch-row"><b>从接口选择模型</b><button type="button" id="fetch-models" class="button secondary small">获取模型列表</button></div>
+      <p id="model-status" class="field-help model-status" role="status" aria-live="polite"></p>
+      <div id="model-picker" class="model-picker" hidden>
+        <input id="model-search" type="search" aria-label="搜索模型" placeholder="搜索模型名称或 ID…" autocomplete="off">
+        <select id="model-list" size="6" aria-label="接口模型列表"></select>
+        <p id="model-count" class="field-help"></p>
+        <p class="field-help">请选择支持文字对话的模型。能列出模型不代表账号具备该模型的调用权限。</p>
+      </div>
+      <label>模型名称<input id="model" required spellcheck="false" placeholder="从列表选择，也可手动填写模型 ID"></label>
+      <p class="field-help">服务商未提供模型目录时，手动填写仍可使用。</p>
+      <div class="info-note">配置由本机服务保存，刷新页面后自动恢复。获取模型只查询目录；点击“AI 评阅代码”或发送助教提问时，会将本课内容、相关提交与对话发送至你填写的地址。分享软件文件夹时请排除 <code>local-config</code>。</div>
+      <div class="dialog-actions"><button type="button" id="clear-key" class="button secondary">清除密钥</button><button type="button" id="reset-config" class="text-button">恢复默认</button><button type="submit" class="button primary">保存到本机</button></div>
+    </form>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <input id="import-file" type="file" accept="application/json,.json" hidden>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

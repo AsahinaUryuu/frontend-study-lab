@@ -1,0 +1,681 @@
+{
+  "version": 1,
+  "progress": {
+    "js-types": {
+      "answers": {
+        "js-types-q1": 1,
+        "js-types-q2": 2,
+        "js-types-q3": "bigint"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "js-equality": {
+      "answers": {
+        "js-equality-q1": 2,
+        "js-equality-q2": 1,
+        "js-equality-q3": "==="
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "js-copy": {
+      "answers": {
+        "js-copy-q1": 1,
+        "js-copy-q2": 1,
+        "js-copy-q3": "浅拷贝"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "js-this": {
+      "answers": {
+        "js-this-q1": 0,
+        "js-this-q2": 2,
+        "js-this-q3": "bind"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "js-prototype": {
+      "answers": {
+        "js-prototype-q1": 2,
+        "js-prototype-q2": 1,
+        "js-prototype-q3": "getPrototypeOf"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "js-closure": {
+      "answers": {
+        "js-closure-q1": 2,
+        "js-closure-q2": 2,
+        "js-closure-q3": "词法"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "js-promise": {
+      "answers": {
+        "js-promise-q1": 1,
+        "js-promise-q2": 2,
+        "js-promise-q3": "rejected"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "js-async": {
+      "answers": {
+        "js-async-q1": 1,
+        "js-async-q2": 1,
+        "js-async-q3": "all"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "js-modules": {
+      "answers": {
+        "js-modules-q1": 1,
+        "js-modules-q2": 0,
+        "js-modules-q3": "exports"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "js-fetch": {
+      "answers": {
+        "js-fetch-q1": 1,
+        "js-fetch-q2": 1,
+        "js-fetch-q3": "ok"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "vue-reactivity": {
+      "answers": {
+        "vue-reactivity-q1": 0,
+        "vue-reactivity-q2": 1,
+        "vue-reactivity-q3": "value"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "vue-props": {
+      "answers": {
+        "vue-props-q1": 1,
+        "vue-props-q2": 1,
+        "vue-props-q3": "Emits"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "vue-nexttick": {
+      "answers": {
+        "vue-nexttick-q1": 1,
+        "vue-nexttick-q2": 1,
+        "vue-nexttick-q3": "nextTick"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "vue-list": {
+      "answers": {
+        "vue-list-q1": 1,
+        "vue-list-q2": 2,
+        "vue-list-q3": "computed"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "vue-lifecycle": {
+      "answers": {
+        "vue-lifecycle-q1": 1,
+        "vue-lifecycle-q2": 0,
+        "vue-lifecycle-q3": "clearInterval"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "vue-slots": {
+      "answers": {
+        "vue-slots-q1": 1,
+        "vue-slots-q2": 0,
+        "vue-slots-q3": "header"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "vue-router": {
+      "answers": {
+        "vue-router-q1": 1,
+        "vue-router-q2": 1,
+        "vue-router-q3": "popstate"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "vue-store": {
+      "answers": {
+        "vue-store-q1": 1,
+        "vue-store-q2": 1,
+        "vue-store-q3": "commit"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "vue-render": {
+      "answers": {
+        "vue-render-q1": 1,
+        "vue-render-q2": 1,
+        "vue-render-q3": "patch"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "react-state": {
+      "answers": {
+        "react-state-q1": 1,
+        "react-state-q2": 1,
+        "react-state-q3": "纯净"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "react-effects": {
+      "answers": {
+        "react-effects-q1": 1,
+        "react-effects-q2": 1,
+        "react-effects-q3": "cleanup"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "react-refs": {
+      "answers": {
+        "react-refs-q1": 1,
+        "react-refs-q2": 0,
+        "react-refs-q3": "current"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "react-hooks": {
+      "answers": {
+        "react-hooks-q1": 1,
+        "react-hooks-q2": 1,
+        "react-hooks-q3": "use"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "react-events": {
+      "answers": {
+        "react-events-q1": 1,
+        "react-events-q2": 1,
+        "react-events-q3": "stopPropagation"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "react-props": {
+      "answers": {
+        "react-props-q1": 1,
+        "react-props-q2": 1,
+        "react-props-q3": "props"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "react-key": {
+      "answers": {
+        "react-key-q1": 2,
+        "react-key-q2": 1,
+        "react-key-q3": "key"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "react-redux": {
+      "answers": {
+        "react-redux-q1": 0,
+        "react-redux-q2": 0,
+        "react-redux-q3": "action"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "performance-lazy": {
+      "answers": {
+        "performance-lazy-q1": 0,
+        "performance-lazy-q2": 1,
+        "performance-lazy-q3": "aspect-ratio"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "performance-layout": {
+      "answers": {
+        "performance-layout-q1": 1,
+        "performance-layout-q2": 2,
+        "performance-layout-q3": "transform"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "performance-rate-limit": {
+      "answers": {
+        "performance-rate-limit-q1": 1,
+        "performance-rate-limit-q2": 1,
+        "performance-rate-limit-q3": "clearTimeout"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "performance-resources": {
+      "answers": {
+        "performance-resources-q1": 1,
+        "performance-resources-q2": 1,
+        "performance-resources-q3": "srcset"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "engineering-modules": {
+      "answers": {
+        "engineering-modules-q1": 0,
+        "engineering-modules-q2": 1,
+        "engineering-modules-q3": "module"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "engineering-loaders": {
+      "answers": {
+        "engineering-loaders-q1": 1,
+        "engineering-loaders-q2": 2,
+        "engineering-loaders-q3": "apply"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "engineering-babel-hmr": {
+      "answers": {
+        "engineering-babel-hmr-q1": 1,
+        "engineering-babel-hmr-q2": 1,
+        "engineering-babel-hmr-q3": "AST"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "engineering-git": {
+      "answers": {
+        "engineering-git-q1": 0,
+        "engineering-git-q2": 1,
+        "engineering-git-q3": "git status"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "browser-security": {
+      "answers": {
+        "browser-security-q1": 1,
+        "browser-security-q2": 1,
+        "browser-security-q3": "服务端"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "browser-cache": {
+      "answers": {
+        "browser-cache-q1": 0,
+        "browser-cache-q2": 1,
+        "browser-cache-q3": "304"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "browser-rendering": {
+      "answers": {
+        "browser-rendering-q1": 0,
+        "browser-rendering-q2": 1,
+        "browser-rendering-q3": "Worker"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "browser-events": {
+      "answers": {
+        "browser-events-q1": 1,
+        "browser-events-q2": 1,
+        "browser-events-q3": "preventDefault"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "network-methods": {
+      "answers": {
+        "network-methods-q1": 1,
+        "network-methods-q2": 1,
+        "network-methods-q3": "PUT"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "network-http-versions": {
+      "answers": {
+        "network-http-versions-q1": 0,
+        "network-http-versions-q2": 0,
+        "network-http-versions-q3": "QUIC"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "network-https": {
+      "answers": {
+        "network-https-q1": 0,
+        "network-https-q2": 1,
+        "network-https-q3": "TLS"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "network-dns-tcp": {
+      "answers": {
+        "network-dns-tcp-q1": 0,
+        "network-dns-tcp-q2": 1,
+        "network-dns-tcp-q3": "字节"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "html-semantics": {
+      "answers": {
+        "html-semantics-q1": 0,
+        "html-semantics-q2": 1,
+        "html-semantics-q3": "label"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "html-document": {
+      "answers": {
+        "html-document-q1": 0,
+        "html-document-q2": 2,
+        "html-document-q3": "zh-CN"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "html-scripts": {
+      "answers": {
+        "html-scripts-q1": 1,
+        "html-scripts-q2": 1,
+        "html-scripts-q3": "DOMContentLoaded"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "html-graphics": {
+      "answers": {
+        "html-graphics-q1": 0,
+        "html-graphics-q2": 1,
+        "html-graphics-q3": "viewBox"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "html-offline": {
+      "answers": {
+        "html-offline-q1": 1,
+        "html-offline-q2": 0,
+        "html-offline-q3": "caches"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "css-display": {
+      "answers": {
+        "css-display-q1": 2,
+        "css-display-q2": 1,
+        "css-display-q3": "inline-block"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "css-units-center": {
+      "answers": {
+        "css-units-center-q1": 2,
+        "css-units-center-q2": 0,
+        "css-units-center-q3": "place-items"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "css-bfc": {
+      "answers": {
+        "css-bfc-q1": 0,
+        "css-bfc-q2": 1,
+        "css-bfc-q3": "Formatting"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    },
+    "css-stacking": {
+      "answers": {
+        "css-stacking-q1": 1,
+        "css-stacking-q2": 0,
+        "css-stacking-q3": "var(--z-modal)"
+      },
+      "quizResult": {
+        "score": 100
+      },
+      "completed": true,
+      "code": "// saved learner draft",
+      "codeEdited": true
+    }
+  }
+}

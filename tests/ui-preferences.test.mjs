@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {collectUIPreferences,restoreUIPreferences,sanitizeUIPreferences,UI_PREFERENCE_KEYS} from '../public/ui-preferences.js';
+const storage=initial=>{const values=new Map(Object.entries(initial||{}));return {values,getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};};
+test('presentation preferences migrate across devices while credentials and arbitrary keys never export or restore',()=>{
+ const source=storage({'zhixing-tutor-width':'520','zhixing-tutor-open':'false','zhixing-lesson-reading':'{"font":19,"line":2.3}','zhixing-tutor-reading-v1':'{"font":22,"theme":"paper","line":2.2,"wrap":true,"width":"wide"}','zhixing-catalog-view':'{"filter":"bookmarked","order":"recent"}','zhixing-editor-display':'{"wrap":false,"font":20}','zhixing-preview-width':'834','zhixing-ai-config':'{"apiKey":"must-not-export","baseUrl":"https://private.example"}','unrelated':'keep-private'});
+ const portable=collectUIPreferences(source);assert.equal(Object.keys(portable).length,UI_PREFERENCE_KEYS.length);assert.ok(!JSON.stringify(portable).includes('must-not-export'));const target=storage({'zhixing-ai-config':'local-config-preserved'});restoreUIPreferences(target,{...portable,'zhixing-ai-config':'attack'});assert.equal(target.getItem('zhixing-ai-config'),'local-config-preserved');assert.deepEqual(collectUIPreferences(target),portable);
+});
+test('malformed, oversized and injected preference fields cannot become arbitrary localStorage or CSS values',()=>{
+ const clean=sanitizeUIPreferences({'zhixing-tutor-width':'999999','zhixing-tutor-open':'yes','zhixing-lesson-reading':'{"font":999,"line":7,"apiKey":"injected-secret"}','zhixing-tutor-reading-v1':'{"font":-1,"theme":"url(evil)","wrap":"true","width":"evil"}','zhixing-editor-display':'x'.repeat(3000),'zhixing-catalog-view':'[]','zhixing-preview-width':'javascript:alert(1)','__proto__':'x'});
+ assert.equal(clean['zhixing-tutor-width'],'760');assert.deepEqual(JSON.parse(clean['zhixing-lesson-reading']),{font:22,line:2});assert.deepEqual(JSON.parse(clean['zhixing-tutor-reading-v1']),{font:12,line:1.9,theme:'light',wrap:false,width:'comfortable'});assert.ok(!JSON.stringify(clean).includes('injected-secret'));assert.equal(clean['zhixing-preview-width'],undefined);assert.equal(clean['zhixing-editor-display'],undefined);assert.deepEqual(sanitizeUIPreferences(null),{});
+});

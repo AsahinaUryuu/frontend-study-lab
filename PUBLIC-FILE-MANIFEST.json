@@ -1,0 +1,467 @@
+[
+  {
+    "path": ".gitignore",
+    "sha256": "b853d601dcbbd636db3b4d39aef5da30fbb321b3c84049cc0cecf5b459126813",
+    "bytes": 403
+  },
+  {
+    "path": "LICENSE",
+    "sha256": "ea6a0acd9f32479f047649e3b7517a618c24ca179316316ef1c7c1f6f579c546",
+    "bytes": 1079
+  },
+  {
+    "path": "NOTICE.md",
+    "sha256": "e2a327754d278551ae77fee2604ea108f80750108b8a0f16d924bbfe28322030",
+    "bytes": 1256
+  },
+  {
+    "path": "PUBLIC-RELEASE.json",
+    "sha256": "4e841f6150e0d467ac34998abcf0be1f354dabc74d49a3db8775ab6f9c1d1c5e",
+    "bytes": 130
+  },
+  {
+    "path": "README.md",
+    "sha256": "501f9b51dd2af554c3c09064e1b594e3aaa577b39b5548b0482b85d3fc792b5e",
+    "bytes": 2607
+  },
+  {
+    "path": "lib/config.mjs",
+    "sha256": "ed19a1b2630dffa7613876789a72155b8ef2c65d9acc40609e6b17cfd766dc12",
+    "bytes": 2673
+  },
+  {
+    "path": "lib/grade.mjs",
+    "sha256": "0a44ba930c2683106b1f4c7c1c5188a7b40c2f0b65c62bf2e31021220bdcb058",
+    "bytes": 4488
+  },
+  {
+    "path": "lib/local-config.mjs",
+    "sha256": "fc723f38b8512ef96862c483fcf63dd7565e26a62e090b5f2a3da1de3c229c71",
+    "bytes": 4319
+  },
+  {
+    "path": "lib/model-response.mjs",
+    "sha256": "7f222297affcdc341d766dd3c5e13b884e2c93b1747e9960d5dcffa22e9a93b0",
+    "bytes": 3156
+  },
+  {
+    "path": "lib/models.mjs",
+    "sha256": "71bdcdc3aee7fec0dc77d1cd1736b3d54100cedac04bc1e871469a3b55555bf8",
+    "bytes": 5064
+  },
+  {
+    "path": "lib/progress.mjs",
+    "sha256": "0445be469faa40b92e4403e86248d6073b7722f777cc17f208fab00a93beb423",
+    "bytes": 3072
+  },
+  {
+    "path": "lib/proxy.mjs",
+    "sha256": "b3363032adad7f05275282cd68081db18f888785ad79526a06c0af97e71529f7",
+    "bytes": 4043
+  },
+  {
+    "path": "lib/remote-access.mjs",
+    "sha256": "3ba9b0955be326bacab80ef277b6ae09848972c0aec6c5dfde825c2085fea55a",
+    "bytes": 4314
+  },
+  {
+    "path": "lib/response.mjs",
+    "sha256": "3f3e8aec28f78e24d6545632b37f8dd28c38c34720544e9bb9ecfba1913adb0b",
+    "bytes": 781
+  },
+  {
+    "path": "lib/submission.mjs",
+    "sha256": "cbd3de78acc06f4cd5dfe4e764e195fb50968ea34e96ad616b930bf0214cf601",
+    "bytes": 2123
+  },
+  {
+    "path": "lib/tutor.mjs",
+    "sha256": "622422113b859717b387424259f448a938d566070e243b52249a0ef3df5b1c42",
+    "bytes": 8635
+  },
+  {
+    "path": "package.json",
+    "sha256": "c8a246f1913b6b8543bbd64aaf3daa963db479afcb38f7c5880781499a8a020d",
+    "bytes": 303
+  },
+  {
+    "path": "public/app.js",
+    "sha256": "5591d893b13627e5fcb881c06e7d6ee080585880f132c13736986146fe4d92d7",
+    "bytes": 62966
+  },
+  {
+    "path": "public/cloud-progress.js",
+    "sha256": "1d4e56df9d030b159a11ac2cbf5b5de0ae538b5faa207fefe390fe039fadeed4",
+    "bytes": 6238
+  },
+  {
+    "path": "public/data/frameworks.json",
+    "sha256": "df5c3ed0a33a47a58cbd4202a194cf2c10a3af490d42fd3c7912df38077ea144",
+    "bytes": 423182
+  },
+  {
+    "path": "public/data/platform.json",
+    "sha256": "e3cff969fdba7c61323f8dca31223251364a883b9b9b537557a7b52b7597163f",
+    "bytes": 314374
+  },
+  {
+    "path": "public/dom-runner.js",
+    "sha256": "2046f7354c599051b3857967c089945574822653c1bfe377b6f25101c1a9168c",
+    "bytes": 14465
+  },
+  {
+    "path": "public/editor.css",
+    "sha256": "771a412fb296c453fddc131d5c62a94611bb099434d799ec74d855f4aca77fd8",
+    "bytes": 3194
+  },
+  {
+    "path": "public/editor.js",
+    "sha256": "09f8df348c5801f6026fce3182ea5cbe9b02dd21772503711e5d56da3807a430",
+    "bytes": 8913
+  },
+  {
+    "path": "public/index.html",
+    "sha256": "4521e94801b47786d7038783d1816e185db14528115bd65767546cf0658a4d34",
+    "bytes": 4844
+  },
+  {
+    "path": "public/learning-ux.js",
+    "sha256": "cea223bd7190fb6f00e14be6d6fc036beca3d953212a0ebe019b79deee95384d",
+    "bytes": 2193
+  },
+  {
+    "path": "public/learning.js",
+    "sha256": "fda3492e47992a9b13b6ce0e9280df2df6692cd6e3aba2fc5f6b98b1c61cb578",
+    "bytes": 3344
+  },
+  {
+    "path": "public/local-config.js",
+    "sha256": "8447c9ac5e6f12aa9d216aa001660faf92450f06b3b5cb9937b122c40127d037",
+    "bytes": 1227
+  },
+  {
+    "path": "public/playground.js",
+    "sha256": "5ed10968c2bb57458377eda3c0853c67493ac6f267b170c380b759d982829b52",
+    "bytes": 11869
+  },
+  {
+    "path": "public/quiz-presentation.js",
+    "sha256": "0e5a37ed50afe3ef450e25599e56488acd23f15be386a24b6bcdb4c171c847f2",
+    "bytes": 1942
+  },
+  {
+    "path": "public/run-examples.json",
+    "sha256": "389df974ebc9f3a99af1e6cb2cf32a48b82ecd5992b776b79c9d0384f3ae1d01",
+    "bytes": 46072
+  },
+  {
+    "path": "public/runner.js",
+    "sha256": "8802d04083697de7c8d4572878cfd54b888e22fbe0679dcfd15e6628a1136cb9",
+    "bytes": 14882
+  },
+  {
+    "path": "public/settings.js",
+    "sha256": "b10cacb51ddf5691a28207d4676ffce5824c2d639286b65ea89e6249ff527f2e",
+    "bytes": 6951
+  },
+  {
+    "path": "public/style.css",
+    "sha256": "d02bf9ff4d2b2d7391ae6e29a7a4a7571cc0abdb1f2ca19c29d602353402d483",
+    "bytes": 45300
+  },
+  {
+    "path": "public/tablet-ux.js",
+    "sha256": "79b22ba267921d3f35a26f50257ff651198f640151ad3b55d315c2a7efa80277",
+    "bytes": 5012
+  },
+  {
+    "path": "public/tablet.css",
+    "sha256": "13d88c88c04f96220da9c2544b35e22f8a15938a661365323602b773e04c679e",
+    "bytes": 10643
+  },
+  {
+    "path": "public/textbook.js",
+    "sha256": "ec7b5235884119acdcfca80eb5411c73b082056738d8b7a0e19fbcaca7f11b23",
+    "bytes": 3516
+  },
+  {
+    "path": "public/textbook/basics.json",
+    "sha256": "983824cce24b26080d125286445b138b3c7a0bf914b66826d0f8385a28794658",
+    "bytes": 25585
+  },
+  {
+    "path": "public/textbook/css.json",
+    "sha256": "36fff33f7f5a22706a63bc6f8b1b0a033f6ab2f8d1cc86d13c13ce16e9cb002e",
+    "bytes": 39176
+  },
+  {
+    "path": "public/textbook/frameworks.json",
+    "sha256": "abb69d13550a5696faf808c4b104de19a3d0c45d4c5de9ca50fe64ee3d5ecaad",
+    "bytes": 119576
+  },
+  {
+    "path": "public/textbook/javascript.json",
+    "sha256": "de70fb0f30f2f7409a990529893f90260be806ba72ae794db0bf466299c70d16",
+    "bytes": 96452
+  },
+  {
+    "path": "public/textbook/platform.json",
+    "sha256": "24d42cd7cbaf55f696919d5a8ad61489ee7bf09d52dde23167bd61630769b6d3",
+    "bytes": 124955
+  },
+  {
+    "path": "public/tutor-context.js",
+    "sha256": "3ecf52cd5a196935e58429fc0b8320132e2c2083519a65b6825ecef16812e70d",
+    "bytes": 14375
+  },
+  {
+    "path": "public/tutor-input-tools.js",
+    "sha256": "02565ceed61d026e8ec4b5fd62f8cc55b3299bd9c9147898d936bb71c8a8b770",
+    "bytes": 2009
+  },
+  {
+    "path": "public/tutor-markdown.css",
+    "sha256": "663b3a667e2d14aa7dc1bee7006212fd349220c18b85fb83ca9320f32c78fe8e",
+    "bytes": 4932
+  },
+  {
+    "path": "public/tutor-markdown.js",
+    "sha256": "1fa38829ad37a67eb7fc7bc4aa410c06a017a77743473af132dff3be178e83a5",
+    "bytes": 7740
+  },
+  {
+    "path": "public/tutor-panel.css",
+    "sha256": "e209b862fa98641b6a671a497f6211c4610b665ced6cc584c07fdd9e04706d25",
+    "bytes": 17067
+  },
+  {
+    "path": "public/tutor-panel.js",
+    "sha256": "907a12da026e20262fd57825d1dbf0a40ff138524335d5946d50889c28ff5f32",
+    "bytes": 16506
+  },
+  {
+    "path": "public/tutor-reader-tools.js",
+    "sha256": "d8a19395661f6d0f73770e0a45f02ae3c9b778dc51a39870542c8ac9823ab879",
+    "bytes": 13234
+  },
+  {
+    "path": "public/tutor-reader.css",
+    "sha256": "5a4779a52089cffde1ee1d59a59ab6c993a3027bb935beb0d2803f09f87876cf",
+    "bytes": 18829
+  },
+  {
+    "path": "public/tutor-reader.js",
+    "sha256": "b0b89c817720c1348a43b7c7b1e63331eec4c3f2e49ca17ac294e2065488f7ba",
+    "bytes": 9650
+  },
+  {
+    "path": "public/tutor-resize.js",
+    "sha256": "44dd64a5b7995658c4eff238d14fbed3a3ac020e698f8913de4a6de631b02706",
+    "bytes": 6456
+  },
+  {
+    "path": "public/tutor-shortcuts.js",
+    "sha256": "18bace27a4cbb0db57d853b4d5b8a1d7e71e7147e488e2891b546480593c682c",
+    "bytes": 1542
+  },
+  {
+    "path": "public/ui-preferences.js",
+    "sha256": "5c154d5dacc4f9f62b16ab82977f203254a245ebc4cc1a354b9f34e82cf29626",
+    "bytes": 2502
+  },
+  {
+    "path": "public/updates.html",
+    "sha256": "31362fc5e35d574ef642d8bf3fd2473c31fd2ea8f174805af75970d5fcc39223",
+    "bytes": 7994
+  },
+  {
+    "path": "public/vendor/LICENSES.txt",
+    "sha256": "694dc2d71c3beef2bde57da019ac4bf6d6ed22fdb791ca58a3bb3005f3e05817",
+    "bytes": 26755
+  },
+  {
+    "path": "public/vendor/acorn-LICENSE.txt",
+    "sha256": "76a876cf886ff9be2a8b5e2e86514fed06223c8c9f0c1e9ee9606e93841e00b7",
+    "bytes": 1099
+  },
+  {
+    "path": "public/vendor/acorn-VERSION.txt",
+    "sha256": "f1d8d187abddfb463a5835e04f7605cdc1f7e320e9452a8434c60a6f4068d2e2",
+    "bytes": 137
+  },
+  {
+    "path": "public/vendor/acorn.js",
+    "sha256": "76254fc76529713b4dfd2532972d17a991ffd9aafeebb1f977445b5506b9fb0b",
+    "bytes": 234658
+  },
+  {
+    "path": "public/vendor/codemirror.js",
+    "sha256": "68d13a30c76958902910227cb0e0cb3090c981af737667f6e06728c943664446",
+    "bytes": 549044
+  },
+  {
+    "path": "public/vendor/tutor-markdown-LICENSES.txt",
+    "sha256": "feb5a9dec0c9279266dc7c77830c6fb07c2bf9f208035eb92352e8935670cd51",
+    "bytes": 37947
+  },
+  {
+    "path": "public/vendor/tutor-markdown-VERSIONS.json",
+    "sha256": "a0dab8cfc209fdeb6a00c2b0bd7a2773ea5b8e862f9fb558a3f1459c6c238b65",
+    "bytes": 769
+  },
+  {
+    "path": "public/vendor/tutor-markdown.js",
+    "sha256": "b59d9591e0d3c6492a3c9b9f470670de51797318362dd8bea6bcf2272781294a",
+    "bytes": 196491
+  },
+  {
+    "path": "public/web-files.js",
+    "sha256": "c047b1c5dd9a0d1c0295997a4fd2ec081965f58b5ed879d9c654caaa7c81726e",
+    "bytes": 693
+  },
+  {
+    "path": "server.mjs",
+    "sha256": "e564472e4d19cff1f7ea873543d16ae2dd4cc26c449b42d620ca3ae382b86c7f",
+    "bytes": 8741
+  },
+  {
+    "path": "start-learning.ps1",
+    "sha256": "d6aea5714cac21fb880188e5f814ac4805e271ad59bd19b4b0917855a7881ac4",
+    "bytes": 10502
+  },
+  {
+    "path": "tests/cloud-progress.test.mjs",
+    "sha256": "dd84ae1c7ea6b0c7ca52a9df5d73fd89afb9fba7aad96469ea2307f96e794dd0",
+    "bytes": 7682
+  },
+  {
+    "path": "tests/dom-runner.test.mjs",
+    "sha256": "d4462b11c7dedd774a07047f36a5a36dd734ea621118565a04f68ddb7bdf226b",
+    "bytes": 3561
+  },
+  {
+    "path": "tests/fill-case.test.mjs",
+    "sha256": "177be6c61817ac2f0cb222529cb6ef78679e38110887694e22984016ac3419b2",
+    "bytes": 3774
+  },
+  {
+    "path": "tests/fixtures/pdf-questions.json",
+    "sha256": "ba7832dfd6abd2a9497ca9241833c154eeabf026599bf141834577bd6c95a467",
+    "bytes": 33477
+  },
+  {
+    "path": "tests/fixtures/progress-v1.json",
+    "sha256": "41094ee2071396f5dea99d4b0046b33696a2dd4f69f9313675ecf06d1ebf1aef",
+    "bytes": 16257
+  },
+  {
+    "path": "tests/fixtures/quiz-answers-v1.2.json",
+    "sha256": "037ea34c7fbfb89a4801408dff619178cacd204a4694c54a669b9a94253c6f54",
+    "bytes": 77112
+  },
+  {
+    "path": "tests/fixtures/run-example-outputs.json",
+    "sha256": "98ebebb95b92c28e0f3641e6f562cf3f9a3862d6878ded5afa23a9090a0bf349",
+    "bytes": 3222
+  },
+  {
+    "path": "tests/launcher.test.mjs",
+    "sha256": "179fc368e2c0aaafa4b5706632791f4037205b90ed47d4ce1794bbd4d4927c62",
+    "bytes": 3963
+  },
+  {
+    "path": "tests/learning-ux.test.mjs",
+    "sha256": "145e8447290d171eb955f08061b5b5d2547e062f2651479c117e50bc0ff3383a",
+    "bytes": 3404
+  },
+  {
+    "path": "tests/learning.test.mjs",
+    "sha256": "a4f04080326de208c71a007591762749789998ccab43df08a44627c431531f7e",
+    "bytes": 3214
+  },
+  {
+    "path": "tests/local-config.test.mjs",
+    "sha256": "6b19ddc5adf7e6e0b1ed69de08f96ff875c9466f5e26166f895c12b6cdfedc0e",
+    "bytes": 6162
+  },
+  {
+    "path": "tests/models.test.mjs",
+    "sha256": "37dc8dc7951b67cece9a91f3c22947c26861080e20a7ef826fe02cde883b7c51",
+    "bytes": 10648
+  },
+  {
+    "path": "tests/playground-regression.test.mjs",
+    "sha256": "1fbc820d202ccd74bb502e1b398260b80fa3c433e5ff67d55623b0e52c4e779d",
+    "bytes": 4757
+  },
+  {
+    "path": "tests/playground.test.mjs",
+    "sha256": "6240ea1b8cdcb471b0ce89bcf10865f13bd5b9c65b64a62e91ed3fb361c37dfb",
+    "bytes": 2236
+  },
+  {
+    "path": "tests/proxy.test.mjs",
+    "sha256": "ad35bbb489629905c5bb82e6bd7cd9e2801c18f23539fa35191e1a0d0c7fbfc3",
+    "bytes": 5208
+  },
+  {
+    "path": "tests/quiz-presentation.test.mjs",
+    "sha256": "b1907c567177d12bd46a97a253552fa8732be7dbdc88f623bc1ec8e4403a1384",
+    "bytes": 4860
+  },
+  {
+    "path": "tests/remote-access.test.mjs",
+    "sha256": "0ecbcd724fa290782ebfccf094ee4a2334979615796a01bf5b9e1be36d9e8da8",
+    "bytes": 8143
+  },
+  {
+    "path": "tests/run-examples.test.mjs",
+    "sha256": "e42a7dc66157491eca6389b9f86da49654fa29f20f07610497d291874a3c5f8e",
+    "bytes": 4807
+  },
+  {
+    "path": "tests/runner.test.mjs",
+    "sha256": "b9e7bcc7ff33afb3571aa002843bb84e35d18122695243a6e95c0dc0396eb812",
+    "bytes": 5532
+  },
+  {
+    "path": "tests/server.test.mjs",
+    "sha256": "64a90f6d896596c6d10050ae5eaca2bd908444e89cc7e4d91ade3184f79eda75",
+    "bytes": 9346
+  },
+  {
+    "path": "tests/textbook.test.mjs",
+    "sha256": "eaae157fdec6da50a342c89dfe7e37b1b2f00b05a5a560a8a695823e695461ec",
+    "bytes": 4799
+  },
+  {
+    "path": "tests/tutor-context.test.mjs",
+    "sha256": "ce09bba74d5dcce0d3a1474b28b45caa61695361c36161d584c5b8c986a892f7",
+    "bytes": 12738
+  },
+  {
+    "path": "tests/tutor.test.mjs",
+    "sha256": "910ce451ff59da11646f73a7a0ec6edeea2acc559ce14cd472466fc8dd049e2b",
+    "bytes": 10960
+  },
+  {
+    "path": "tests/ui-preferences.test.mjs",
+    "sha256": "2a2e78793688c1c80fe4fca74753871b87e5873716b1bd1a594ffd485fcad101",
+    "bytes": 2433
+  },
+  {
+    "path": "tests/upgrade.test.mjs",
+    "sha256": "61a7373c626d77805c0fd089c7a13c13a82c7706f2bf85624f633ccdfff9993d",
+    "bytes": 2860
+  },
+  {
+    "path": "tests/web-files.test.mjs",
+    "sha256": "81227d611fa3ddba2fec6d9af23ae958db5c62a0f9b9e98c3f32e28e5880b955",
+    "bytes": 1855
+  },
+  {
+    "path": "启动学习.bat",
+    "sha256": "af23b2397f40ea529ea7fbeedf89277eaa69b1d43b2eeacad27f68e5583fb44d",
+    "bytes": 320
+  }
+]

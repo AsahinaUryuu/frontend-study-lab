@@ -1,0 +1,14 @@
+{
+  "name": "frontend-academy",
+  "version": "1.9.0",
+  "private": true,
+  "type": "module",
+  "description": "基于中文前端面试资料的本地互动学习软件",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test"
+  }
+}

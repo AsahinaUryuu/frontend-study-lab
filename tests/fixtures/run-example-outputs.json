@@ -1,0 +1,135 @@
+{
+  "js-types": [
+    "null: null",
+    "数组: array",
+    "BigInt: bigint",
+    "数字: number"
+  ],
+  "js-equality": [
+    "NaN: true",
+    "正负零: false",
+    "相同数字: true"
+  ],
+  "js-prototype": [
+    "数组属于 Array: true",
+    "数组属于 Object: true",
+    "null 属于 Object: false"
+  ],
+  "js-copy": [
+    "新城市: 杭州",
+    "原城市: 上海",
+    "地址已独立: true"
+  ],
+  "js-objects": [
+    "属性值: 90",
+    "原型相同: true",
+    "可枚举: false"
+  ],
+  "js-this": [
+    "你好，小林"
+  ],
+  "js-proxy": [
+    "有效修改: 20",
+    "无效修改: RangeError",
+    "最后年龄: 20"
+  ],
+  "js-json": [
+    "合法: {\"name\":\"小林\",\"age\":18}",
+    "结构错误: null",
+    "语法错误: null"
+  ],
+  "js-regexp": [
+    "Alice_7: true",
+    "1Alice: false",
+    "ab: false",
+    "abc!: false"
+  ],
+  "js-loading": [
+    "加载后回调",
+    "已经就绪回调"
+  ],
+  "js-dom-bom": [
+    "宽度: 800",
+    "宽度: 1024",
+    "监听已清理: true"
+  ],
+  "js-url": [
+    "https://example.com/search?q=%E5%89%8D%E7%AB%AF+%E8%AF%BE%E7%A8%8B&tag=js&tag=vue"
+  ],
+  "js-iteration": [
+    "第一次: 2,3,4",
+    "第二次: 2,3,4",
+    "空区间长度: 0"
+  ],
+  "js-closure": [
+    "A: 1 2",
+    "B: 11",
+    "A 重置后: 1"
+  ],
+  "js-event-loop": [
+    "任务 A",
+    "任务 B",
+    "结果: A,B"
+  ],
+  "js-promise": [
+    "成功: ALICE",
+    "失败: 读取失败"
+  ],
+  "js-async": [
+    "合并: {\"a\":\"A\",\"b\":\"B\"}"
+  ],
+  "js-memory": [
+    "次数: 1",
+    "释放完成: true"
+  ],
+  "react-redux": [
+    "新增: [{\"id\":\"a\",\"title\":\"学前端\",\"done\":false}]",
+    "切换: [{\"id\":\"a\",\"title\":\"学前端\",\"done\":true}]",
+    "旧状态未变: true"
+  ],
+  "performance-layout": [
+    "卡片宽度: 300px,300px"
+  ],
+  "performance-rate-limit": [
+    "执行: 第一次",
+    "执行: 稍后"
+  ],
+  "engineering-build-speed": [
+    "{\"cold\":1100,\"warm\":200,\"incremental\":80}"
+  ],
+  "browser-cache": [
+    "首次请求: {\"status\":200,\"headers\":{\"ETag\":\"\\\"v2\\\"\"},\"body\":\"hello\"}",
+    "版本一致: {\"status\":304,\"headers\":{\"ETag\":\"\\\"v2\\\"\"}}"
+  ],
+  "browser-rendering": [
+    "处理数量: 45",
+    "首尾: 1 45"
+  ],
+  "browser-storage": [
+    "合法数据: {\"theme\":\"dark\"}",
+    "损坏数据: {\"theme\":\"light\"}",
+    "读取失败: {\"theme\":\"light\"}"
+  ],
+  "browser-threats": [
+    "可信: {\"height\":200}",
+    "来源错误: null",
+    "高度越界: null"
+  ],
+  "network-http-versions": [
+    "[[\"h2\",2],[\"h3\",1],[\"unknown\",1]]"
+  ],
+  "network-https": [
+    "合法: https://example.com/api",
+    "拒绝 HTTP: 需要 HTTPS",
+    "拒绝凭据: 禁止 URL 凭据"
+  ],
+  "network-dns-tcp": [
+    "正常: {\"dnsMs\":5,\"connectionMs\":25}",
+    "无效范围: {\"dnsMs\":null,\"connectionMs\":null}"
+  ],
+  "network-layers": [
+    "DNS: 检查域名记录、解析缓存与解析器",
+    "HTTP: 检查状态码、响应头和服务端日志",
+    "未知: 先定位失败发生在哪个阶段"
+  ]
+}

@@ -1,0 +1,572 @@
+{
+  "js-types": {
+    "mode": "javascript",
+    "hint": "先实现 kindOf，再运行下面几个调用；未完成的函数返回 undefined 也是实际执行结果。",
+    "testCode": "console.log(\"null:\", kindOf(null));\nconsole.log(\"数组:\", kindOf([]));\nconsole.log(\"BigInt:\", kindOf(1n));\nconsole.log(\"数字:\", kindOf(42));",
+    "html": ""
+  },
+  "js-equality": {
+    "mode": "javascript",
+    "hint": "分别检查 NaN、正负零与普通相等值，观察函数返回值。",
+    "testCode": "console.log(\"NaN:\", sameValue(NaN, NaN));\nconsole.log(\"正负零:\", sameValue(0, -0));\nconsole.log(\"相同数字:\", sameValue(3, 3));",
+    "html": ""
+  },
+  "js-prototype": {
+    "mode": "javascript",
+    "hint": "用数组、普通对象和原始值检查原型链判断。",
+    "testCode": "console.log(\"数组属于 Array:\", isInstance([], Array));\nconsole.log(\"数组属于 Object:\", isInstance([], Object));\nconsole.log(\"null 属于 Object:\", isInstance(null, Object));",
+    "html": ""
+  },
+  "js-copy": {
+    "mode": "javascript",
+    "hint": "检查新对象的城市，以及原对象是否保持不变。",
+    "testCode": "const runUser = { name: \"小林\", address: { city: \"上海\" } };\nconst runMoved = moveCity(runUser, \"杭州\");\nconsole.log(\"新城市:\", runMoved.address.city);\nconsole.log(\"原城市:\", runUser.address.city);\nconsole.log(\"地址已独立:\", runMoved.address !== runUser.address);",
+    "html": ""
+  },
+  "js-objects": {
+    "mode": "javascript",
+    "hint": "构造一个不可枚举属性，观察复制是否保留描述符与原型。",
+    "testCode": "const runProto = { group: \"student\" };\nconst runOriginal = Object.create(runProto);\nObject.defineProperty(runOriginal, \"score\", { value: 90, enumerable: false, writable: false });\nconst runCopy = cloneWithDescriptors(runOriginal);\nconsole.log(\"属性值:\", runCopy.score);\nconsole.log(\"原型相同:\", Object.getPrototypeOf(runCopy) === runProto);\nconsole.log(\"可枚举:\", Object.getOwnPropertyDescriptor(runCopy, \"score\").enumerable);",
+    "html": ""
+  },
+  "js-this": {
+    "mode": "javascript",
+    "hint": "把方法取出来独立调用，确认仍能访问原对象。",
+    "testCode": "const runStudent = { name: \"小林\", greet(prefix) { return prefix + this.name; } };\nconst runGreet = bindMethod(runStudent, \"greet\");\nconsole.log(runGreet(\"你好，\"));",
+    "html": ""
+  },
+  "js-proxy": {
+    "mode": "javascript",
+    "hint": "分别尝试有效年龄和无效年龄；预期的异常会被示例捕获并打印。",
+    "testCode": "const runPerson = createPerson(18);\nrunPerson.age = 20;\nconsole.log(\"有效修改:\", runPerson.age);\ntry { runPerson.age = -1; } catch (error) { console.log(\"无效修改:\", error.name); }\nconsole.log(\"最后年龄:\", runPerson.age);",
+    "html": ""
+  },
+  "js-json": {
+    "mode": "javascript",
+    "hint": "比较合法数据、结构错误和 JSON 语法错误的返回值。",
+    "testCode": "console.log(\"合法:\", JSON.stringify(parseProfile('{\"name\":\"小林\",\"age\":18}')));\nconsole.log(\"结构错误:\", parseProfile('{\"name\":123,\"age\":-1}'));\nconsole.log(\"语法错误:\", parseProfile('{broken'));",
+    "html": ""
+  },
+  "js-regexp": {
+    "mode": "javascript",
+    "hint": "检查长度、首字符及非法字符的边界。",
+    "testCode": "for (const runName of [\"Alice_7\", \"1Alice\", \"ab\", \"abc!\"]) {\n  console.log(runName + \":\", isUsername(runName));\n}",
+    "html": ""
+  },
+  "js-loading": {
+    "mode": "javascript",
+    "hint": "此题的草稿是 JavaScript 函数。这里用最小模拟文档检查两个分支，不会创建真实网页或证明浏览器加载时序。",
+    "testCode": "// 这是模拟文档，不是真实 DOM。\nconst runDoc = { readyState: \"loading\", listeners: {}, addEventListener(type, fn) { this.listeners[type] = fn; } };\nwhenReady(runDoc, () => console.log(\"加载后回调\"));\nrunDoc.listeners.DOMContentLoaded();\nwhenReady({ readyState: \"complete\" }, () => console.log(\"已经就绪回调\"));",
+    "html": ""
+  },
+  "js-dom-bom": {
+    "mode": "web",
+    "mainLanguage": "javascript",
+    "hint": "这里使用真实预览窗口。实现 observeWidth 后应立即显示宽度；改变浏览器宽度或手动发送 resize，停止订阅后通知次数应保持不变。",
+    "testCode": "let notifications = 0;\nconst stopWidth = observeWidth(window, width => {\n  document.querySelector('#width-result').textContent = '当前预览视口：' + width + 'px；通知次数：' + ++notifications;\n  console.log('视口宽度：', width);\n});\ndocument.querySelector('#emit-resize').addEventListener('click', () => window.dispatchEvent(new Event('resize')));\ndocument.querySelector('#stop-width').addEventListener('click', () => {\n  if (typeof stopWidth === 'function') { stopWidth(); stopWidth(); }\n  console.log('已重复调用停止函数，再发送 resize 验证不再通知。');\n});",
+    "html": "<h2>视口宽度订阅</h2><p>改变浏览器宽度，观察输出是否更新。</p><button id=\"emit-resize\" type=\"button\">发送 resize 事件</button><button id=\"stop-width\" type=\"button\">停止订阅</button><output id=\"width-result\">等待初次通知</output>",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n",
+    "javascript": ""
+  },
+  "js-fetch": {
+    "mode": "project",
+    "hint": "此题需要真实或模拟的 HTTP 服务。离线试运行不访问网络；请在项目中提供接口后验证成功、失败与取消请求。",
+    "testCode": "",
+    "html": ""
+  },
+  "js-url": {
+    "mode": "javascript",
+    "hint": "URL 构造只处理字符串，不会向这个地址发请求。",
+    "testCode": "console.log(buildSearchUrl(\"https://example.com/search?tag=old\", \"前端 课程\", [\"js\", \"vue\"]));",
+    "html": ""
+  },
+  "js-iteration": {
+    "mode": "javascript",
+    "hint": "把可迭代对象展开两次，确认每次可以重新开始。",
+    "testCode": "const runNumbers = range(2, 5);\nconsole.log(\"第一次:\", [...runNumbers].join(\",\"));\nconsole.log(\"第二次:\", [...runNumbers].join(\",\"));\nconsole.log(\"空区间长度:\", [...range(3, 3)].length);",
+    "html": ""
+  },
+  "js-modules": {
+    "mode": "project",
+    "hint": "本题包含两个模块文件及 import/export，需要放进模块项目按文件拆开运行；单段原生 JavaScript 控制台不加载模块依赖。",
+    "testCode": "",
+    "html": ""
+  },
+  "js-closure": {
+    "mode": "javascript",
+    "hint": "创建两个独立计数器，并验证 reset 后重新计数。",
+    "testCode": "const runA = createCounter(0), runB = createCounter(10);\nconsole.log(\"A:\", runA.next(), runA.next());\nconsole.log(\"B:\", runB.next());\nrunA.reset();\nconsole.log(\"A 重置后:\", runA.next());",
+    "html": ""
+  },
+  "js-event-loop": {
+    "mode": "javascript",
+    "hint": "使用两个不访问网络的异步任务，观察任务启动顺序与结果。",
+    "testCode": "(async () => {\n  const result = await runSequential([\n    async () => { console.log(\"任务 A\"); return \"A\"; },\n    async () => { console.log(\"任务 B\"); return \"B\"; }\n  ]);\n  console.log(\"结果:\", result.join(\",\"));\n})();",
+    "html": ""
+  },
+  "js-promise": {
+    "mode": "javascript",
+    "hint": "用本地函数模拟获取用户，不会访问网络。",
+    "testCode": "(async () => {\n  console.log(\"成功:\", await loadUserName(() => ({ name: \"alice\" })));\n  try { await loadUserName(() => { throw new Error(\"读取失败\"); }); }\n  catch (error) { console.log(\"失败:\", error.message); }\n})();",
+    "html": ""
+  },
+  "js-async": {
+    "mode": "javascript",
+    "hint": "两个短定时任务模拟并发等待，通常在 50 毫秒内完成。",
+    "testCode": "(async () => {\n  const result = await loadBoth(\n    () => new Promise(resolve => setTimeout(() => resolve(\"A\"), 30)),\n    () => new Promise(resolve => setTimeout(() => resolve(\"B\"), 10))\n  );\n  console.log(\"合并:\", JSON.stringify(result));\n})();",
+    "html": ""
+  },
+  "js-memory": {
+    "mode": "web",
+    "mainLanguage": "javascript",
+    "hint": "实现 startCounter 后连续点击计数按钮，观察每秒通知的数量；停止后继续点击与等待，确认监听器和定时器都已清理。",
+    "testCode": "const stopCounter = startCounter(document.querySelector('#count-button'), count => {\n  document.querySelector('#counter-output').textContent = '最近一次通知的计数：' + count;\n  console.log('周期通知：', count);\n});\ndocument.querySelector('#stop-counter').addEventListener('click', () => {\n  if (typeof stopCounter === 'function') { stopCounter(); stopCounter(); }\n  console.log('已重复调用 stop，之后不应再收到周期通知。');\n});",
+    "html": "<h2>点击与周期通知</h2><button id=\"count-button\" type=\"button\">点击计数</button><button id=\"stop-counter\" type=\"button\">停止并清理</button><output id=\"counter-output\">等待每秒通知</output>",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n",
+    "javascript": ""
+  },
+  "vue-reactivity": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-props": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-architecture": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-slots": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-nexttick": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-router": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-composition": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-assets": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-render": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-list": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-lifecycle": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-async-data": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-keepalive": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "vue-store": {
+    "mode": "project",
+    "hint": "本题需要 Vue 项目的编译器、组件与依赖。静态 HTML 预览不会执行 Vue 指令；请在 Vue 项目中运行组件验证交互。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-events": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-hooks": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-render": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-refs": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-state": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-props": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-types": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-effects": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-lifecycle": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-router": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-key": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-persistence": {
+    "mode": "project",
+    "hint": "本题需要 React 项目及 JSX/TSX 编译环境。原生 JavaScript 控制台不转换 JSX、类型声明或导入依赖，请在对应项目中验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "react-redux": {
+    "mode": "javascript",
+    "hint": "本题的 reducer 是纯 JavaScript，可以独立检查状态更新，无需启动 React。",
+    "testCode": "const runAdded = todosReducer([], { type: \"todos/add\", payload: { id: \"a\", title: \"学前端\" } });\nconst runToggled = todosReducer(runAdded, { type: \"todos/toggle\", payload: \"a\" });\nconsole.log(\"新增:\", JSON.stringify(runAdded));\nconsole.log(\"切换:\", JSON.stringify(runToggled));\nconsole.log(\"旧状态未变:\", runAdded[0].done === false);",
+    "html": ""
+  },
+  "performance-lazy": {
+    "mode": "web",
+    "mainLanguage": "javascript",
+    "hint": "实现 lazyImages 后滚动预览区；图片使用内置 data URL，无需网络。先停止观察再向下滚动，可检查断开后是否仍触发。",
+    "testCode": "const stopImages = lazyImages(document.querySelector('#image-list'));\nfor (const img of document.querySelectorAll('img')) {\n  img.addEventListener('load', () => console.log('图片已加载：', img.alt));\n}\ndocument.querySelector('#stop-observer').addEventListener('click', () => {\n  if (typeof stopImages === 'function') stopImages();\n  console.log('已调用 observer 清理函数。');\n});",
+    "html": "<h2>懒加载图片</h2><button id=\"stop-observer\" type=\"button\">停止观察</button><p>向下滚动预览区，观察图片进入视口附近后出现。</p><main id=\"image-list\"><img data-src='data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"160\"%3E%3Crect width=\"400\" height=\"160\" fill=\"%23195c48\"/%3E%3Ctext x=\"40\" y=\"90\" fill=\"white\" font-size=\"28\"%3ELazy image%3C/text%3E%3C/svg%3E' alt=\"第一张练习图\" width=\"400\" height=\"160\"><div class=\"spacer\"></div><img data-src='data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"160\"%3E%3Crect width=\"400\" height=\"160\" fill=\"%23195c48\"/%3E%3Ctext x=\"40\" y=\"90\" fill=\"white\" font-size=\"28\"%3ELazy image%3C/text%3E%3C/svg%3E' alt=\"第二张练习图\" width=\"400\" height=\"160\"><div class=\"spacer\"></div><img data-src='data:image/svg+xml,%3Csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"400\" height=\"160\"%3E%3Crect width=\"400\" height=\"160\" fill=\"%23195c48\"/%3E%3Ctext x=\"40\" y=\"90\" fill=\"white\" font-size=\"28\"%3ELazy image%3C/text%3E%3C/svg%3E' alt=\"第三张练习图\" width=\"400\" height=\"160\"></main>",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\nimg { display: block; max-width: 100%; background: #dae5dc; } .spacer { height: 480px; }",
+    "javascript": ""
+  },
+  "performance-layout": {
+    "mode": "web",
+    "mainLanguage": "javascript",
+    "hint": "实现 resizeCards 后拖动滑块改变容器宽度，再点重新计算，卡片应各为容器宽度的一半。这里只验证尺寸结果，仍需检查代码是否只测量一次。",
+    "testCode": "const container = document.querySelector('#card-container');\nconst cards = [...container.querySelectorAll('.card')];\nconst applySizes = () => {\n  resizeCards(container, cards);\n  console.log('容器宽度：', container.getBoundingClientRect().width, '卡片宽度：', cards.map(card => card.getBoundingClientRect().width));\n};\ndocument.querySelector('#container-size').addEventListener('input', event => { container.style.width = event.target.value + 'px'; });\ndocument.querySelector('#resize-cards').addEventListener('click', applySizes);\napplySizes();",
+    "html": "<h2>测量一次，再批量更新</h2><label>容器宽度 <input id=\"container-size\" type=\"range\" min=\"200\" max=\"500\" value=\"360\"></label><button id=\"resize-cards\" type=\"button\">重新计算卡片宽度</button><div id=\"card-container\"><div class=\"card\">卡片 A</div><div class=\"card\">卡片 B</div></div>",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n#card-container { width: 360px; max-width: 100%; margin-top: 16px; background: #e3ebe5; } .card { box-sizing: border-box; padding: 12px; margin-block: 6px; background: #f4d7a7; }",
+    "javascript": ""
+  },
+  "performance-rate-limit": {
+    "mode": "javascript",
+    "hint": "连续调用两次，再隔一小段时间调用，观察哪些调用实际执行。",
+    "testCode": "const runLimited = throttle(value => console.log(\"执行:\", value), 50);\nrunLimited(\"第一次\");\nrunLimited(\"紧接着\");\nnew Promise(resolve => setTimeout(() => { runLimited(\"稍后\"); resolve(); }, 90));",
+    "html": ""
+  },
+  "performance-resources": {
+    "mode": "web",
+    "hint": "可预览图片占位、尺寸与替代文字。草稿引用的 photo-*.webp 不在本地沙箱中，真实响应式资源选择需在有图片资源的项目验证。 HTML、CSS、JavaScript 三个页签会联动运行；外部资源不会加载。",
+    "testCode": "",
+    "html": "",
+    "mainLanguage": "html",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n",
+    "javascript": ""
+  },
+  "performance-animation": {
+    "mode": "web",
+    "mainLanguage": "javascript",
+    "hint": "实现 moveX 后点击开始动画，观察真实 requestAnimationFrame 动画；中途取消应停在当前位置。重新开始可继续验证。",
+    "testCode": "const box = document.querySelector('#moving-box');\nlet cancelMove;\ndocument.querySelector('#start-animation').addEventListener('click', () => {\n  if (typeof cancelMove === 'function') cancelMove();\n  box.style.transform = 'translateX(0)';\n  cancelMove = moveX(box, 220, 2000);\n  console.log('已启动 moveX；可在中途点击取消。');\n});\ndocument.querySelector('#cancel-animation').addEventListener('click', () => {\n  if (typeof cancelMove === 'function') cancelMove();\n  console.log('已调用取消函数。');\n});",
+    "html": "<h2>可取消的水平动画</h2><p>橙色方块应在 2 秒内向右移动 220px。</p>\n<button id=\"start-animation\" type=\"button\">开始动画</button><button id=\"cancel-animation\" type=\"button\">取消动画</button>\n<div class=\"track\"><div id=\"moving-box\"></div></div>",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n.track { margin-top: 20px; padding: 16px; background: #e6ece7; overflow: auto; } #moving-box { width: 48px; height: 48px; border-radius: 10px; background: #d59c54; }",
+    "javascript": ""
+  },
+  "performance-fragment": {
+    "mode": "web",
+    "mainLanguage": "javascript",
+    "hint": "实现 renderNames 后显示示例姓名，观察旧列表是否被替换、标签是否仅显示文字；点击清空检查空数组。",
+    "testCode": "const list = document.querySelector('#names');\ndocument.querySelector('#fill-names').addEventListener('click', () => {\n  renderNames(list, ['小林', '<strong>只显示文字</strong>', '阿青']);\n  console.log('当前姓名：', [...list.children].map(item => item.textContent));\n});\ndocument.querySelector('#empty-names').addEventListener('click', () => {\n  renderNames(list, []); console.log('清空后节点数：', list.children.length);\n});",
+    "html": "<h2>安全姓名列表</h2><button id=\"fill-names\" type=\"button\">显示示例姓名</button><button id=\"empty-names\" type=\"button\">清空列表</button><ul id=\"names\"><li>旧内容应该被替换</li></ul>",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n",
+    "javascript": ""
+  },
+  "engineering-modules": {
+    "mode": "project",
+    "hint": "需要 main.js、home.js 和 admin.js 等模块文件及构建工具；单段控制台不加载这些文件。",
+    "testCode": "",
+    "html": ""
+  },
+  "engineering-loaders": {
+    "mode": "project",
+    "hint": "这是 Webpack 插件与 Node 配置，必须在实际构建项目的 compiler 生命周期中运行。",
+    "testCode": "",
+    "html": ""
+  },
+  "engineering-babel-hmr": {
+    "mode": "project",
+    "hint": "这是 Babel 插件配置，需要 Babel 遍历 AST；普通控制台无法代替插件运行环境。",
+    "testCode": "",
+    "html": ""
+  },
+  "engineering-git": {
+    "mode": "project",
+    "hint": "这里填写 Git 命令，需在终端和练习仓库中逐步执行；页面不会执行系统命令。",
+    "testCode": "",
+    "html": ""
+  },
+  "engineering-build-speed": {
+    "mode": "javascript",
+    "hint": "使用手写的耗时记录检查统计逻辑；此试运行不执行真实构建。",
+    "testCode": "const runRows = [{ kind: \"cold\", ms: 1000 }, { kind: \"cold\", ms: 1200 }, { kind: \"warm\", ms: 200 }, { kind: \"incremental\", ms: 80 }, { kind: \"cold\", ms: -1 }];\nconsole.log(JSON.stringify(summarizeBuilds(runRows)));",
+    "html": ""
+  },
+  "browser-security": {
+    "mode": "web",
+    "mainLanguage": "javascript",
+    "hint": "实现函数后点击“添加评论”，正文里的 <b> 应作为文字显示，不能变成加粗标签。也可输入其他文本重复验证。",
+    "testCode": "document.querySelector('#publish-comment').addEventListener('click', () => {\n  renderComment(document.querySelector('#comments'), {\n    author: document.querySelector('#author').value,\n    body: document.querySelector('#comment-body').value\n  });\n  console.log('已调用 renderComment，请检查 strong、p 和纯文本结果。');\n});",
+    "html": "<h2>评论预览</h2>\n<label>作者 <input id=\"author\" value=\"小林\"></label>\n<p><label>正文 <textarea id=\"comment-body\">&lt;b&gt;这段标签应作为文字显示&lt;/b&gt;</textarea></label></p>\n<button id=\"publish-comment\" type=\"button\">添加评论</button><div id=\"comments\"></div>",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\narticle { padding: 16px; margin-top: 12px; background: white; border: 1px solid #c9d8ce; border-radius: 12px; }",
+    "javascript": ""
+  },
+  "browser-cache": {
+    "mode": "javascript",
+    "hint": "这里检查响应决策函数，不会建立 HTTP 服务器或实际使用浏览器缓存。",
+    "testCode": "console.log(\"首次请求:\", JSON.stringify(getResponse(undefined)));\nconsole.log(\"版本一致:\", JSON.stringify(getResponse('\"v2\"')));",
+    "html": ""
+  },
+  "browser-rendering": {
+    "mode": "javascript",
+    "hint": "用 45 个数检查分批处理结果；定时让出控制权不等于已测量真实页面帧率。",
+    "testCode": "(async () => {\n  const visited = [];\n  await processBatches(Array.from({ length: 45 }, (_, index) => index + 1), value => visited.push(value));\n  console.log(\"处理数量:\", visited.length);\n  console.log(\"首尾:\", visited[0], visited.at(-1));\n})();",
+    "html": ""
+  },
+  "browser-events": {
+    "mode": "web",
+    "mainLanguage": "javascript",
+    "hint": "实现 attachDelete 后，点击删除按钮内部文字，再新增一项并删除。停止委托后，删除按钮应失效。配套调用只创建测试列表，不实现删除逻辑。",
+    "testCode": "const list = document.querySelector('#task-list');\nconst stopDelete = attachDelete(list);\nlet nextItem = 1;\ndocument.querySelector('#add-item').addEventListener('click', () => {\n  const item = document.createElement('li');\n  item.append(document.createTextNode('新增课程 ' + nextItem++ + ' '));\n  const button = document.createElement('button');\n  button.type = 'button'; button.dataset.remove = '';\n  const label = document.createElement('span'); label.textContent = '删除';\n  button.append(label); item.append(button); list.append(item);\n});\ndocument.querySelector('#stop-listening').addEventListener('click', () => {\n  if (typeof stopDelete === 'function') stopDelete();\n  console.log('已调用解绑函数，再点删除检查是否停止。');\n});",
+    "html": "<h2>动态课程列表</h2>\n<button id=\"add-item\" type=\"button\">新增一项</button><button id=\"stop-listening\" type=\"button\">停止委托</button>\n<ul id=\"task-list\"><li>学习 DOM <button type=\"button\" data-remove><span>删除</span></button></li><li>学习事件委托 <button type=\"button\" data-remove><span>删除</span></button></li></ul>\n<p>列表外：<button type=\"button\" data-remove>这个按钮不应删除列表项</button></p>",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n",
+    "javascript": ""
+  },
+  "browser-storage": {
+    "mode": "javascript",
+    "hint": "通过注入的模拟 storage 检查读取与回退，不读取你实际的浏览器存储。",
+    "testCode": "console.log(\"合法数据:\", JSON.stringify(readPrefs({ getItem() { return '{\"version\":1,\"theme\":\"dark\"}'; } })));\nconsole.log(\"损坏数据:\", JSON.stringify(readPrefs({ getItem() { return '{broken'; } })));\nconsole.log(\"读取失败:\", JSON.stringify(readPrefs({ getItem() { throw new Error(\"禁止读取\"); } })));",
+    "html": ""
+  },
+  "browser-tabs": {
+    "mode": "project",
+    "hint": "本题需要两个同源标签页的 BroadcastChannel。隔离试运行不接入真实页面会话；请在练习项目中开两个标签页验证。",
+    "testCode": "",
+    "html": ""
+  },
+  "browser-processes": {
+    "mode": "project",
+    "hint": "本题是独立 Worker 文件，需由主页面创建 Worker 并发送消息；请在项目中分别保存主页面和 worker.js 验证协议。",
+    "testCode": "",
+    "html": ""
+  },
+  "browser-threats": {
+    "mode": "javascript",
+    "hint": "用显式构造的消息对象测试来源和数据验证，不接收外部窗口消息。",
+    "testCode": "const runSource = {};\nconsole.log(\"可信:\", JSON.stringify(acceptMessage({ origin: \"https://example.com\", source: runSource, data: { type: \"resize\", height: 200 } }, \"https://example.com\", runSource)));\nconsole.log(\"来源错误:\", acceptMessage({ origin: \"https://other.example\", source: runSource, data: { type: \"resize\", height: 200 } }, \"https://example.com\", runSource));\nconsole.log(\"高度越界:\", acceptMessage({ origin: \"https://example.com\", source: runSource, data: { type: \"resize\", height: 9999 } }, \"https://example.com\", runSource));",
+    "html": ""
+  },
+  "network-methods": {
+    "mode": "project",
+    "hint": "本题需要能够处理 PUT 的 HTTP 接口；离线试运行不访问网络，请在项目中验证请求体、状态码与错误分支。",
+    "testCode": "",
+    "html": ""
+  },
+  "network-headers": {
+    "mode": "project",
+    "hint": "本题需要真实或模拟 HTTP 接口以核对请求头与 JSON 响应；离线试运行不会请求外部服务。",
+    "testCode": "",
+    "html": ""
+  },
+  "network-http-versions": {
+    "mode": "javascript",
+    "hint": "注入示例性能条目检查计数，不读取本页的真实网络性能记录。",
+    "testCode": "const runCounts = countProtocols([{ nextHopProtocol: \"h2\" }, { nextHopProtocol: \"h2\" }, { nextHopProtocol: \"h3\" }, { nextHopProtocol: \"\" }]);\nconsole.log(JSON.stringify([...runCounts]));",
+    "html": ""
+  },
+  "network-https": {
+    "mode": "javascript",
+    "hint": "这里只校验 URL 字符串，不发请求、不验证真实证书。",
+    "testCode": "console.log(\"合法:\", validateEndpoint(\"https://example.com/api#section\"));\ntry { validateEndpoint(\"http://example.com/api\"); } catch (error) { console.log(\"拒绝 HTTP:\", error.message); }\ntry { validateEndpoint(\"https://user:pass@example.com/api\"); } catch (error) { console.log(\"拒绝凭据:\", error.message); }",
+    "html": ""
+  },
+  "network-dns-tcp": {
+    "mode": "javascript",
+    "hint": "使用示例时间点检查差值与无效范围，不执行 DNS 或 TCP 请求。",
+    "testCode": "console.log(\"正常:\", JSON.stringify(timingSummary({ domainLookupStart: 10, domainLookupEnd: 15, connectStart: 15, connectEnd: 40 })));\nconsole.log(\"无效范围:\", JSON.stringify(timingSummary({ domainLookupStart: 20, domainLookupEnd: 10 })));",
+    "html": ""
+  },
+  "network-layers": {
+    "mode": "javascript",
+    "hint": "检查不同阶段的提示文本，不建立真实连接。",
+    "testCode": "console.log(\"DNS:\", describeFailure(\"dns\"));\nconsole.log(\"HTTP:\", describeFailure(\"http\"));\nconsole.log(\"未知:\", describeFailure(\"something-else\"));",
+    "html": ""
+  },
+  "html-semantics": {
+    "mode": "web",
+    "hint": "完成表单后填写邮箱并点击“订阅”，查看控制台中的邮箱值；浏览器还会验证 email 与 required。配套 JS 只负责观察提交，不补全表单。",
+    "testCode": "",
+    "html": "",
+    "mainLanguage": "html",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n",
+    "javascript": "const form = document.querySelector('form');\nif (form) form.addEventListener('submit', event => {\n  event.preventDefault();\n  console.log('提交的邮箱：', new FormData(form).get('email'));\n});"
+  },
+  "html-document": {
+    "mode": "web",
+    "hint": "可预览完整 HTML 文档的可见内容。cover.png 等项目文件不会自动载入；可使用 data URL 图片检查布局。 HTML、CSS、JavaScript 三个页签会联动运行；外部资源不会加载。",
+    "testCode": "",
+    "html": "",
+    "mainLanguage": "html",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n",
+    "javascript": ""
+  },
+  "html-scripts": {
+    "mode": "project",
+    "hint": "此题关注外部脚本下载与执行顺序，需要实际 library.js、app.js 和 metrics.js；静态预览不加载外部脚本，也不能验证 async/defer 时序。",
+    "testCode": "",
+    "html": ""
+  },
+  "html-graphics": {
+    "mode": "web",
+    "hint": "SVG 可直接显示，修改 rect 的尺寸和颜色后重新运行。也可在 HTML 页签添加 canvas，并在 JavaScript 页签编写绘制代码，比较两种绘图方式。",
+    "testCode": "",
+    "html": "",
+    "mainLanguage": "html",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n",
+    "javascript": ""
+  },
+  "html-offline": {
+    "mode": "project",
+    "hint": "这是 Service Worker 的 fetch 事件处理器，需要实际站点注册、缓存与离线切换；运行沙箱不注册 Service Worker。",
+    "testCode": "",
+    "html": ""
+  },
+  "html-drag": {
+    "mode": "web",
+    "mainLanguage": "javascript",
+    "hint": "实现 installDropZone 后，把上方文字拖到放置区；结果应保留原文本。停止监听后再拖动，输出不应更新。",
+    "testCode": "document.querySelector('#drag-source').addEventListener('dragstart', event => {\n  event.dataTransfer.setData('text/plain', event.currentTarget.textContent);\n});\nconst stopDrop = installDropZone(document.querySelector('#drop-zone'), text => {\n  document.querySelector('#drop-result').textContent = text;\n  console.log('收到原始文本：', text);\n});\ndocument.querySelector('#stop-drop').addEventListener('click', () => {\n  if (typeof stopDrop === 'function') stopDrop();\n  console.log('已调用拖放清理函数。');\n});",
+    "html": "<h2>纯文本拖放</h2><p id=\"drag-source\" draggable=\"true\">拖动这一行文字到下方区域</p><div id=\"drop-zone\">把文字拖到这里</div><button id=\"stop-drop\" type=\"button\">停止监听</button><output id=\"drop-result\">尚未接收文本</output>",
+    "css": "body { margin: 0; padding: 24px; color: #193c32; background: #f6f8f4; font: 16px/1.6 system-ui, sans-serif; }\nbutton, input, textarea { font: inherit; }\nbutton { padding: 8px 14px; margin: 4px; border: 1px solid #8cae9f; border-radius: 8px; background: white; color: #195c48; cursor: pointer; }\ninput, textarea { padding: 8px; border: 1px solid #b8cabc; border-radius: 6px; }\noutput { display: block; margin-top: 16px; padding: 12px; background: #e4eee5; border-radius: 8px; }\nli { padding: 8px; }\n#drag-source { cursor: grab; padding: 12px; background: #e4eee5; } #drop-zone { min-height: 90px; padding: 20px; border: 2px dashed #7da18c; border-radius: 12px; }",
+    "javascript": ""
+  },
+  "css-display": {
+    "mode": "web",
+    "hint": "预览 HTML 已提供 .card。修改盒模型、边框、宽度后运行 CSS，观察卡片尺寸。 可在 HTML 页签修改配套结构，也可在 JavaScript 页签添加事件。",
+    "testCode": "",
+    "html": "<div class=\"card\" style=\"background:#edf5ef;color:#244333\">课程卡片：这段内容用于观察 padding、border 和 box-sizing 对宽度的影响。</div>\n<p>修改上方 CSS 后点击预览。卡片的样式由你的 CSS 决定。</p>",
+    "mainLanguage": "css",
+    "css": "",
+    "javascript": "const card = document.querySelector('.card');\nif (card) console.log('卡片边框盒宽度：', card.getBoundingClientRect().width);"
+  },
+  "css-units-center": {
+    "mode": "web",
+    "hint": "预览 HTML 已提供 .overlay 和 .dialog；居中位置相对于预览区域。 可在 HTML 页签修改配套结构，也可在 JavaScript 页签添加事件。",
+    "testCode": "",
+    "html": "<div class=\"overlay\" style=\"background:#e8eee9\">\n  <section class=\"dialog\" style=\"background:white;border:1px solid #789680;padding:20px\">\n    <h2>课程提示</h2><p>这是对话框内容。请让它在预览区域内居中，窄屏时不超出边界。</p>\n  </section>\n</div>",
+    "mainLanguage": "css",
+    "css": "",
+    "javascript": ""
+  },
+  "css-bfc": {
+    "mode": "web",
+    "hint": "预览 HTML 已提供浮动头像和简介。观察开启 flow-root 后容器是否包住浮动内容。 可在 HTML 页签修改配套结构，也可在 JavaScript 页签添加事件。",
+    "testCode": "",
+    "html": "<div class=\"profile\" style=\"background:#e7f1e8;border:1px solid #789680;padding:12px\">\n  <div class=\"avatar\" style=\"background:#81b294;border-radius:8px;color:white;text-align:center\">头像</div>\n  <p>小林的学习卡片</p>\n</div>\n<p>下一个区块：观察它是否受到前面的浮动影响。</p>",
+    "mainLanguage": "css",
+    "css": "",
+    "javascript": ""
+  },
+  "css-stacking": {
+    "mode": "web",
+    "hint": "导航与弹层均放在预览顶层；观察两者重叠时的前后关系。 可在 HTML 页签修改配套结构，也可在 JavaScript 页签添加事件。",
+    "testCode": "",
+    "html": "<nav class=\"nav\" style=\"background:#d5e5ff;padding:20px\">导航栏</nav>\n<main style=\"min-height:600px;padding:20px\">课程内容</main>\n<div class=\"dialog-layer\" style=\"background:#28452d55;padding:60px 24px\">\n  <section style=\"background:white;border:1px solid #789680;padding:20px\">弹层：应该覆盖导航栏。</section>\n</div>",
+    "mainLanguage": "css",
+    "css": "",
+    "javascript": ""
+  },
+  "css-loading": {
+    "mode": "web",
+    "hint": "预览 HTML 提供 .notice。更改层顺序或颜色规则后预览，观察层叠结果。 可在 HTML 页签修改配套结构，也可在 JavaScript 页签添加事件。",
+    "testCode": "",
+    "html": "<p class=\"notice\">这一条提示文字的颜色由你的层叠规则决定。</p>",
+    "mainLanguage": "css",
+    "css": "",
+    "javascript": ""
+  },
+  "css-features-sprites": {
+    "mode": "web",
+    "hint": "预览 HTML 提供 .icon.icon-search；示例里的 icons@2x.png 需要在项目中提供，本地预览可改用 data URL 图片，空白不代表定位代码错误。 可在 HTML 页签修改配套结构，也可在 JavaScript 页签添加事件。",
+    "testCode": "",
+    "html": "<p>图标位置：<span class=\"icon icon-search\" role=\"img\" aria-label=\"搜索\" style=\"outline:1px dashed #789680\"></span></p>\n<p>虚线标出元素范围。请在 CSS 中提供可用的内嵌图片资源后检查背景定位。</p>",
+    "mainLanguage": "css",
+    "css": "",
+    "javascript": ""
+  },
+  "css-hairline": {
+    "mode": "web",
+    "hint": "预览 HTML 提供 .separator。细线观感还取决于当前设备像素比和浏览器缩放。 可在 HTML 页签修改配套结构，也可在 JavaScript 页签添加事件。 点击分隔线区域，确认伪元素没有阻挡事件；设备像素比仍由实际屏幕决定。",
+    "testCode": "",
+    "html": "<section class=\"separator\" style=\"padding:20px;color:#244b35\">第一条内容：底部使用你的伪元素细线。</section>\n<section class=\"separator\" style=\"padding:20px;color:#244b35\">第二条内容：修改 CSS 后再次预览。</section>",
+    "mainLanguage": "css",
+    "css": "",
+    "javascript": "document.querySelector('.separator')?.addEventListener('click', () => console.log('分隔线区域收到了点击'));"
+  }
+}

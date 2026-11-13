@@ -1,0 +1,1622 @@
+{
+  "vue-reactivity": {
+    "title": "从普通变量到会更新页面的数据",
+    "intro": "在购物车里，数量从一变成二，数字和总价都应更新。响应式就是让“数据变化”与“依赖它的界面或计算”建立联系。先理解状态、读取和更新，再学习 Vue 如何侦测这些变化；本课示例使用 Vue 3 单文件组件。",
+    "objectives": [
+      "理解状态与响应式依赖",
+      "会使用 ref 和 reactive",
+      "区分数据变化与页面更新"
+    ],
+    "prerequisites": [
+      "JavaScript 变量与对象",
+      "HTML 的基本标签"
+    ],
+    "sections": [
+      {
+        "title": "状态：程序在此刻记住的事实",
+        "paragraphs": [
+          "状态是会随操作改变的数据，例如数量、是否登录和输入框内容。普通 JavaScript 变量改变后，浏览器并不知道哪段页面应该随之改变；直接操作 DOM 时，你要自己找到元素并更新文字。Vue 让模板描述状态应该怎样显示。",
+          "依赖是“某个结果需要读取哪些数据”的关系。总价读取数量和单价，数量变化后总价就需要重新计算。响应式不是定时扫描所有变量，而是在受管理的数据被读取和修改时记录关系并安排相关工作。"
+        ]
+      },
+      {
+        "title": "ref 与 reactive：怎样让数据进入管理范围",
+        "paragraphs": [
+          "ref 把一个值放进带有 value 属性的容器，既能装数字，也能装对象；在脚本里通过 count.value 读取和修改。reactive 返回对象的代理，可以直接读写属性，适合有关联的一组字段。这里的代理是一个替你接收对象操作的包装对象。",
+          "模板会自动解开常见 ref，所以插值里写 count 而不是 count.value。脚本中把响应式对象的某个数字属性直接解构成普通变量，会取出当时的值而失去这一条属性连接；需要保留连接时使用合适的 ref 工具，或继续通过对象访问。"
+        ]
+      },
+      {
+        "title": "从点击到显示：沿着一次更新走完",
+        "paragraphs": [
+          "下面的数量用 ref 保存。模板读取数量和表达式 count * price，点击按钮只改变数量，Vue 会根据新数据更新对应显示。你不必同时手写“更新数字”和“更新总价”两段 DOM 操作。",
+          "Vue 3 主要用 Proxy 管理响应式对象，ref 则提供自己的读写入口。Vue 2 的对象属性侦测以 getter/setter 改写为基础，对新增属性和部分数组操作有额外限制。学习新代码先掌握 Vue 3 的用法，维护旧项目时再确认其版本。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<script setup>\nimport { ref } from 'vue';\nconst count = ref(1);\nconst price = 12;\n</script>\n<template>\n  <p>数量 {{ count }}，总价 {{ count * price }} 元</p>\n  <button @click=\"count++\">增加一件</button>\n</template>",
+          "explanation": "初始显示数量 1、总价 12。点击一次后，数量变为 2、总价变为 24；price 没有变化，因此这里用普通常量即可。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：制作一个饮料购买计数器",
+      "scenario": "制作一个饮料购买计数器。用户每次点击加一，页面同时显示数量和总价。",
+      "steps": [
+        "先列出真正会变化的数量，把固定价格保留为常量。",
+        "使用 ref 保存数量，在模板写出数量与总价的关系。",
+        "点击时只更新数量，观察两处显示是否一起变化。",
+        "把数量重置为零，确认总价也随之归零，而不是另存一份容易不同步的总价。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "为什么数量适合存成状态，而可以直接计算的总价未必需要再保存一份？",
+      "answer": "总价由数量和单价决定。保留两份可修改数据就需要额外同步；直接从源数据计算，关系更明确，也减少忘记更新的机会。"
+    },
+    "takeaways": [
+      "状态描述会变化的事实",
+      "响应式把读取关系与更新联系起来",
+      "先选择合适的数据入口，再讨论侦测实现"
+    ]
+  },
+  "vue-props": {
+    "title": "父子组件怎样传数据和表达请求",
+    "intro": "一个页面可以拆成父组件和子组件。父组件像负责业务安排的外层，子组件像一个可重复使用的局部界面。组件通信要解决两件事：子组件拿到什么数据，以及用户操作后由谁决定修改。",
+    "objectives": [
+      "理解 props 是组件输入",
+      "区分修改请求与直接改值",
+      "完成父传子和子通知父"
+    ],
+    "prerequisites": [
+      "Vue 组件和 ref",
+      "函数参数与回调"
+    ],
+    "sections": [
+      {
+        "title": "props：像函数参数一样描述输入",
+        "paragraphs": [
+          "props 是父组件传给子组件的数据。父组件在标签上绑定属性，子组件声明自己接收哪些属性，再使用它们显示界面。属性可以是字符串、数字、数组或对象，命名应说明业务含义，例如 count 比 value1 更容易理解。",
+          "props 是单向向下传递的：父组件状态更新，子组件接收到新的输入。子组件应该把顶层 prop 当作只读数据，而不是偷偷改变它。这样从父组件就能追踪数据由哪里来，也不会出现父级下一次更新覆盖子级修改的混乱。"
+        ]
+      },
+      {
+        "title": "事件：子组件报告发生了什么",
+        "paragraphs": [
+          "事件是子组件对外发出的通知。子组件可以表达“用户想增加数量”，父组件再决定是否允许增加以及增加多少。Vue 的 emit 发出具名事件，父组件用 @事件名 监听；这不是自动修改父变量的魔法。",
+          "对象和数组虽然作为 props 传入，内部仍可能共享引用，因此改嵌套属性可能影响父组件。技术上能改不等于好的通信设计。把修改意图变成明确事件，或由双方约定更新入口，比依赖这种隐式副作用更容易维护。"
+        ]
+      },
+      {
+        "title": "最小通信实例：计数按钮",
+        "paragraphs": [
+          "下面是两个文件，父组件持有 count，子组件只显示 count 并发出 increase。一次点击依次经过子组件处理器、事件通知、父组件更新和新的 props 传入，整个路径可以逐步观察。",
+          "复杂表单常用 v-model 约定来组合“当前值”和“更新事件”。理解本例后再使用这种简写，才能知道数据究竟在哪里被修改，而不会把所有双向交互都理解成子组件可以随便改父组件。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<!-- Parent.vue -->\n<script setup>\nimport { ref } from 'vue';\nimport CounterButton from './CounterButton.vue';\nconst count = ref(0);\n</script>\n<template><CounterButton :count=\"count\" @increase=\"count++\" /></template>\n\n<!-- CounterButton.vue：另存为独立文件 -->\n<script setup>\ndefineProps({ count: { type: Number, required: true } });\nconst emit = defineEmits(['increase']);\n</script>\n<template><button @click=\"emit('increase')\">当前 {{ count }}</button></template>",
+          "explanation": "子组件没有修改 props.count。父组件监听 increase 后执行 count++，新值才重新传入子组件。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：设计一个购物车数量按钮",
+      "scenario": "设计一个购物车数量按钮。库存最多五件，限制由父组件统一决定。",
+      "steps": [
+        "父组件保存数量和库存。",
+        "子组件通过 props 显示数量，点击后只发出增加请求。",
+        "父组件监听事件，只有数量小于库存时才增加。",
+        "在其他位置修改父级数量，确认子组件无需额外同步就显示新值。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "如果子组件只发出 increase，父组件完全不监听，会自动增加父级数量吗？",
+      "answer": "不会。事件表达请求或事实，如何更新状态由接收方决定；没有监听器执行修改，父级数量就保持不变。"
+    },
+    "takeaways": [
+      "props 是输入而非子组件的私有状态",
+      "事件把用户意图传回父组件",
+      "状态所有者负责决定如何修改"
+    ]
+  },
+  "vue-architecture": {
+    "title": "先认识组件、界面状态与单页应用",
+    "intro": "框架解决的不是“把 HTML 换一种写法”，而是让复杂页面有可管理的结构。先看一个由列表、筛选框和详情区组成的页面，理解组件如何划分、状态怎样驱动显示，以及浏览器地址如何参与组织页面。",
+    "objectives": [
+      "知道组件负责什么",
+      "理解数据驱动与 MVVM 术语",
+      "区分 SPA 和页面首次加载"
+    ],
+    "prerequisites": [
+      "HTML 与 JavaScript 基础",
+      "Vue 模板和 ref"
+    ],
+    "sections": [
+      {
+        "title": "组件：把结构、行为与样式围绕一件事组织",
+        "paragraphs": [
+          "组件是可组合的界面单元，例如搜索框、商品卡片和购物车摘要。一个组件应该有明确职责、可理解的输入与输出，而不是越小越好。相同视觉块是否值得复用，要看其行为和数据约定是否真的一致。",
+          "父组件组合子组件，形成组件树。树的关系用于组织界面，但状态的位置应由使用范围决定：只在一个输入框使用的数据可放局部；两个兄弟都需要的选中项通常放到共同父级，避免各自维护一份而不同步。"
+        ]
+      },
+      {
+        "title": "数据驱动：先描述状态，再描述状态对应的界面",
+        "paragraphs": [
+          "Model 可以理解为数据和业务状态，View 是用户看到的界面，ViewModel 则承担数据与界面之间的连接。MVVM 是一种帮助理解职责的模式名称，不必把每个 Vue 文件硬塞进某个字母里。",
+          "实际写作时，先给界面列出状态，如列表数据、选中编号和加载标记，再通过模板表达显示规则。状态改变后，框架更新依赖它的界面。这样比在很多事件中分别寻找 DOM、修改文字和切换样式更容易保持一致。"
+        ]
+      },
+      {
+        "title": "SPA：切换内容不必整页重新加载",
+        "paragraphs": [
+          "单页应用 SPA 是一种组织形式：初次获取应用入口后，很多站内切换由前端路由决定显示哪个组件，而不为每次操作重新下载完整页面。地址仍应能表达当前位置，方便刷新、分享和后退。",
+          "SPA 并不等于无需服务器，也不保证首屏一定快。服务器仍提供入口、静态资源和业务接口；大型应用还需拆包与合适的渲染策略。本例先不引入路由，用一个选中编号展示“状态决定内容”的最小关系。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<script setup>\nimport { ref, computed } from 'vue';\nconst courses = [{ id: 1, title: 'HTML' }, { id: 2, title: 'CSS' }];\nconst selectedId = ref(1);\nconst selected = computed(() => courses.find(c => c.id === selectedId.value));\n</script>\n<template>\n  <button v-for=\"c in courses\" :key=\"c.id\" @click=\"selectedId = c.id\">{{ c.title }}</button>\n  <h2>{{ selected.title }}</h2>\n</template>",
+          "explanation": "点击课程只改变 selectedId，详情由 computed 推导。这里展示的是状态切换；要支持真实 URL，还需要前端路由。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：规划一个课程学习页面",
+      "scenario": "规划一个课程学习页面。左边列表和右边详情必须始终指向同一门课。",
+      "steps": [
+        "识别列表、详情、搜索三个职责，先不急于按每个标签拆文件。",
+        "把选中课程编号放到共同父级，两个区域都从这里获得信息。",
+        "让详情通过编号查找课程，不再保存第二份选中课程副本。",
+        "需要可分享链接时，再把课程编号与路由参数建立明确对应。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "为什么把选中课程分别存在列表组件和详情组件里容易出问题？",
+      "answer": "一次切换必须同时更新两份状态，任意一处漏掉就会不一致。共用同一个可信来源，两个界面可以由同一事实推导。"
+    },
+    "takeaways": [
+      "组件围绕职责划分",
+      "状态归属由使用范围决定",
+      "SPA 是页面组织形式而不是性能保证"
+    ]
+  },
+  "vue-slots": {
+    "title": "插槽：让容器决定布局，让调用者填写内容",
+    "intro": "一个卡片组件可能总有相同的边框和间距，却要分别装商品、通知或表单。props 适合传递数据，插槽则允许调用者提供一段界面结构。理解这一区别，就能避免把卡片写成几十个控制标签的布尔参数。",
+    "objectives": [
+      "区分内容结构与普通数据",
+      "使用默认和具名插槽",
+      "理解插槽内容的数据作用域"
+    ],
+    "prerequisites": [
+      "Vue 父子组件与 props",
+      "模板插值"
+    ],
+    "sections": [
+      {
+        "title": "默认插槽：给布局留出内容位置",
+        "paragraphs": [
+          "子组件中的 slot 标记一个可被填入内容的位置。父组件把标签写在子组件的开始与结束标签之间，这段结构就会放到该位置。如果父组件没有提供内容，slot 内的后备内容可以给出默认提示。",
+          "插槽不是把子组件的所有内部数据公开给父组件。父组件提供的结构默认仍读取父组件作用域中的变量，子组件自身模板读取自己的变量。先确认每一段模板由谁编写，再判断它能访问哪份数据。"
+        ]
+      },
+      {
+        "title": "具名插槽：一个布局可以预留多个区域",
+        "paragraphs": [
+          "当卡片有标题、正文和操作区时，可以给插槽命名，例如 header 和 actions。调用者使用 template #header 指明内容放到哪里；没有命名的通常落入默认插槽。这样布局组件控制位置，使用者控制区域内的内容。",
+          "插槽名像页面上的区域标签，而不是业务数据字段。标题只是普通字符串时也可以用 prop；需要标题内带图标、链接和其他结构时，插槽更加灵活。选择哪一种要看调用者需要控制的程度。"
+        ]
+      },
+      {
+        "title": "作用域插槽：容器主动提供渲染所需数据",
+        "paragraphs": [
+          "有时列表组件掌握当前项目，调用者却决定每个项目如何画出来。子组件可以在 slot 上绑定 item，再由父组件接收插槽参数。只有显式传出的数据可以用于这种协作，不会自动暴露组件的全部私有状态。",
+          "下面先实现具名插槽卡片。学会它后，看到 slot :item=\"item\" 和 #default=\"{ item }\" 时，可以把它理解为“子组件调用父组件提供的渲染函数，并把当前项目作为参数交给它”。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<!-- Card.vue -->\n<template>\n  <article>\n    <header><slot name=\"header\">默认标题</slot></header>\n    <section><slot /></section>\n    <footer><slot name=\"actions\" /></footer>\n  </article>\n</template>\n<!-- 调用 Card 的父组件模板 -->\n<Card>\n  <template #header><h2>今日课程</h2></template>\n  <p>先学习数据类型，再完成练习。</p>\n  <template #actions><button>开始学习</button></template>\n</Card>",
+          "explanation": "Card 文件负责三段布局。父组件分别填写标题、正文和按钮；实际使用时须在父组件导入 Card。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：把通知卡片和课程卡片统一为同一种布局",
+      "scenario": "把通知卡片和课程卡片统一为同一种布局。两者的正文结构不相同。",
+      "steps": [
+        "先写只有边框与三个区域的 Card。",
+        "通知调用处填文字和关闭按钮，课程调用处填进度和学习链接。",
+        "检查这些内容读取的变量都来自各自调用者。",
+        "只有容器确实掌握调用者需要的数据时，才通过插槽参数传出。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "父组件写在 Card 插槽里的 userName 默认读取父组件还是 Card 内部的同名变量？",
+      "answer": "默认读取父组件的 userName。插槽内容保留其定义位置的作用域，除非通过插槽参数显式接收子组件提供的数据。"
+    },
+    "takeaways": [
+      "props 主要传数据，插槽主要传结构",
+      "具名插槽表达布局区域",
+      "插槽作用域与模板定义位置相关"
+    ]
+  },
+  "vue-nexttick": {
+    "title": "数据更新与 DOM 更新为什么分成两步",
+    "intro": "修改变量是一件事，让浏览器中的元素反映新值是另一件事。Vue 会把一轮同步代码里的多次更新合并安排，避免每修改一个字段就立即重做页面。nextTick 用来等待这轮已经排队的 DOM 更新完成。",
+    "objectives": [
+      "分清响应式状态和 DOM",
+      "理解批量更新的目的",
+      "在确需读 DOM 时使用 nextTick"
+    ],
+    "prerequisites": [
+      "Vue ref 与事件",
+      "Promise 和 await"
+    ],
+    "sections": [
+      {
+        "title": "先有数据，再有渲染结果",
+        "paragraphs": [
+          "模板读取响应式状态，生成页面应该呈现的结果。状态修改后，JavaScript 中的新值已经可读，但已有 DOM 节点可能还展示旧值。DOM 是渲染后的产物，不应被当成状态的唯一来源。",
+          "假设同一处理函数把标题、数量和颜色都更新一次，立即渲染三次通常没有必要。Vue 将这些变化排进更新队列，在合适时机统一处理。于是同步代码与界面更新之间出现了一个可以理解的时间边界。"
+        ]
+      },
+      {
+        "title": "nextTick 等待的是 Vue 的更新完成",
+        "paragraphs": [
+          "nextTick 返回的 Promise 可以被 await；等待结束后，再访问本次更新产生的 DOM。常见用途包括展开区域后聚焦新出现的输入框、添加列表项后测量尺寸，以及读取已经改变的元素内容。",
+          "它不是万能延迟函数，不保证网络请求完成，不保证所有图片已加载，也不等于浏览器已经把像素显示到屏幕。需要等待哪件事，就使用那件事提供的完成信号；不要把固定 setTimeout 当作可靠替代。"
+        ]
+      },
+      {
+        "title": "实例：显示输入框后再聚焦",
+        "paragraphs": [
+          "下面使用 v-if 决定输入框是否存在，用模板 ref 保存挂载后的 DOM 引用。先把 show 改成 true，再 await nextTick，随后才可对新创建的输入框调用 focus。",
+          "如果只需要基于新数据继续计算，通常直接读状态即可，不用 nextTick。只有后续动作依赖更新后的 DOM，才需要跨过这个时间边界；否则随处等待会掩盖数据流设计问题。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<script setup>\nimport { ref, nextTick } from 'vue';\nconst show = ref(false);\nconst input = ref(null);\nasync function openEditor() {\n  show.value = true;\n  await nextTick();\n  input.value?.focus();\n}\n</script>\n<template>\n  <button @click=\"openEditor\">编辑姓名</button>\n  <input v-if=\"show\" ref=\"input\" aria-label=\"姓名\">\n</template>",
+          "explanation": "初始没有 input 节点。点击后先安排创建节点，nextTick 结束时再聚焦；可选链同时避免节点不存在时抛错。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：制作“点击编辑后自动输入”的姓名表单",
+      "scenario": "制作“点击编辑后自动输入”的姓名表单。输入框最初不在页面中。",
+      "steps": [
+        "使用 show 控制输入框，使用模板 ref 保存元素引用。",
+        "先观察直接在 show 修改后访问 ref 时的时序风险。",
+        "等待 nextTick 后再聚焦，并保留节点存在性检查。",
+        "区分这个 DOM 就绪动作与稍后保存姓名的网络请求，分别处理完成状态。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "count.value++ 后马上要计算 count.value * 2，需要先 nextTick 吗？",
+      "answer": "不需要。响应式数据本身已经更新；nextTick 解决的是依赖更新后 DOM 的动作，不是普通 JavaScript 读取新数据。"
+    },
+    "takeaways": [
+      "状态更新不等于 DOM 已更新",
+      "nextTick 等待 Vue 已排队的渲染更新",
+      "按真正等待的对象选择完成信号"
+    ]
+  },
+  "vue-router": {
+    "title": "地址、页面组件和浏览器历史怎样连接",
+    "intro": "站内切换不仅是把一个 div 换成另一个。用户还期待复制地址、刷新后仍在原页，以及用浏览器后退回到之前的页面。前端路由负责把 URL 与页面组件对应起来，并协调导航和历史记录。",
+    "objectives": [
+      "理解路由表和路由参数",
+      "使用 RouterLink 与 RouterView",
+      "解释 history 模式的服务器责任"
+    ],
+    "prerequisites": [
+      "Vue 组件基础",
+      "URL 的路径与查询参数"
+    ],
+    "sections": [
+      {
+        "title": "路由表：约定哪个地址显示哪个组件",
+        "paragraphs": [
+          "路由表是一组匹配规则，例如 / 显示课程首页，/courses/:id 显示课程详情。冒号后的 id 是可变路径参数，地址中的 42 可以成为详情组件读取的课程编号。参数是输入，应验证后再用于请求数据。",
+          "RouterView 是匹配组件的展示位置，RouterLink 是配合路由器导航的链接。它们把地址变化与组件展示连接起来。页面组件内部仍使用普通 props、状态和事件，不会因为使用路由就变成另一种组件。"
+        ]
+      },
+      {
+        "title": "导航、刷新与后退是不同入口",
+        "paragraphs": [
+          "点击路由链接时，路由器可以更新浏览器历史并切换组件，通常不用重新请求整份 HTML。刷新或直接粘贴详情地址时，请求却会先到服务器，服务器需要知道这条地址应返回应用入口。",
+          "history 模式使用正常路径，服务器通常为前端页面路径提供回退处理；API 与静态文件不应被错误回退成 HTML。hash 模式把前端路径放在 # 后，片段通常不随 HTTP 请求发送，但它有不同的地址形式和使用取舍。"
+        ]
+      },
+      {
+        "title": "最小路由配置与页面占位",
+        "paragraphs": [
+          "下面的 main.js 在创建应用后安装 router，App.vue 使用 RouterView 展示匹配页面。真实项目把页面组件拆成文件即可；为了看清关系，这里用短小的内联组件表示。",
+          "路由守卫可以决定某次导航是否允许，但前端页面上的登录判断不能替代服务端授权。页面能否进入与接口是否允许读取敏感数据是两个层次，开始学习时应先把导航链路走通，再增加业务检查。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "// main.js（已安装 vue 与 vue-router）\nimport { createApp, h } from 'vue';\nimport { createRouter, createWebHistory } from 'vue-router';\nimport App from './App.vue';\nconst router = createRouter({\n  history: createWebHistory(),\n  routes: [\n    { path: '/', component: { render: () => h('h1', '课程首页') } },\n    { path: '/courses/:id', props: true, component: { props: ['id'], render() { return h('h1', '课程 ' + this.id); } } }\n  ]\n});\ncreateApp(App).use(router).mount('#app');\n// App.vue 的模板：\n// <RouterLink to=\"/courses/42\">课程 42</RouterLink><RouterView />",
+          "explanation": "点击链接后路径变为 /courses/42，展示课程编号。生产环境直接访问此路径仍需服务器正确返回应用入口。这里用 h 创建界面描述以免依赖运行时模板编译；通常把页面写成独立 .vue 文件再导入。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：实现可分享的课程详情页",
+      "scenario": "实现可分享的课程详情页。别人打开链接后应看到同一门课程。",
+      "steps": [
+        "用 /courses/:id 表达课程身份，而不是只把当前编号存到组件变量。",
+        "从路由参数读取 id，校验后获取对应课程。",
+        "点击详情、后退、复制链接分别检查导航结果。",
+        "部署后再直接刷新详情地址，确认服务器回退规则没有吞掉 API 或缺失资源错误。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "点击详情链接正常，刷新同一地址却返回服务器 404，为什么先检查服务器配置？",
+      "answer": "点击时由已运行的路由器切换组件；刷新时服务器先处理真实路径。它若不知道该路径属于前端应用，就可能直接返回 404。"
+    },
+    "takeaways": [
+      "路由将 URL 映射到页面组件",
+      "站内点击和直接请求经过不同路径",
+      "客户端导航不能替代服务器授权"
+    ]
+  },
+  "vue-composition": {
+    "title": "把可复用状态逻辑写成组合式函数",
+    "intro": "两个组件都要实现计数、加载状态或窗口尺寸监听时，复制代码会让修复分散在多处。组合式函数是一种普通 JavaScript 函数的组织方式：在里面使用 Vue 响应式 API，并把需要的状态和操作返回给组件。",
+    "objectives": [
+      "区分状态逻辑复用与界面复用",
+      "编写简单的 use 函数",
+      "理解每次调用的状态归属"
+    ],
+    "prerequisites": [
+      "JavaScript 函数和返回对象",
+      "Vue ref 与生命周期"
+    ],
+    "sections": [
+      {
+        "title": "复用逻辑，不必复用整块界面",
+        "paragraphs": [
+          "组件复用的是界面单元，组合式函数复用的是有状态的行为。例如两个不同布局都需要加一和重置，它们可以共享计数逻辑，但各自保留按钮、文字和样式。纯粹计算税额且没有响应式状态的函数则不必特意包装成组合式函数。",
+          "通常使用 use 开头命名，向读代码的人表达“这里可能包含响应式状态或生命周期”。函数接收明确参数、返回明确结果，比隐式向组件混入很多同名字段更容易追踪。使用者也能通过解构看到自己依赖了哪些能力。"
+        ]
+      },
+      {
+        "title": "状态放在哪里，决定是否共享",
+        "paragraphs": [
+          "把 ref 定义在组合式函数内部，每调用一次就产生新的状态容器；两个组件各调用一次，计数通常彼此独立。把 ref 定义在模块顶层，则可能被所有调用者共享，这需要明确的设计意图。",
+          "历史上的 mixin 和 extends 会合并组件选项，阅读时可能难以看出一个字段来自哪里，并遇到命名冲突。组合式函数把来源、参数和返回值写出来，但并不自动解决所有状态设计问题，仍要决定生命周期与共享范围。"
+        ]
+      },
+      {
+        "title": "把计数逻辑从按钮布局中取出",
+        "paragraphs": [
+          "下面的 useCounter 只负责 count、increase 和 reset，不生成任何 HTML。组件可以把它用于数量按钮、阅读计数或其他界面。reset 需要记住初始值，闭包正好保存这个调用的上下文。",
+          "如果逻辑注册事件或计时器，应在适当生命周期中启动并清理。依赖组件生命周期的组合式函数通常在 setup 的同步执行期间调用，不能随意移到稍后点击事件里才注册生命周期钩子。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "// useCounter.js\nimport { ref } from 'vue';\nexport function useCounter(initial = 0) {\n  const count = ref(initial);\n  const increase = () => count.value++;\n  const reset = () => { count.value = initial; };\n  return { count, increase, reset };\n}\n// 某个 .vue 文件的 <script setup> 中：\n// const { count, increase, reset } = useCounter(2);\n// 模板可用 {{ count }}、@click=\"increase\"、@click=\"reset\"。",
+          "explanation": "调用 useCounter(2) 从 2 开始，increase 后为 3，reset 后回到 2；另一次调用会获得独立的 ref。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：让阅读计数器和购物车计数器使用同一套增减逻辑，但保持不同数量",
+      "scenario": "让阅读计数器和购物车计数器使用同一套增减逻辑，但保持不同数量。",
+      "steps": [
+        "先把状态和操作移到 useCounter，不移动任何页面标签。",
+        "两个组件分别调用，给出各自的初始值。",
+        "点击阅读计数器，确认购物车数量不变。",
+        "检查 ref 是否在函数内部，若写到模块外则重新讨论是否真的需要共享。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "同一个 useCounter 被两个组件调用，是否必然共享一个 count？",
+      "answer": "不必然。本例每次调用都在内部创建 ref，所以状态独立；共享与否取决于状态的创建位置，而不是函数名字相同。"
+    },
+    "takeaways": [
+      "组合式函数复用有状态的逻辑",
+      "显式参数与返回值让依赖可追踪",
+      "状态创建位置决定共享范围"
+    ]
+  },
+  "vue-assets": {
+    "title": "图片、样式与资源地址如何到达浏览器",
+    "intro": "项目文件夹里的路径不一定就是浏览器访问的地址。构建工具会读取源码、处理引用并生成发布文件。本课以 Vite 项目说明资源从开发目录到线上 URL 的变化，再理解页面挂载前的短暂显示问题。",
+    "objectives": [
+      "区分源码路径与公开 URL",
+      "正确选择导入资源和 public",
+      "理解首屏闪动的不同原因"
+    ],
+    "prerequisites": [
+      "HTML img 与 CSS",
+      "JavaScript import"
+    ],
+    "sections": [
+      {
+        "title": "浏览器需要的是 URL，不是磁盘位置",
+        "paragraphs": [
+          "图片出现在硬盘上并不代表网页能直接访问它。img 的 src 最终需要一个可请求的 URL；相对 URL 会结合页面或资源所在位置解析。Windows 的盘符路径不能原样变成发布后的站点地址。",
+          "构建工具负责把源码引用与生成文件关联起来。通过 import 导入图片时，得到的通常是处理后的资源 URL，文件名可能包含内容哈希，也可能按配置内联。不要在业务逻辑中猜测构建后名称，应该使用构建工具给出的引用。"
+        ]
+      },
+      {
+        "title": "被依赖的资源与原样公开的文件",
+        "paragraphs": [
+          "在 Vite 项目中，src 内的图片可以被组件导入，参与依赖分析和构建处理。public 则适合必须保留名称、无需模块导入的公开文件，例如某些固定名称的图标或站点约定文件；使用时通常从站点公开根路径引用。",
+          "部署到子目录时还应检查基础路径配置，不能把开发时可用当作所有部署环境都可用。资源也不该含有私密配置：被打包或放到 public 的文件最终可能让浏览器下载，目录名字不构成访问权限。"
+        ]
+      },
+      {
+        "title": "首屏闪动：先确定闪的是哪一层",
+        "paragraphs": [
+          "未编译的双花括号短暂出现，和样式尚未加载造成的布局闪动并不是同一问题。通过直接在 HTML 中挂载模板的场景，可用 v-cloak 配合 CSS 在编译完成前隐藏；预编译的单文件组件通常不会以同样方式暴露原始模板。",
+          "下面的图片通过 import 得到正确地址，并提前声明显示尺寸。检查空白或闪动时，分别观察资源请求、样式到达、应用挂载和图片尺寸，避免仅靠一个隐藏属性掩盖所有加载问题。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<script setup>\nimport coverUrl from './assets/course-cover.png';\n</script>\n<template>\n  <img :src=\"coverUrl\" width=\"320\" height=\"180\" alt=\"课程封面\">\n</template>\n<!-- 在 Vite 项目中先创建对应图片文件。public/manual.pdf 可通过 /manual.pdf 引用。 -->",
+          "explanation": "coverUrl 是构建工具处理后的公开 URL。width 和 height 为布局预留比例，避免图片加载后才把下方内容推开。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：发布带有课程封面的页面",
+      "scenario": "发布带有课程封面的页面。开发正常，发布到子目录后却发现图片缺失。",
+      "steps": [
+        "先在网络面板查看实际请求 URL 与状态码，不只检查源码中有没有图片。",
+        "对组件依赖资源采用静态 import，确认打包输出实际包含资源。",
+        "检查站点基础路径与 public 文件引用规则是否匹配部署目录。",
+        "重新加载页面，分别观察图片是否可达以及加载前是否保留了正确空间。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "为什么不应该手写构建产物里某个带哈希的图片名称？",
+      "answer": "内容更新后哈希可能变化，手写名称就会失效。让源码导入引用资源，构建工具才能同步维护实际输出名称和使用位置。"
+    },
+    "takeaways": [
+      "源码位置与公开地址不同",
+      "资源导入交给构建工具解析",
+      "先定位闪动来源，再选择对应处理"
+    ]
+  },
+  "vue-render": {
+    "title": "模板怎样变成真正的页面节点",
+    "intro": "模板描述你希望出现的界面，浏览器最终显示的却是 DOM 节点。两者之间需要编译、生成界面描述和更新节点的过程。理解这条路线，才能把虚拟 DOM 和 key 放回实际用途，而不把它们当作需要孤立背诵的词。",
+    "objectives": [
+      "区分模板、虚拟节点和 DOM",
+      "理解渲染与更新的过程",
+      "知道 key 表达什么身份"
+    ],
+    "prerequisites": [
+      "HTML 节点与属性",
+      "Vue 响应式与组件"
+    ],
+    "sections": [
+      {
+        "title": "模板是描述，DOM 是浏览器中的实际结构",
+        "paragraphs": [
+          "Vue 模板在 HTML 形式上增加插值、绑定和指令，例如把变量放进文字，或根据条件显示节点。它需要被编译成可以执行的渲染逻辑；浏览器并不会直接理解所有 Vue 指令。",
+          "渲染逻辑读取当前状态，生成虚拟节点。虚拟节点是 JavaScript 中描述元素类型、属性和子节点的数据结构，并不是屏幕上另建一棵真实页面。真实 DOM 则由浏览器提供，具有实际节点和布局、事件等行为。"
+        ]
+      },
+      {
+        "title": "初次挂载和后续更新做的工作不同",
+        "paragraphs": [
+          "初次挂载时，框架根据描述创建并插入真实节点。状态变化后的渲染会得到新描述，更新过程比较相关的新旧节点，再决定哪些真实节点应改属性、移动或删除。重新运行渲染逻辑不等于清空整页重建。",
+          "虚拟 DOM 是组织更新的一种方式，不保证所有操作都比手写 DOM 快。编译器、更新范围和实际页面结构都会影响成本。学习时先掌握它如何保持状态与界面一致，再结合开发工具观察真正发生的 DOM 修改。"
+        ]
+      },
+      {
+        "title": "key：为同级节点提供稳定身份",
+        "paragraphs": [
+          "列表中的 key 帮助框架判断“这次的项目和上次的哪一个是同一项”。商品编号通常比数组位置更稳定，因为排序后位置会变，商品本身却没变。它尤其影响带局部状态的子组件或输入框能否跟随正确项目。",
+          "key 只需在同级列表中合理唯一，不是自动生成的业务 ID，也不会阻止组件更新。若刻意改变某个组件的 key，框架可把它视为另一身份并重新创建；这适合明确的重置需求，不应被当作常规刷新手段。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<script setup>\nimport { ref } from 'vue';\nconst items = ref([{ id: 'a', title: 'HTML' }, { id: 'b', title: 'CSS' }]);\nfunction reverse() { items.value = [...items.value].reverse(); }\n</script>\n<template>\n  <button @click=\"reverse\">反转顺序</button>\n  <ul><li v-for=\"item in items\" :key=\"item.id\">{{ item.title }}</li></ul>\n</template>",
+          "explanation": "反转后 a、b 的位置改变，身份仍由 id 表达。Vue 可更新列表位置，而不是把位置编号当作课程身份。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：为可排序的课程列表选择 key",
+      "scenario": "为可排序的课程列表选择 key。每行以后还会有自己的展开状态。",
+      "steps": [
+        "先给每条业务数据一个稳定 id，避免在每次渲染中随机生成。",
+        "在 v-for 节点绑定 id，把显示序号作为单独内容。",
+        "反转或删除中间项目，观察项目与局部状态是否保持关联。",
+        "若需要彻底重置某行，明确设计身份变化，而不是随意修改所有 key。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "调用了一次组件渲染，是否意味着这一组件下所有真实 DOM 都被重新创建？",
+      "answer": "不意味着。渲染先产生新的描述，随后更新过程才决定哪些节点需要实际变化；能复用的节点可以继续使用。"
+    },
+    "takeaways": [
+      "模板会转成渲染逻辑",
+      "虚拟节点描述界面而非真实布局",
+      "稳定 key 表达同级项目身份"
+    ]
+  },
+  "vue-list": {
+    "title": "条件显示与列表渲染的基础写法",
+    "intro": "列表负责“有几项”，条件负责“某项要不要出现”。把这两种职责分开，页面的显示规则就容易理解。本课先用数组产生列表，再从原始数组推导筛选结果，最后说明什么时候销毁节点、什么时候只隐藏它。",
+    "objectives": [
+      "会使用 v-for 显示数组",
+      "理解 computed 筛选结果",
+      "区分 v-if 与 v-show"
+    ],
+    "prerequisites": [
+      "JavaScript 数组和 filter",
+      "Vue ref 与模板"
+    ],
+    "sections": [
+      {
+        "title": "v-for：把数据集合映射成界面集合",
+        "paragraphs": [
+          "数组保存一组数据，v-for 为其中每个项目生成对应的模板结构。item 是当前项目的局部变量，只在这轮列表模板内有效。key 则为同级项目提供稳定身份，通常选择业务 id，而不是容易随排序改变的位置。",
+          "列表内容应该尽量由数据产生，不必每次增加一条就手动 append 元素。这样删除、排序和筛选都能在数据层表达，模板仍保持同一个规则。没有数据时，也可以单独展示空状态，告诉用户是没有内容而非页面坏了。"
+        ]
+      },
+      {
+        "title": "筛选属于数据推导，不必塞进每个节点",
+        "paragraphs": [
+          "computed 表达由其他响应式数据推导的结果。将原数组按条件 filter 得到可见列表，模板只负责遍历这个结果，逻辑比在同一标签上混用很多指令清楚。筛选不应意外修改原数组，保留源数据才能切换条件。",
+          "Vue 3 中同一元素的 v-if 优先于 v-for，这会让当前项目变量的可用范围不符合初学者直觉。与其依赖容易误读的优先级，不如先用 computed 筛选，或让条件与循环位于不同的模板层。"
+        ]
+      },
+      {
+        "title": "v-if 与 v-show：移除还是保留",
+        "paragraphs": [
+          "v-if 根据条件创建或销毁对应子树，适合不一定存在的结构。v-show 则保留元素，通过显示样式控制可见性，适合需要频繁切换的简单区域。两者都不是权限控制；隐藏页面不等于保护数据。",
+          "下面把“只看未完成”作为状态，让 visible 负责筛选。切换复选框只改变条件，不会删掉已完成课程；这区分了“暂时不展示”和“从数据中删除”的两种操作。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<script setup>\nimport { ref, computed } from 'vue';\nconst onlyTodo = ref(false);\nconst items = ref([{ id: 1, title: 'HTML', done: true }, { id: 2, title: 'CSS', done: false }]);\nconst visible = computed(() => onlyTodo.value ? items.value.filter(x => !x.done) : items.value);\n</script>\n<template>\n  <label><input v-model=\"onlyTodo\" type=\"checkbox\">只看未完成</label>\n  <p v-if=\"visible.length === 0\">暂无课程</p>\n  <ul><li v-for=\"item in visible\" :key=\"item.id\">{{ item.title }}</li></ul>\n</template>",
+          "explanation": "默认显示两课，勾选后只显示 CSS；取消勾选 HTML 会重新出现，因为原数组没有被筛选操作破坏。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：给课程列表增加“只看未完成”筛选",
+      "scenario": "给课程列表增加“只看未完成”筛选。切换时应保留所有课程数据。",
+      "steps": [
+        "先用 v-for 正确显示完整数组并绑定稳定 key。",
+        "新增一个布尔状态保存筛选条件。",
+        "通过 computed 产生可见列表，再让模板遍历它。",
+        "补充结果为空时的提示，并反复切换确认源数据没有丢失。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "用户取消筛选后无法找回已完成项目，应该检查哪一步？",
+      "answer": "先检查筛选操作是否把原始列表永久替换或删除了。通常应保留源数据，另行推导可见结果，而不是把筛选当作删除。"
+    },
+    "takeaways": [
+      "列表从数组生成",
+      "筛选结果与源数据分开",
+      "是否保留节点决定选 v-if 还是 v-show"
+    ]
+  },
+  "vue-lifecycle": {
+    "title": "组件从创建到离开页面经历什么",
+    "intro": "组件并不是只有一段执行一次的代码。它会创建、挂载到页面、因状态改变而更新，最后离开页面。生命周期钩子让你在适合的时点启动或释放工作，尤其是 DOM 操作、事件监听和计时器。",
+    "objectives": [
+      "理解挂载、更新和卸载",
+      "把 DOM 操作放到适当时机",
+      "成对建立与清理资源"
+    ],
+    "prerequisites": [
+      "Vue 组件和模板 ref",
+      "JavaScript 事件与计时器"
+    ],
+    "sections": [
+      {
+        "title": "挂载：组件产生的节点进入页面",
+        "paragraphs": [
+          "setup 阶段用于建立状态和逻辑，此时不应假定模板节点已经存在。挂载完成后，组件对应的 DOM 才可以用于需要真实节点的操作，例如测量或对第三方图表进行初始化。",
+          "onMounted 注册挂载后执行的回调，onUpdated 关注组件更新后的状态，onUnmounted 则在组件卸载时清理工作。钩子名称表达的是组件生命周期，不等于页面所有图片、网络请求都已完成。"
+        ]
+      },
+      {
+        "title": "资源生命周期：谁创建，谁负责收尾",
+        "paragraphs": [
+          "监听 resize、启动 setInterval 或连接外部服务会产生超出一次函数调用的工作。若组件离开后这些工作仍继续，可能浪费资源、重复回调，或保留本来不需要的对象。清理不是装饰性代码，而是行为的一部分。",
+          "移除事件监听时需要保留原来的函数引用；取消计时器需要保存对应标识。把启动与清理写在相邻位置，更容易检查是否配对。仅仅隐藏组件与真正卸载也可能不同，缓存组件还需要单独考虑激活和停用。"
+        ]
+      },
+      {
+        "title": "用一个秒数显示观察挂载与卸载",
+        "paragraphs": [
+          "下面组件挂载后每秒递增，卸载时取消定时器。父组件用 v-if 控制它存在与否时，反复打开和关闭可以验证是否留下旧定时器。这个示例记录挂载后的累计回调次数，不是高精度时钟。",
+          "Vue 2 的 beforeDestroy、destroyed 等历史名称与 Vue 3 的卸载名称不同。讨论时应标明版本；新代码先用当前组件模型理解资源开始和结束，再映射旧项目中的钩子，避免死背一串名称却不知道用途。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<script setup>\nimport { ref, onMounted, onUnmounted } from 'vue';\nconst seconds = ref(0);\nlet timer;\nonMounted(() => { timer = setInterval(() => seconds.value++, 1000); });\nonUnmounted(() => clearInterval(timer));\n</script>\n<template><p>已收到 {{ seconds }} 次计时通知</p></template>",
+          "explanation": "挂载后数字逐次增加；组件真正卸载后定时器停止。浏览器繁忙或后台调度会影响通知间隔，所以不要当作精确秒表。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：给仅在当前页面有效的统计面板加周期更新",
+      "scenario": "给仅在当前页面有效的统计面板加周期更新。用户离开后应停止。",
+      "steps": [
+        "先决定计时器属于哪个组件，而不是直接放到无归属的全局脚本。",
+        "挂载时创建并保存标识，卸载时清理。",
+        "用父组件的 v-if 反复显示和移除面板。",
+        "观察每轮打开后的回调次数，确认没有越开越快的重复订阅。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "为什么不能只在 onMounted 里注册监听，却忽略组件之后可能离开？",
+      "answer": "监听的存在时间可能超过组件本身，继续回调会保留旧对象或重复处理。组件负责启动的外部工作，应同时设计对应的释放路径。"
+    },
+    "takeaways": [
+      "生命周期描述组件的存在阶段",
+      "DOM 就绪与其他资源完成不同",
+      "启动外部工作时同步设计清理"
+    ]
+  },
+  "vue-async-data": {
+    "title": "为等待中的数据设计完整界面状态",
+    "intro": "网络数据不会在发出请求的同一刻返回。一个可用的页面需要表达等待、成功、空结果和失败，而不是只写“获取数据后赋值”。当查询条件快速变化时，还要保证旧结果不会覆盖新的选择。",
+    "objectives": [
+      "理解异步请求的四种界面状态",
+      "会检查 HTTP 与解析失败",
+      "理解取消和过期响应"
+    ],
+    "prerequisites": [
+      "fetch、Promise 与 async/await",
+      "Vue ref 和 watch"
+    ],
+    "sections": [
+      {
+        "title": "先建状态模型，再发请求",
+        "paragraphs": [
+          "加载标记表示请求尚在进行，数据保存成功结果，错误信息表示本次操作未完成。空数组不一定是错误，也可能是请求成功但没有匹配项目。把这些情况区分开，用户才知道应该等待、修改条件还是重试。",
+          "fetch 返回 Promise，需要等待响应；HTTP 的 404 或 500 不会自动等同于网络拒绝，还要检查 response.ok。随后解析 JSON 也可能失败，数据结构仍需按业务要求验证。展示层不要把任意响应直接当作可信课程列表。"
+        ]
+      },
+      {
+        "title": "条件改变后，旧工作如何结束",
+        "paragraphs": [
+          "watch 观察一个响应式来源，在它变化时执行副作用，例如按课程编号加载详情。新编号出现时，前一次请求可能尚未完成；即便旧请求更早发出，也不保证更早返回，这叫竞态。",
+          "可用 AbortController 尝试取消旧请求，并用局部 active 标记避免已过期流程继续更新状态。watch 回调提供的清理函数可在下一次执行前或停止时清理旧工作。取消属于预期流程，通常不应显示成普通网络错误。"
+        ]
+      },
+      {
+        "title": "从编号到文本：一个包含清理的请求例子",
+        "paragraphs": [
+          "下面仅为展示请求生命周期而读取文本接口，真实项目按接口协议解析和验证数据。每次 id 变化建立一份局部 active 标记，清理时先停用旧流程，再中止请求，确保旧 catch 或 finally 不改写新状态。",
+          "首次加载可由 watch 的 immediate 选项触发。是否在 setup、挂载后或路由进入时获取数据，应由数据依赖和渲染方式决定；不依赖 DOM 的请求不必为了背某个生命周期口诀而等待元素挂载。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<script setup>\nimport { ref, watch } from 'vue';\nconst id = ref('1'), text = ref(''), loading = ref(false), error = ref('');\nwatch(id, async (value, oldValue, onCleanup) => {\n  const controller = new AbortController();\n  let active = true;\n  onCleanup(() => { active = false; controller.abort(); });\n  loading.value = true; error.value = ''; text.value = '';\n  try {\n    const r = await fetch(`/api/courses/${encodeURIComponent(value)}`, { signal: controller.signal });\n    if (!r.ok) throw new Error(`HTTP ${r.status}`);\n    const result = await r.text();\n    if (active) text.value = result;\n  } catch (e) { if (active) error.value = e.message; }\n  finally { if (active) loading.value = false; }\n}, { immediate: true });\n</script>\n<template><input v-model=\"id\" aria-label=\"课程编号\"><p>{{ loading ? '加载中' : error || text }}</p></template>",
+          "explanation": "需由应用提供 /api/courses/:id 接口。切换编号会使上一轮失效；只有最新有效流程能写入结果和加载状态。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：制作按课程编号查询详情的输入框",
+      "scenario": "制作按课程编号查询详情的输入框。连续输入时页面应始终对应最后一次选择。",
+      "steps": [
+        "先在慢网下观察加载提示，再分别模拟成功和失败响应。",
+        "快速改变编号，确认较早请求即使晚返回也不能覆盖页面。",
+        "清理旧请求时同步停用其后续流程，避免旧 finally 关闭新请求的加载提示。",
+        "给真实 JSON 接口补充字段校验和空结果展示，再考虑防抖减少请求频率。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "只加输入防抖，能完全解决旧请求覆盖新结果的问题吗？",
+      "answer": "不能。防抖减少请求启动频率，但已启动请求仍可能乱序返回；仍需要取消或标记过期结果，保证更新对应最新意图。"
+    },
+    "takeaways": [
+      "加载、空结果和失败是不同状态",
+      "请求返回顺序不等于发送顺序",
+      "清理必须覆盖结果、错误与结束状态"
+    ]
+  },
+  "vue-keepalive": {
+    "title": "缓存组件时，离开界面不一定代表销毁",
+    "intro": "用户在两个标签之间切换时，可能希望保留刚输入的草稿和滚动状态。普通动态组件切换可能卸载旧组件；KeepAlive 可以缓存组件实例，使返回时继续使用原来的状态。缓存带来便利，也改变了资源该何时暂停的判断。",
+    "objectives": [
+      "理解组件缓存与持久化的区别",
+      "识别激活和停用阶段",
+      "给缓存组件暂停外部工作"
+    ],
+    "prerequisites": [
+      "Vue 组件生命周期",
+      "动态组件 component"
+    ],
+    "sections": [
+      {
+        "title": "缓存的是实例及其状态",
+        "paragraphs": [
+          "动态组件使用 component :is 决定当前显示哪个组件。没有缓存时，被切换掉的组件通常会卸载，之后再次显示时重新创建；内部表单和局部状态也会重新初始化。KeepAlive 可以把不显示的实例保留在缓存中。",
+          "这不是把数据保存到硬盘，也不是永久保留所有页面。浏览器刷新仍会重建应用，缓存容量和筛选规则也会影响哪些实例保留。只有确实需要返回后恢复交互状态的区域，才值得承担额外内存成本。"
+        ]
+      },
+      {
+        "title": "激活和停用：增加一条可见性生命周期",
+        "paragraphs": [
+          "onActivated 在组件进入活动状态时运行，onDeactivated 在它被缓存停用时运行。停用不等于卸载，因此只依赖 onUnmounted 清理轮询，可能让隐藏页面仍持续请求。组件需要区分“暂时看不见”和“真正结束”。",
+          "首次进入也会涉及激活，最终卸载还需要安全释放资源。启动和停止函数最好能重复调用而不产生重复计时器。保持已有输入值通常合理，但用户身份改变后是否继续复用旧内容，应由业务明确决定。"
+        ]
+      },
+      {
+        "title": "先用表单验证缓存，再加入暂停逻辑",
+        "paragraphs": [
+          "下面外层选择 FormPanel 或 HelpPanel，并用 KeepAlive 包住动态组件。FormPanel 内有自己的 ref 草稿，切到帮助页再回来时仍在。两个面板应分别写成组件文件，而不是把所有状态都偷偷放到父级来掩盖缓存效果。",
+          "缓存有 include、exclude 和 max 等控制方式。先验证自己确实需要保留哪些组件，再设置缓存范围；如果需要定期刷新数据，也要设计返回时的更新策略，避免把保存状态误解为一直使用过期业务信息。"
+        ],
+        "code": {
+          "language": "vue",
+          "source": "<script setup>\nimport { ref } from 'vue';\nimport FormPanel from './FormPanel.vue';\nimport HelpPanel from './HelpPanel.vue';\nconst current = ref('form');\n</script>\n<template>\n  <button @click=\"current = 'form'\">表单</button>\n  <button @click=\"current = 'help'\">帮助</button>\n  <KeepAlive :max=\"2\"><component :is=\"current === 'form' ? FormPanel : HelpPanel\" /></KeepAlive>\n</template>\n<!-- FormPanel 内用 ref('') 与 v-model 保存自己的输入；HelpPanel 可为普通说明组件。 -->",
+          "explanation": "在表单输入文字、切到帮助、再切回时，可观察局部状态保留；刷新浏览器后这个组件缓存不会继续存在。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：给详情页与帮助页增加来回切换",
+      "scenario": "给详情页与帮助页增加来回切换。详情里有未提交笔记和定时刷新。",
+      "steps": [
+        "先只保留笔记，确认缓存前后切换行为的区别。",
+        "把轮询启动放进激活处理，暂停放进停用处理。",
+        "让停止操作可重复执行，并保留最终卸载清理。",
+        "刷新页面测试，明确向用户说明只有另做持久化才能跨刷新保存笔记。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "缓存组件不在屏幕上，onUnmounted 没有执行，是否一定是框架出错？",
+      "answer": "不是。组件可能只是停用并仍在缓存中；暂停可见期间的工作应考虑停用钩子，而不能仅依据是否卸载。"
+    },
+    "takeaways": [
+      "KeepAlive 保留组件实例状态",
+      "停用与卸载是不同阶段",
+      "缓存不等于跨刷新持久化"
+    ]
+  },
+  "vue-store": {
+    "title": "共享状态为什么需要统一的修改规则",
+    "intro": "购物车角标、商品页和结算页都读取同一份数量时，层层传递数据会变得繁琐。状态仓库把需要跨组件共享的数据及其更新规则集中起来。原书讨论 Vuex，本课先理解问题，再认识它的各个概念与现代项目的选择。",
+    "objectives": [
+      "判断哪些状态需要共享",
+      "理解 state、getter、mutation、action",
+      "区分仓库与持久化"
+    ],
+    "prerequisites": [
+      "Vue props 和单向数据流",
+      "对象、函数与异步请求"
+    ],
+    "sections": [
+      {
+        "title": "先区分局部状态与共享状态",
+        "paragraphs": [
+          "输入框临时展开、某个按钮是否悬停，通常只属于局部组件；购物车、会话信息和跨页面筛选条件可能需要多个组件共同读取。仓库不是把所有变量放到全局，而是给真正共享的事实一个明确来源。",
+          "统一来源能减少多个组件各存一份数据造成的不一致，但也要求明确谁可以修改。一个组件想改变共享数量，应通过约定入口表达操作，而不是到处直接修改对象，导致无法看出变化从何而来。"
+        ]
+      },
+      {
+        "title": "Vuex 的数据与操作如何分工",
+        "paragraphs": [
+          "state 是共享数据，getter 从 state 推导结果；mutation 是按约定同步修改状态的入口，通过 commit 调用。action 用于组织操作和异步过程，通过 dispatch 调用，完成请求后再提交 mutation。",
+          "这样的划分让异步流程与实际状态改变分开记录。getter 适合总价等派生结果，不要为了使用仓库再保存一份容易失去同步的总价。模块可按业务拆分大型仓库，但名称和规则仍应保持清晰。"
+        ]
+      },
+      {
+        "title": "仓库存在内存里，不会自动跨刷新保存",
+        "paragraphs": [
+          "下面是 Vuex 4 的最小仓库，用于阅读或维护现有项目。新 Vue 项目通常优先评估官方推荐的 Pinia，它减少了一些 Vuex 特有的概念；但共享状态的来源和修改边界仍然重要。",
+          "无论哪种状态库，刷新后保留内容都需要额外读取存储或请求服务器。持久化时还要考虑版本、损坏数据和敏感信息，不能把整个仓库无差别写入 localStorage，再假设恢复结果一定可信。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "// store.js（Vuex 4）\nimport { createStore } from 'vuex';\nexport const store = createStore({\n  state: () => ({ count: 0 }),\n  getters: { doubled: state => state.count * 2 },\n  mutations: { add(state, amount) { state.count += amount; } },\n  actions: { addOne({ commit }) { commit('add', 1); } }\n});\nstore.dispatch('addOne');\nconsole.log(store.state.count, store.getters.doubled); // 1 2\n// 在 Vue 入口用 createApp(App).use(store).mount('#app') 安装。",
+          "explanation": "action 组织“加一”操作，mutation 真正改变 count，getter 从新 count 推导 doubled；示例没有执行任何持久化。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：让导航角标和购物车页显示同一份商品数量",
+      "scenario": "让导航角标和购物车页显示同一份商品数量。两处都能触发更新。",
+      "steps": [
+        "把真正共享的数量放到仓库，局部按钮展开状态仍留在组件。",
+        "给增加、移除等操作命名，让修改经过明确入口。",
+        "两处读取同一来源，测试其中一处更新后另一处同步。",
+        "刷新后若需恢复，再设计服务端或本地存储读取，而不是以为仓库已经自动保存。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "把数量放进 Vuex 后，关闭页面再打开会自动恢复吗？",
+      "answer": "不会仅因为使用 Vuex 就恢复。仓库通常是内存状态；跨刷新恢复需要单独的存储、读取和校验方案。"
+    },
+    "takeaways": [
+      "共享仓库只集中真正共享的事实",
+      "更新入口使变化来源可追踪",
+      "状态管理与持久化分别设计"
+    ]
+  },
+  "react-events": {
+    "title": "把用户操作连接到组件行为",
+    "intro": "页面上的按钮、输入框和表单会产生事件。React 让你把处理函数交给 JSX 属性，在用户真正操作时执行。先理解函数何时被调用、事件从哪里来，再区分取消浏览器行为与停止事件传播。",
+    "objectives": [
+      "正确传递事件处理函数",
+      "理解 target 与 currentTarget",
+      "区分默认行为和传播"
+    ],
+    "prerequisites": [
+      "JavaScript 函数与参数",
+      "HTML 表单和按钮"
+    ],
+    "sections": [
+      {
+        "title": "事件处理器是以后执行的函数",
+        "paragraphs": [
+          "onClick={handleClick} 把函数交给 React，等点击发生再执行；onClick={handleClick()} 则在渲染时立刻调用函数，并把返回值作为属性，这通常不是想要的效果。需要传参数时，可以使用箭头函数包装一次调用。",
+          "处理器适合完成用户明确触发的动作，例如修改状态、提交表单或打开对话框。组件函数本身负责计算界面，不应因为一次渲染就发送订单请求，否则重新渲染会意外重复操作。"
+        ]
+      },
+      {
+        "title": "一个点击可能经过多层监听器",
+        "paragraphs": [
+          "事件最初发生的元素是 target，正在执行处理器所绑定的元素是 currentTarget。点击按钮中的小图标时，target 可能是图标，按钮处理器的 currentTarget 仍是按钮，这对事件委托和读取数据属性很有用。",
+          "很多事件会沿组件对应的元素树传播，外层也可能接收到子元素的点击。stopPropagation 用于阻止继续传播；preventDefault 则取消可取消的浏览器默认行为，例如表单提交后导航。二者处理不同问题，不能相互替代。"
+        ]
+      },
+      {
+        "title": "表单实例：阻止默认导航，再处理数据",
+        "paragraphs": [
+          "下面把文本输入保存为 state，表单提交时取消默认导航，然后显示提交内容。按钮明确使用 submit，浏览器键盘提交也可以走表单的 onSubmit，而不必只在按钮点击里处理。",
+          "React 提供统一的事件对象接口，实际事件仍与浏览器事件有关。现代 React 网页代码不必沿用旧版事件池释放的背诵结论。学习时先确认运行版本，再分析同步与异步处理中要保存哪些值。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { useState } from 'react';\nexport default function NameForm() {\n  const [name, setName] = useState('');\n  const [message, setMessage] = useState('');\n  function submit(event) {\n    event.preventDefault();\n    setMessage(`你好，${name || '同学'}`);\n  }\n  return <form onSubmit={submit}>\n    <label>姓名<input value={name} onChange={e => setName(e.target.value)} /></label>\n    <button type=\"submit\">确认</button><p>{message}</p>\n  </form>;\n}",
+          "explanation": "输入时 onChange 更新 name，提交时只显示问候语而不执行表单默认导航；submit 函数在事件发生时才调用。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：为报名表实现确认操作",
+      "scenario": "为报名表实现确认操作。鼠标点击和输入框内按回车都应走相同逻辑。",
+      "steps": [
+        "把真正提交逻辑绑定到 form 的 onSubmit。",
+        "取消默认导航，再读取状态并完成校验。",
+        "让按钮使用 submit，其他普通操作按钮使用 button 类型。",
+        "在外层加日志观察传播，分别测试 stopPropagation 和 preventDefault 的作用。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "在按钮处理器里停止冒泡，是否会自动阻止所属表单提交？",
+      "answer": "不会。停止传播与取消默认行为是两件事；表单提交应在相应可取消事件中明确处理，通常使用 onSubmit 和 preventDefault。"
+    },
+    "takeaways": [
+      "把函数传给事件属性，别在渲染时误调用",
+      "target 和 currentTarget 表达不同位置",
+      "传播控制与默认行为控制分别处理"
+    ]
+  },
+  "react-hooks": {
+    "title": "函数组件如何记住状态并复用逻辑",
+    "intro": "函数每次执行都会重新创建局部变量，但组件往往需要记住上一次的输入和选择。Hook 是 React 提供的特殊函数入口，让函数组件使用状态、引用和外部同步等能力；自定义 Hook 则把这些能力组合成可复用逻辑。",
+    "objectives": [
+      "理解 Hook 与普通局部变量的区别",
+      "认识 useState 的返回值",
+      "编写保持独立状态的自定义 Hook"
+    ],
+    "prerequisites": [
+      "JavaScript 函数、数组解构",
+      "React 函数组件和 JSX"
+    ],
+    "sections": [
+      {
+        "title": "useState：取出本次状态和更新入口",
+        "paragraphs": [
+          "useState 返回一对值：本次渲染的状态值，以及请求更新的 setter。初始值用于组件状态的初始化，后续渲染会得到 React 为该组件保存的状态。普通 let 变量重新赋值不会自动通知 React 产生新的界面。",
+          "setter 的作用是安排下一次渲染，不是把当前函数里的变量就地改成新值。需要根据之前的值计算下一步时，可以传入更新函数。先把这条关系理解清楚，再学习更多 Hook，能避免把它们当作神秘的语法糖。"
+        ]
+      },
+      {
+        "title": "调用规则让状态位置保持稳定",
+        "paragraphs": [
+          "useState、useEffect 等常规 Hook 应在函数组件或自定义 Hook 的顶层调用，而不是放进条件、循环或嵌套事件函数。这样每次渲染的调用关系稳定，React 才能正确关联各个状态。",
+          "自定义 Hook 通常以 use 开头命名，并可以调用其他 Hook。它共享的是逻辑写法，不会仅因为两个组件调用同名函数就共享同一份状态。若确实需要跨组件共享，应提升状态或使用明确的共享机制。"
+        ]
+      },
+      {
+        "title": "把可重置计数提取成 Hook",
+        "paragraphs": [
+          "下面的 useCounter 封装计数和重置，Counter 只负责界面。把两个 Counter 放在同一页面，点击其中一个不会自动改变另一个；因为每个组件调用都有自己的状态关联。",
+          "复用前先找稳定的共同职责，不要把所有代码都包成 Hook。没有状态和 React 能力的纯格式化函数，普通工具函数就足够。Hook 的输入输出也应清晰，否则只是把复杂依赖藏到另一个文件里。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { useState } from 'react';\nfunction useCounter(initial = 0) {\n  const [count, setCount] = useState(initial);\n  return { count, add: () => setCount(n => n + 1), reset: () => setCount(initial) };\n}\nfunction Counter() {\n  const { count, add, reset } = useCounter(2);\n  return <p>{count} <button onClick={add}>加一</button><button onClick={reset}>重置</button></p>;\n}\nexport default function App() { return <><Counter /><Counter /></>; }",
+          "explanation": "两个计数器均从 2 开始。各自的 add 与 reset 只操作各自实例的状态，复用逻辑不等于合并状态。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：给两个独立练习面板提供相同的计数与重置行为",
+      "scenario": "给两个独立练习面板提供相同的计数与重置行为。",
+      "steps": [
+        "先实现一个组件中的 useState 流程。",
+        "只把状态和相关操作提取到 useCounter，保留各面板自己的布局。",
+        "同时渲染两个调用者，验证它们互不影响。",
+        "新增条件显示时，保持 Hook 在组件顶层调用，而不是把调用本身包进 if。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "把 Hook 移到一个点击处理函数里，等点击后才调用 useState，为什么不合适？",
+      "answer": "useState 需要在 React 渲染组件的稳定调用过程中建立状态关联。点击处理器可以调用 setter，但不是临时创建组件 Hook 状态的位置。"
+    },
+    "takeaways": [
+      "Hook 让函数组件使用 React 状态能力",
+      "常规 Hook 调用位置保持稳定",
+      "自定义 Hook 复用逻辑而非自动共享状态"
+    ]
+  },
+  "react-render": {
+    "title": "从组件函数到屏幕：先分清三种对象",
+    "intro": "初学 React 时，组件函数、JSX 表达式和真实 DOM 容易被混称为“组件”。它们各有作用：函数描述规则，元素描述一次渲染结果，DOM 是浏览器实际显示的结构。分清这些角色，才能理解重新渲染并不等于整页重建。",
+    "objectives": [
+      "区分组件与 React 元素",
+      "理解 JSX 的用途",
+      "认识渲染和提交两个阶段"
+    ],
+    "prerequisites": [
+      "JavaScript 函数与对象",
+      "HTML 元素"
+    ],
+    "sections": [
+      {
+        "title": "Component：描述界面规则的组件",
+        "paragraphs": [
+          "函数组件是接收 props 并返回界面描述的函数，名字通常以大写开头。它可以组合其他组件，形成树状结构。props 是本次输入，组件根据输入和当前状态计算应该显示什么。",
+          "组件应由 React 通过 JSX 使用，例如 <Greeting name=\"小林\" />，而不是随意当普通函数调用来跳过组件边界。渲染逻辑应该保持纯计算：相同输入给出相应输出，不在渲染中直接修改外部对象或发送业务请求。"
+        ]
+      },
+      {
+        "title": "Element：某次界面的描述，不是 DOM 节点",
+        "paragraphs": [
+          "JSX 是在 JavaScript 中书写界面结构的语法扩展，通常由构建工具转换为创建 React 元素的调用。元素描述类型、属性和子内容，可以理解为某次渲染的说明数据，而不是已经插入页面的节点。",
+          "字符串如 \"section\" 表示原生标签，自定义组件类型则表示继续按该组件规则计算。JSX 里的花括号用于嵌入表达式，列表通常通过 map 生成描述；不要把 JSX 当作可以随意插入 JavaScript 语句的普通 HTML 文件。"
+        ]
+      },
+      {
+        "title": "实例身份、渲染与提交",
+        "paragraphs": [
+          "React 渲染时计算新的界面描述，提交时把必要变化应用到 DOM。函数组件没有需要用户通过 new 创建的公共实例对象，但 React 会维护它的状态与身份；类组件则有对应的类实例。",
+          "现代 JSX 转换可让 JSX 文件不必仅为写标签而导入 React 变量，但使用 useState 等 API 仍需导入相关函数。具体转换由项目工具配置负责，浏览器不会直接理解未转换的 JSX。本例应放进已配置的 React 项目。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "function Greeting({ name }) {\n  return <h2>你好，{name}</h2>;\n}\nexport default function App() {\n  const userName = '小林';\n  return <section><Greeting name={userName} /><p>欢迎开始第一课。</p></section>;\n}",
+          "explanation": "Greeting 是组件函数，<Greeting ... /> 是元素表达式；最终浏览器得到 section、h2 和 p 等真实节点。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：把欢迎页拆成一个可复用的问候组件",
+      "scenario": "把欢迎页拆成一个可复用的问候组件。用户名来自外层数据。",
+      "steps": [
+        "先定义 Greeting 并说明它只接收 name 这一输入。",
+        "在 App 中通过 JSX 使用它，而不是手动创建 DOM。",
+        "改变传入名字，观察界面内容变化并指出哪一部分是输入。",
+        "用开发者工具检查真实 DOM，对照 JSX 描述，区分两者。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "写出 const item = <p>你好</p> 后，是否已经向浏览器页面插入一个 p 节点？",
+      "answer": "没有。它只是一个 React 元素描述；需要参与被 React 管理的渲染并经过提交，才能形成页面上的实际节点。"
+    },
+    "takeaways": [
+      "组件表达规则，元素表达结果描述",
+      "JSX 需要项目工具处理",
+      "渲染计算与 DOM 提交是不同阶段"
+    ]
+  },
+  "react-refs": {
+    "title": "需要记住但不驱动显示的数据放在哪里",
+    "intro": "组件既可能记住显示在屏幕上的数量，也可能记住计时器编号或一个输入框节点。前者变化后需要重新显示，后者常用于命令式操作。state 与 ref 分别适合这两类需求，选择依据是这个值是否参与界面的计算。",
+    "objectives": [
+      "理解 useRef 的 current 容器",
+      "区分 ref 与 state 更新效果",
+      "通过 ref 操作需要聚焦的节点"
+    ],
+    "prerequisites": [
+      "React useState",
+      "JavaScript 对象与 DOM 方法"
+    ],
+    "sections": [
+      {
+        "title": "ref 是跨渲染保留的容器",
+        "paragraphs": [
+          "useRef(initialValue) 返回一个带 current 属性的对象，组件后续渲染中仍保留这个引用。你可以修改 current，但这种修改本身不会请求 React 重新渲染，因此它适合存储不直接决定显示内容的可变信息。",
+          "计时器标识、外部库实例和 DOM 节点是常见用途。若一个数字需要显示且随点击变化，应优先使用 state；把它放进 ref 再期待页面自动刷新，就混淆了“记住值”和“通知界面更新”。"
+        ]
+      },
+      {
+        "title": "DOM ref：在提交后拿到节点",
+        "paragraphs": [
+          "把 ref 对象传给原生输入框的 ref 属性，React 会在节点挂载后把对应 DOM 放进 current，移除后再清理相关引用。这样按钮处理器就能调用 focus，而不用通过全局选择器寻找恰好对应这个组件的元素。",
+          "渲染阶段不应依赖随意读取或改写 ref 来决定画面，因为它不是 React 跟踪的响应式输入。对 DOM 的操作也尽量留给确有需要的焦点、测量或第三方集成；普通文字显示仍由 JSX 和 state 管理。"
+        ]
+      },
+      {
+        "title": "把焦点控制与输入状态分开",
+        "paragraphs": [
+          "下面用 state 保存输入内容，用 ref 指向输入框。点击聚焦按钮只改变浏览器焦点，不必额外保存一份“节点状态”；输入内容变化则走 state，使显示的字符数量正确更新。",
+          "向自定义组件传递 ref 的方式有版本差异：React 19 的函数组件可以把 ref 作为 prop 接收，旧版常见 forwardRef。先掌握原生节点引用，再按项目版本选择跨组件暴露方式，避免把所有 API 混用。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { useRef, useState } from 'react';\nexport default function NameEditor() {\n  const inputRef = useRef(null);\n  const [name, setName] = useState('');\n  return <section>\n    <label>姓名<input ref={inputRef} value={name} onChange={e => setName(e.target.value)} /></label>\n    <button onClick={() => inputRef.current?.focus()}>定位到输入框</button>\n    <p>已输入 {name.length} 个字符</p>\n  </section>;\n}",
+          "explanation": "ref 用于 focus，name 用于显示字符数量。修改 inputRef.current 本身不会像 setName 一样触发组件渲染。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：为表单增加“返回姓名栏”按钮，同时显示输入长度",
+      "scenario": "为表单增加“返回姓名栏”按钮，同时显示输入长度。",
+      "steps": [
+        "先确定输入内容参与显示，因此由 state 保存。",
+        "用 useRef 保存对应 input 节点，绑定到元素的 ref 属性。",
+        "在按钮事件中检查节点存在后调用 focus。",
+        "尝试只增加 ref.current 中的自定义数字，观察它不会自动引发页面更新。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "一个倒计时数字每秒都要显示新值，应该仅放进 ref 吗？",
+      "answer": "不应该仅靠 ref 驱动显示。显示数字应由 state 更新；计时器编号这类不直接显示的控制信息，可以另外放在 ref 中。"
+    },
+    "takeaways": [
+      "ref 记住可变值但不自动触发渲染",
+      "state 适合参与显示的数据",
+      "命令式 DOM 操作只在必要边界使用"
+    ]
+  },
+  "react-state": {
+    "title": "状态是一张本次渲染的快照",
+    "intro": "点击加一后，页面需要用新的数量重新计算。React 的 state 不是一条可以随意赋值的普通全局变量，而是与组件身份关联的数据。每次渲染拿到它在那个时刻的值，这就是“状态快照”的含义。",
+    "objectives": [
+      "理解 setter 请求更新",
+      "推导连续更新的结果",
+      "用更新函数表达依赖前值的变化"
+    ],
+    "prerequisites": [
+      "JavaScript 函数与闭包",
+      "React useState 和事件"
+    ],
+    "sections": [
+      {
+        "title": "一次渲染使用一组固定的输入",
+        "paragraphs": [
+          "组件函数运行时拿到当前 props 和 state，据此生成 JSX，同时创建这一轮的事件处理器。处理器中的变量引用来自这次渲染，所以在它执行期间，不会因为调用 setter 就让局部 count 立刻变成下一次渲染的值。",
+          "setter 告诉 React 安排新状态和后续渲染。它不是赋值运算，也不是一个通用的“等待页面更新”Promise。把它看成更新请求，可以同时解释为什么界面会改变，以及为什么当前处理器里的日志仍可能显示旧快照。"
+        ]
+      },
+      {
+        "title": "直接给值与给更新函数的区别",
+        "paragraphs": [
+          "setCount(count + 1) 先在当前快照中计算一个确定值。如果 count 是零，连续写三次都会请求设置成一。setCount(n => n + 1) 则提交一条根据队列中的前一个结果计算下一值的规则，可以按顺序累加。",
+          "更新函数应保持纯计算，不在里面发送请求或写入存储。React 可能为了开发检查等原因重复调用纯函数来发现问题；把副作用放进更新函数，会让行为难以预测。需要执行的用户动作留在事件里处理。"
+        ]
+      },
+      {
+        "title": "对象和数组状态也需要明确新结果",
+        "paragraphs": [
+          "修改对象内部字段后仍把同一个对象传回去，可能导致引用没有变化，更新行为也不符合预期。通常创建新对象或数组，保留未改字段并替换需要变化的部分。所谓不可变更新，是不改写之前已经作为状态使用的那份数据。",
+          "下面比较增加三次的两种写法。重点不是记忆“React 总是异步”，而是逐行确定当前 count 是多少，以及队列里提交的是三个相同值还是三个可组合的更新函数。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { useState } from 'react';\nexport default function Counter() {\n  const [count, setCount] = useState(0);\n  function addThree() {\n    setCount(n => n + 1);\n    setCount(n => n + 1);\n    setCount(n => n + 1);\n  }\n  return <button onClick={addThree}>当前 {count}，增加三次</button>;\n}",
+          "explanation": "从 0 点击一次变成 3。若三行都改为 setCount(count + 1)，这一轮提交的是相同快照算出的值，通常只增加 1。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：实现购买数量的批量增加按钮",
+      "scenario": "实现购买数量的批量增加按钮。一次点击相当于连续增加三次。",
+      "steps": [
+        "先在纸上写出当前渲染的 count 值。",
+        "把每个 setter 转成“设置为某值”或“根据前值计算”的队列条目。",
+        "按顺序处理队列，预测最终结果，再运行确认。",
+        "如果数量改为对象字段，创建新对象更新，不直接改写旧状态对象。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "在 count 为 5 的处理器中，setCount(count + 1) 后立即读 count，为什么仍是 5？",
+      "answer": "处理器拿到的是当前渲染的快照。setter 安排后续状态，并不改写这个函数中的局部变量；新的渲染才会得到更新后的值。"
+    },
+    "takeaways": [
+      "每次渲染看到自己的状态快照",
+      "基于前值的变化使用更新函数",
+      "不要改写已经提交的对象状态"
+    ]
+  },
+  "react-props": {
+    "title": "用输入和回调建立组件之间的数据流",
+    "intro": "当两个输入框或按钮需要协同工作时，关键不是找一种“互相改变量”的办法，而是确定共同数据由谁拥有。props 向下传递输入，回调向上表达操作，状态提升把共同事实放到多个使用者的共同父级。",
+    "objectives": [
+      "理解 props 的只读角色",
+      "找到共享状态的合适位置",
+      "通过回调连接子组件行为"
+    ],
+    "prerequisites": [
+      "React 函数组件和 useState",
+      "JavaScript 函数参数"
+    ],
+    "sections": [
+      {
+        "title": "props 是组件一次渲染的输入",
+        "paragraphs": [
+          "父组件在 JSX 中传递属性，子组件通过参数接收，可以像普通对象一样解构。字符串、对象和函数都能作为 prop，但名字应解释业务含义。子组件根据输入计算界面，不应把父组件传入的对象当作可随意修改的私有数据。",
+          "只读是组件之间的约定，不表示所有对象都被深度冻结。直接改 prop 对象的内部字段仍可能影响共享引用，却绕过正常更新路径。需要改变时，应该由状态所有者通过 setter 产生新状态。"
+        ]
+      },
+      {
+        "title": "提升状态：只保留一个可信来源",
+        "paragraphs": [
+          "两个子组件需要同步同一个温度或选中值时，可以把状态移到最近的共同父级，再分别传入。一个子组件发生操作，就通过回调通知父级更新；父级下一轮渲染给两个子组件传入一致的新值。",
+          "不要看到 props 就把它复制进局部 state。若复制只是为了展示相同内容，之后父级变化还要额外同步，容易产生两份互相冲突的数据。只有明确需要“编辑草稿”等独立生命周期时，才设计第二份状态及其初始化、保存和取消规则。"
+        ]
+      },
+      {
+        "title": "受控输入：显示值和更新入口由父级提供",
+        "paragraphs": [
+          "受控输入的 value 来自状态，onChange 把用户的新值交给状态所有者。下面两个 NameInput 显示同一个 name，所以任意一处输入后，两处都更新。子组件无需知道另一个输入框的存在。",
+          "回调并不是特殊的传送通道，它只是一个由父级定义、子级适时调用的函数。顺着函数定义位置和参数传递去读代码，就能看清谁决定新值，谁只负责显示和报告交互。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { useState } from 'react';\nfunction NameInput({ label, value, onValueChange }) {\n  return <label>{label}<input value={value} onChange={e => onValueChange(e.target.value)} /></label>;\n}\nexport default function App() {\n  const [name, setName] = useState('');\n  return <section>\n    <NameInput label=\"姓名\" value={name} onValueChange={setName} />\n    <NameInput label=\"确认姓名\" value={name} onValueChange={setName} />\n  </section>;\n}",
+          "explanation": "两处输入共用父级 name。这里为了展示同步而使用相同内容；真实“确认”字段是否独立，应根据业务要求决定。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：让课程列表和详情显示同一个选中课程",
+      "scenario": "让课程列表和详情显示同一个选中课程。点击任一入口都能同步。",
+      "steps": [
+        "把 selectedId 放到两者共同父级，避免各自独立保存。",
+        "父级向列表传入当前编号和 onSelect 回调。",
+        "列表点击时报告课程 id，由父级更新状态。",
+        "详情通过同一编号读取课程，测试从不同入口切换是否一致。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "为什么把父级 name 复制到子级 useState 后就不再更新，可能让界面显示旧值？",
+      "answer": "useState 的初始化不等于持续跟踪 prop。父级后续传入新值时，子级的独立状态不会自动变成它；若不需要独立草稿，应直接使用 prop。"
+    },
+    "takeaways": [
+      "props 描述输入，回调表达操作",
+      "共享事实尽量只有一个状态来源",
+      "复制 props 到 state 前先说明独立数据的目的"
+    ]
+  },
+  "react-types": {
+    "title": "类型约定帮助开发，输入校验保护运行过程",
+    "intro": "组件希望拿到价格、名称和编号，但网络返回的数据可能缺字段或类型不对。开发时的类型检查与程序运行时的数据校验解决不同问题。本课把两者分开，先看 props 合同，再把不可信输入转成组件可用的数据。",
+    "objectives": [
+      "认识 TypeScript 的开发期约束",
+      "理解 readonly 的作用范围",
+      "为外部数据编写运行时校验"
+    ],
+    "prerequisites": [
+      "JavaScript 对象与 typeof",
+      "React props；基础 TypeScript 语法"
+    ],
+    "sections": [
+      {
+        "title": "类型描述我们希望怎样使用数据",
+        "paragraphs": [
+          "TypeScript 可以声明组件 props 中必须有哪些字段、字段是什么类型，以及回调需要哪些参数。编辑器和编译检查能提前发现漏传、拼写或不匹配调用。类型使组件的使用约定更清楚，但不会自动修复错误数据。",
+          "编译后，多数类型声明不会以相同形式留在运行时。服务器返回 JSON，即使你用类型断言声称它是 Product，也没有真的检查字段。断言只是告诉编译器相信你的判断，不能替代对外部输入的验证。"
+        ]
+      },
+      {
+        "title": "只读约定与运行时保护不是一回事",
+        "paragraphs": [
+          "Readonly 类型可以在开发期阻止通过该类型直接赋值某些字段，但不等于深度冻结对象，也不阻止其他引用修改同一对象。React 的 props 只读思路同样要求组件不要随意改变收到的数据。",
+          "历史项目常见 PropTypes 做运行期开发提示；React 19 已移除相关 propTypes 检查，不应继续把它当作新代码的必然保障。实际边界可使用显式校验函数或合适的校验库，输出经过验证的数据后再交给组件。"
+        ]
+      },
+      {
+        "title": "从 unknown 到可用对象",
+        "paragraphs": [
+          "unknown 表示暂时不知道输入结构，使用属性前需要做检查。下面先排除 null、数组和非对象，再检查字符串和非负安全整数价格。返回时只保留约定字段，避免把多余输入直接扩散到应用状态。",
+          "价格采用整数分而不是随意的小数，是本例的业务约定；校验应围绕实际需求编写。校验成功不等于完成所有安全与权限检查，但能让组件不必到处防御“价格居然是对象”这样的结构错误。"
+        ],
+        "code": {
+          "language": "tsx",
+          "source": "type Product = Readonly<{ name: string; priceCents: number }>;\nfunction parseProduct(value: unknown): Product | null {\n  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;\n  const v = value as Record<string, unknown>;\n  if (typeof v.name !== 'string' || typeof v.priceCents !== 'number' ||\n      !Number.isSafeInteger(v.priceCents) || v.priceCents < 0) return null;\n  return { name: v.name, priceCents: v.priceCents };\n}\nfunction ProductCard({ product }: { product: Product }) {\n  return <p>{product.name}：{(product.priceCents / 100).toFixed(2)} 元</p>;\n}",
+          "explanation": "代码放在已配置 TypeScript 的 .tsx 文件。parseProduct 成功返回后再传给 ProductCard；失败时显示错误或采用业务回退。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：把商品接口的数据送进价格卡片",
+      "scenario": "把商品接口的数据送进价格卡片。接口有时返回字符串价格或空对象。",
+      "steps": [
+        "先列出组件需要的字段和业务限制，写成 Product 类型。",
+        "把外部响应视为 unknown，不直接通过断言绕过检查。",
+        "使用解析函数验证并构造最小对象，失败时进入明确错误路径。",
+        "分别测试合法价格、负数、小数和缺少字段，确认组件只收到有效结构。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "把 response.json() 的结果写成 as Product，是否已经验证了服务器真的返回这些字段？",
+      "answer": "没有。类型断言不会运行这些字段检查；应通过实际判断或校验工具验证数据，再构造或返回符合约定的对象。"
+    },
+    "takeaways": [
+      "开发期类型与运行时校验各有职责",
+      "readonly 不等于深度冻结",
+      "外部输入先验证，再交给组件"
+    ]
+  },
+  "react-effects": {
+    "title": "让组件与外部系统保持同步",
+    "intro": "有些工作不能只靠返回 JSX 完成，例如监听窗口变化、连接聊天频道或控制第三方播放器。Effect 用来把这些外部系统与已经显示的组件状态同步起来。它不是所有计算和事件的默认存放位置。",
+    "objectives": [
+      "区分渲染、事件与 Effect",
+      "理解依赖数组表达的关系",
+      "让建立和清理成对出现"
+    ],
+    "prerequisites": [
+      "React props 和 state",
+      "JavaScript 事件监听"
+    ],
+    "sections": [
+      {
+        "title": "哪些工作需要离开纯渲染",
+        "paragraphs": [
+          "渲染逻辑根据 props 和 state 计算 JSX，应该尽量没有外部副作用。用户点击保存产生的请求通常属于事件处理器，因为它由明确动作触发；页面出现后需要持续订阅某个频道，则需要与组件显示状态保持同步。",
+          "Effect 在提交之后安排执行，适合处理这类同步。它不是“任意代码延后执行”的口袋。如果总价能够由当前数量直接计算，通常在渲染中推导即可，不必先渲染旧总价，再用 Effect 设置第二份状态。"
+        ]
+      },
+      {
+        "title": "依赖数组描述这段同步需要哪些值",
+        "paragraphs": [
+          "Effect 读取了 roomId，就应把它作为依赖，让频道改变时重新同步。依赖改变后，React 会先运行上一轮的清理，再建立新一轮工作。空依赖并不表示你可以忽略回调中读取的变化数据；遗漏依赖可能让它一直使用旧闭包。",
+          "依赖比较关注值和引用的变化。每次渲染都创建的新对象或函数，可能使 Effect 频繁重建；解决方式是整理真正的依赖，而不是为了减少执行次数就删掉依赖列表中的必需值。"
+        ]
+      },
+      {
+        "title": "一次注册就应有对应释放",
+        "paragraphs": [
+          "下面把窗口宽度同步到 state。Effect 注册 resize 监听，返回函数移除同一个监听器。组件卸载后，不应该还因为窗口变化修改旧状态；重新显示时则建立自己的新订阅。",
+          "开发模式的 StrictMode 可能额外执行一次建立与清理来检查问题，这要求代码能正确清理，而不是依赖“绝对只执行一次”。Effect 的一般时机也不能粗略等同于所有场景都在屏幕绘制之后；精确布局需求应学习对应 API。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { useEffect, useState } from 'react';\nexport default function WidthInfo() {\n  const [width, setWidth] = useState(null);\n  useEffect(() => {\n    const update = () => setWidth(window.innerWidth);\n    update();\n    window.addEventListener('resize', update);\n    return () => window.removeEventListener('resize', update);\n  }, []);\n  return <p>窗口宽度：{width === null ? '等待浏览器信息' : width}</p>;\n}",
+          "explanation": "首次提交后读取窗口宽度；缩放窗口时更新显示；卸载时移除监听。这里没有在渲染阶段读取并修改外部系统。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：在设置页实时显示浏览器宽度",
+      "scenario": "在设置页实时显示浏览器宽度。离开设置页后不再保留该监听。",
+      "steps": [
+        "先定义一个状态表达尚未读取到浏览器信息。",
+        "用 Effect 注册监听并执行一次初始同步。",
+        "返回清理函数，确保使用原监听函数引用。",
+        "反复进入和离开设置页，并在开发检查模式下观察是否产生重复监听。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "过滤课程数组只依赖当前课程和搜索词，是否一定要放到 Effect 后再 setState？",
+      "answer": "通常不需要。它是由当前输入推导的显示数据，可以在渲染中计算；如果计算昂贵，再根据实际测量考虑缓存，而不是先增加同步状态。"
+    },
+    "takeaways": [
+      "Effect 连接外部系统",
+      "依赖是同步关系而非随意优化开关",
+      "建立和清理必须能安全配对"
+    ]
+  },
+  "react-lifecycle": {
+    "title": "组件生命周期与现代渲染过程",
+    "intro": "组件会开始存在、接收更新并最终离开。旧代码常用类生命周期组织这些阶段，函数组件则更常按“一项外部同步如何开始和结束”安排 Effect。先理解实际发生的事情，再比较 API 名称，才能正确阅读新旧项目。",
+    "objectives": [
+      "理解挂载、更新与卸载",
+      "区分渲染计算和提交",
+      "把类组件的资源逻辑迁移为配对同步"
+    ],
+    "prerequisites": [
+      "React 渲染与 useEffect",
+      "JavaScript 类的基础概念"
+    ],
+    "sections": [
+      {
+        "title": "生命周期描述组件的存在过程",
+        "paragraphs": [
+          "挂载意味着组件首次被提交到界面；更新来自新 props、state 或其他渲染原因；卸载表示它不再占据原来的组件位置。函数组件每次渲染都会执行，但这不意味着它每次都从零开始挂载。",
+          "类组件通过 render 描述界面，并可在 componentDidMount、componentDidUpdate 和 componentWillUnmount 等方法处理相关工作。读旧项目时，先标出创建了哪些资源、哪些输入变化会影响它们、哪里负责释放。"
+        ]
+      },
+      {
+        "title": "Fiber 与可中断计算先作为调度背景理解",
+        "paragraphs": [
+          "Fiber 可以理解为 React 组织组件工作和状态关联的内部结构。渲染阶段的计算可能被重新开始或放弃，提交阶段才把选定结果应用到实际界面。不是每一次运行组件函数都必然对应一次用户看得见的提交。",
+          "因此渲染逻辑不能依赖执行次数来发送请求或修改外部数据。以 componentWill 开头的部分旧生命周期在现代渲染中存在问题，旧项目可能使用 UNSAFE 前缀；学习时不应把历史调用顺序直接当作所有版本的保证。"
+        ]
+      },
+      {
+        "title": "把一项订阅的开始和结束放在一起",
+        "paragraphs": [
+          "函数组件不必把一个订阅拆到三个类方法中。Effect 可以描述“对于当前 topic，建立订阅，离开或 topic 改变时取消”。但这是一种职责转换，不代表每个类方法都与某个 Hook 一一等价。",
+          "下面的 subscribe 由使用者传入，并应返回取消函数。回调中的 active 防止清理后迟到的消息写入旧状态；依赖包含 topic 与 subscribe，任何会改变订阅含义的输入变化都应重新同步。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { useEffect, useState } from 'react';\nexport default function MessagePanel({ topic, subscribe }) {\n  const [message, setMessage] = useState('');\n  useEffect(() => {\n    let active = true;\n    setMessage('');\n    const stop = subscribe(topic, value => { if (active) setMessage(String(value)); });\n    return () => { active = false; stop(); };\n  }, [topic, subscribe]);\n  return <section><h2>{topic}</h2><p>{message || '等待消息'}</p></section>;\n}",
+          "explanation": "调用者须提供稳定且可取消的 subscribe。topic 改变时旧订阅被清理，新订阅开始；卸载时也会执行清理。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：把旧类组件里的聊天订阅迁移为函数组件",
+      "scenario": "把旧类组件里的聊天订阅迁移为函数组件。频道随 props 改变。",
+      "steps": [
+        "先整理旧代码何时连接、频道变化时是否切换、卸载时如何断开。",
+        "把同一订阅的建立和释放放进一个 Effect。",
+        "列出它读取的输入并声明依赖，不复制旧方法名作为设计依据。",
+        "测试切换频道、离开页面与迟到消息，确认只显示当前订阅的数据。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "组件函数被执行了一次，是否可以在函数体里据此记录“页面已经展示一次”？",
+      "answer": "不可以简单这样判断。渲染计算可能重做或被放弃，并不保证已经提交到界面；需要结合真正的展示或业务事件定义记录时机。"
+    },
+    "takeaways": [
+      "渲染执行次数不等于挂载次数",
+      "类生命周期用于阅读历史代码",
+      "按同步职责迁移，避免机械映射钩子"
+    ]
+  },
+  "react-router": {
+    "title": "把站内导航变成可以分享的地址",
+    "intro": "React 本身负责界面渲染，页面地址如何匹配组件通常由路由库处理。一个完整的导航体验应支持点击链接、后退、刷新与直接打开。本课用声明式路由说明路由表、导航链接与参数读取的关系。",
+    "objectives": [
+      "认识 BrowserRouter、Routes 和 Route",
+      "使用 Link 进行站内导航",
+      "理解路径参数与服务器回退"
+    ],
+    "prerequisites": [
+      "React 组件与 JSX",
+      "URL 路径和浏览器历史"
+    ],
+    "sections": [
+      {
+        "title": "路由器提供当前地址的共同上下文",
+        "paragraphs": [
+          "BrowserRouter 使用浏览器历史机制管理导航状态，让内部组件读取当前位置并触发路由切换。Routes 按地址选择匹配分支，Route 描述某个路径对应的元素。页面仍是普通 React 组件，只是由匹配结果决定显示谁。",
+          "路径 /courses/:id 中的 id 是可变片段，详情组件可以用 useParams 读取。它属于外部输入，不应该在没有验证时直接假设为有效数据库编号。列表筛选等信息也可用查询参数表示，与路径身份承担不同职责。"
+        ]
+      },
+      {
+        "title": "Link 既表达链接语义，也参与客户端导航",
+        "paragraphs": [
+          "普通站内操作可以使用 Link，让路由器更新地址并切换内容，同时保留链接的基本浏览器语义。不要把所有链接都改成没有 href 的 div 再手写点击，键盘、复制链接和打开新标签等行为容易因此受损。",
+          "有些场景确实需要完整文档导航或跳转到外站，应使用适合的方式。客户端路由不是禁止浏览器导航，而是在明确场景下避免每次都重新加载整份应用。也不能依靠隐藏路由来保护后端数据。"
+        ]
+      },
+      {
+        "title": "从首页到详情的最小路由表",
+        "paragraphs": [
+          "下面按现代 React Router 的声明式用法，从 react-router 导入所需 API。旧项目常从 react-router-dom 导入相同网页路由能力，迁移时应遵循项目对应版本的文档，不要把不同年代的 Switch 与 Routes 写法混合。",
+          "BrowserRouter 下的组件依赖路由上下文，因此不要把 Link 或 useParams 放到路由器外。生产服务器还需要对前端页面路径返回入口；静态文件缺失与 API 错误不应被回退规则伪装成正常 HTML 页面。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router';\nfunction Home() { return <Link to=\"/courses/42\">打开课程 42</Link>; }\nfunction Detail() {\n  const { id } = useParams();\n  return <section><h1>课程 {id}</h1><Link to=\"/\">返回首页</Link></section>;\n}\nexport default function App() {\n  return <BrowserRouter><Routes>\n    <Route path=\"/\" element={<Home />} />\n    <Route path=\"/courses/:id\" element={<Detail />} />\n    <Route path=\"*\" element={<p>页面不存在</p>} />\n  </Routes></BrowserRouter>;\n}",
+          "explanation": "示例要求安装提供这些声明式 API 的 react-router。点击首页链接后读取参数 42；未知路径显示页面不存在。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：让课程详情可以通过地址直接分享给同学",
+      "scenario": "让课程详情可以通过地址直接分享给同学。",
+      "steps": [
+        "在路由表中定义动态 id，把课程身份放入 URL。",
+        "从首页用 Link 进入详情，检查地址、内容和后退操作。",
+        "复制详情链接在新标签打开，验证服务器能返回入口。",
+        "在详情组件中验证参数并处理找不到课程的情况，而不把前端路由匹配当作数据一定存在。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "Route 成功匹配 /courses/42，是否说明服务器上一定存在编号 42 的课程？",
+      "answer": "不是。路由只说明地址形状匹配；数据是否存在、是否有权限查看，仍需业务读取与服务端检查。"
+    },
+    "takeaways": [
+      "路由负责地址到组件的对应",
+      "链接保留导航语义",
+      "地址匹配、数据存在和访问权限分别判断"
+    ]
+  },
+  "react-redux": {
+    "title": "用动作和更新规则组织共享状态",
+    "intro": "当多个页面共同读写购物车或复杂业务流程时，需要知道每一次变化由谁触发、如何产生。Redux 用 store 保存共享状态，用 action 描述发生的事，再由 reducer 根据旧状态计算新状态。它不是每个 React 页面都必须安装的工具。",
+    "objectives": [
+      "理解 store、action、dispatch 与 reducer",
+      "认识纯更新规则的价值",
+      "区分 Redux 与 React 连接层"
+    ],
+    "prerequisites": [
+      "React state 与不可变更新",
+      "JavaScript 对象和纯函数"
+    ],
+    "sections": [
+      {
+        "title": "用 action 说明发生了什么",
+        "paragraphs": [
+          "action 通常是包含 type 的普通对象，也可以携带 payload 业务数据。dispatch 把 action 交给 store 的更新流程。把事件命名为 cart/itemAdded，往往比让各处随意改全局对象更容易追踪意图。",
+          "store 是保存状态、处理更新和通知订阅者的容器。它集中的是需要共享的业务事实，并不要求把每个输入框焦点或临时菜单都搬进去。是否使用 Redux 应根据状态复杂度、协作需要和调试价值决定。"
+        ]
+      },
+      {
+        "title": "reducer：根据输入计算下一个状态",
+        "paragraphs": [
+          "reducer 接收旧 state 和 action，返回新 state。纯规则意味着不在这里发请求、读取随机数或修改外部对象；相同输入应产生相应可预测的结果。这样可以单独测试更新过程，也便于检查动作与结果。",
+          "手写 reducer 通常通过新对象或数组进行不可变更新。Redux Toolkit 的 createSlice 使用 Immer，使内部看起来可以修改草稿；这种写法依赖工具处理，不表示可以在任意 reducer 或组件里直接改旧状态。"
+        ]
+      },
+      {
+        "title": "从核心规则到组件读取",
+        "paragraphs": [
+          "下面先用纯函数展示规则，无需安装库也能理解和运行。真实 Redux 应用把规则交给 store，再由 React-Redux 的 Provider 提供访问范围，useSelector 读取需要的数据，useDispatch 获得派发入口。",
+          "当前 Redux 项目通常使用 Redux Toolkit 减少手写配置。异步请求通过相应中间件或工具组织，成功后仍以明确动作影响状态。仓库本身也不会自动把状态保存到硬盘，跨刷新恢复需要另外设计。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function cartReducer(state = { count: 0 }, action) {\n  switch (action.type) {\n    case 'cart/add': return { ...state, count: state.count + action.amount };\n    case 'cart/clear': return { ...state, count: 0 };\n    default: return state;\n  }\n}\nconst before = { count: 1 };\nconst after = cartReducer(before, { type: 'cart/add', amount: 2 });\nconsole.log(before.count, after.count, before === after); // 1 3 false",
+          "explanation": "旧对象保持 count 为 1，新对象为 3；这个纯 reducer 示例说明更新规则，尚未创建完整 Redux store 或连接 React。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：让商品页与顶部购物车角标共同操作购物车数量",
+      "scenario": "让商品页与顶部购物车角标共同操作购物车数量。",
+      "steps": [
+        "先列出业务动作，如加入、移除和清空，而不是暴露任意改对象的入口。",
+        "为每个动作写纯更新规则，单独验证旧状态没有被改写。",
+        "通过 store 与 React 连接层让两处读取同一来源。",
+        "需要服务器请求时，把异步流程放到相应工具中，保持 reducer 负责计算状态。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "为什么在 reducer 里直接发网络请求会破坏它作为更新规则的职责？",
+      "answer": "网络请求有时间、失败和外部副作用，无法只由输入计算确定结果。把异步流程放在外层，reducer 仍可保持可预测、可单独测试。"
+    },
+    "takeaways": [
+      "action 表达发生的事",
+      "reducer 计算下一个状态",
+      "工具中的草稿修改不等于随处允许改旧数据"
+    ]
+  },
+  "react-key": {
+    "title": "让列表状态跟随正确的业务项目",
+    "intro": "列表不仅显示文字，每行还可能有展开状态、输入草稿和焦点。排序后这些状态应跟随同一个项目，而不是留在原来的位置。key 帮助 React 在同级子元素中识别身份，是理解状态保留与重置的重要线索。",
+    "objectives": [
+      "理解组件身份与状态关联",
+      "为可变化列表选择稳定 key",
+      "知道何时 key 改变会重置状态"
+    ],
+    "prerequisites": [
+      "React 列表 map",
+      "组件局部 useState"
+    ],
+    "sections": [
+      {
+        "title": "位置、类型与 key 共同参与身份判断",
+        "paragraphs": [
+          "React 把状态与组件在树中的身份关联起来。没有额外 key 时，同级位置是重要线索；类型变化通常也意味着不同组件。列表加上稳定 key，可以让身份在重新排列时仍与业务项目对应。",
+          "key 只在当前同级列表中需要唯一，不是整个应用的全局编号，也不会作为普通 prop 自动传给子组件。若子组件需要业务 id，应另行传入 id 属性，而不是尝试读取 props.key。"
+        ]
+      },
+      {
+        "title": "为什么位置编号和随机数容易出问题",
+        "paragraphs": [
+          "数组下标表达“现在排第几”，不是“这是谁”。在头部插入或删除一项后，多个项目下标都改变，组件状态可能按位置被复用到另一个项目。完全固定且无身份相关状态的列表有不同条件，但不该把下标作为动态业务列表的默认选择。",
+          "每次渲染生成随机 key 则会让项目看起来全是新身份，旧状态被丢弃，节点和组件可能反复重建。优先使用数据中稳定的业务 id；若需要创建 id，应在创建数据时生成并保存，而不是在渲染时临时改变。"
+        ]
+      },
+      {
+        "title": "用可编辑行观察状态跟随",
+        "paragraphs": [
+          "下面 Row 保存自己的草稿，外层可反转顺序。稳定 id 让输入内容跟随对应课程移动，而不是被另一行占用。通过这个现象，比只看静态文字更容易理解 key 的实际价值。",
+          "有时我们希望切换用户后重置整个编辑器，可以明确改变编辑器 key 以建立新身份。这是有意重置，不是简单“让它刷新一下”。正常数据更新用 props 和 state，身份变化则应有业务含义。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { useState } from 'react';\nfunction Row({ item }) {\n  const [draft, setDraft] = useState(item.title);\n  return <label>{item.id}<input value={draft} onChange={e => setDraft(e.target.value)} /></label>;\n}\nexport default function CourseList() {\n  const [items, setItems] = useState([{ id: 'a', title: 'HTML' }, { id: 'b', title: 'CSS' }]);\n  return <section><button onClick={() => setItems(xs => [...xs].reverse())}>反转</button>\n    {items.map(item => <Row key={item.id} item={item} />)}\n  </section>;\n}",
+          "explanation": "编辑 a 的草稿后反转，草稿仍属于 a。Row 这里明确拥有独立编辑草稿，初始标题不是持续同步的输入值。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：制作可排序的课程备注列表，每行有尚未保存的编辑草稿",
+      "scenario": "制作可排序的课程备注列表，每行有尚未保存的编辑草稿。",
+      "steps": [
+        "先使用稳定课程 id 作为 key，同时把 id 作为普通数据传给行组件。",
+        "编辑一行草稿，再反转列表或在头部新增课程。",
+        "确认草稿与课程仍匹配，而不是跟随旧位置。",
+        "最后比较使用下标或每次随机值的版本，说明状态错位与被重置分别来自什么身份变化。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "为什么把 key 写成 Math.random() 看似不会重复，却仍然不合适？",
+      "answer": "它每次渲染都改变身份。即使唯一，React 也难以把本次项目和上次项目视为同一个，已有状态会被反复丢弃或重建。"
+    },
+    "takeaways": [
+      "key 要同时稳定且在同级唯一",
+      "列表位置不是业务身份",
+      "有意重置才应有意改变身份"
+    ]
+  },
+  "react-persistence": {
+    "title": "让学习草稿跨刷新继续存在",
+    "intro": "组件状态默认存在当前页面的内存里。刷新后应用重新启动，若没有恢复步骤，输入草稿就会回到初始值。持久化是把选定数据保存到更长寿命的位置，并在下一次启动时读取、校验和恢复的完整过程。",
+    "objectives": [
+      "区分内存状态与持久化存储",
+      "设计读取、校验和保存流程",
+      "处理存储失败与版本变化"
+    ],
+    "prerequisites": [
+      "React useState 和 useEffect",
+      "JSON 与 localStorage"
+    ],
+    "sections": [
+      {
+        "title": "先选择哪些数据值得保存",
+        "paragraphs": [
+          "草稿、显示偏好和学习进度常需要跨刷新保留；临时悬停状态或可以随时重新推导的值通常不必保存。localStorage 按同源保存字符串，适合少量简单数据，但同步读写可能阻塞，不适合无限增长的大量内容。",
+          "浏览器数据可能被用户清除，也可能因配额、隐私设置或环境限制而无法读写。持久化不意味着永不丢失；重要内容还应考虑导出、服务端保存和明确反馈。不要把密钥等敏感信息随整份状态无差别写入。"
+        ]
+      },
+      {
+        "title": "恢复必须检查格式，而不只是 JSON.parse",
+        "paragraphs": [
+          "JSON.parse 只解决语法，不能保证结果拥有你需要的字段。可以给数据加 version 标记，验证字段类型和范围，再恢复受支持的内容；旧版本格式不兼容时，应迁移或采用合理默认值。",
+          "读取失败应让页面仍能启动。useState 可以接收初始化函数，让纯客户端应用在初始化时读取一次已有草稿；这个函数应避免写入和其他不可重复副作用。服务端渲染环境没有浏览器 localStorage，需要另行设计恢复时机与一致性。"
+        ]
+      },
+      {
+        "title": "让保存发生在状态更新之后",
+        "paragraphs": [
+          "下面示例只面向纯客户端组件，初始化时恢复字符串草稿，之后用 Effect 同步存储。保存失败会显示提示，避免用户以为内容已经落盘；不把存储写入藏在 setDraft 的更新函数里。",
+          "多个标签页同时编辑、服务器版本冲突和跨设备同步是下一层问题。单纯写 localStorage 没有自动解决这些情况。先把单页的读取、校验、写入和失败路径做好，再依据产品需求扩展协作规则。"
+        ],
+        "code": {
+          "language": "jsx",
+          "source": "import { useEffect, useState } from 'react';\nconst KEY = 'course-draft-v1';\nfunction readDraft() {\n  try {\n    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');\n    return saved?.version === 1 && typeof saved.text === 'string' ? saved.text : '';\n  } catch { return ''; }\n}\nexport default function DraftEditor() {\n  const [draft, setDraft] = useState(readDraft);\n  const [error, setError] = useState('');\n  useEffect(() => {\n    try { localStorage.setItem(KEY, JSON.stringify({ version: 1, text: draft })); setError(''); }\n    catch { setError('保存失败，请复制草稿备份。'); }\n  }, [draft]);\n  return <section><textarea aria-label=\"课程笔记\" value={draft} onChange={e => setDraft(e.target.value)} />\n    {error && <p role=\"alert\">{error}</p>}</section>;\n}",
+          "explanation": "输入后保存版本化对象，刷新时恢复文本。该最小示例没有加入写入防抖、容量限制或多标签冲突合并，正式产品需按需求补充。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "一起做：给学习笔记增加刷新恢复功能",
+      "scenario": "给学习笔记增加刷新恢复功能。存储损坏时页面也应该正常打开。",
+      "steps": [
+        "先确定只保存笔记文本，并为格式增加版本号。",
+        "读取时处理不存在、非法 JSON 和字段类型错误三种情况。",
+        "状态变化后写入，捕获失败并给用户可执行的备份提示。",
+        "修改存储内容模拟损坏，再刷新确认有合理回退，而不是整个组件崩溃。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "localStorage 里存在同名键，是否就能直接把解析结果当成合法组件状态？",
+      "answer": "不能。旧版本、用户操作或其他代码都可能改变内容；需要验证版本、类型和范围，读取失败时也应保持应用可用。"
+    },
+    "takeaways": [
+      "持久化包含恢复和失败处理",
+      "解析成功不等于数据结构正确",
+      "单页保存不自动解决同步与冲突"
+    ]
+  }
+}

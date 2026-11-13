@@ -1,0 +1,1321 @@
+{
+  "js-equality": {
+    "title": "从“是不是同一个”理解相等比较",
+    "intro": "程序经常需要决定两份数据是否相同：输入的验证码是否匹配、购物车里是否已有某件商品、页面状态是否真的变化。比较前先说明“相同”的标准，才能选择合适的工具。",
+    "objectives": [
+      "区分类型相同、值相同和对象身份相同",
+      "会用严格相等判断业务数据",
+      "理解 NaN 与正负零的特殊比较"
+    ],
+    "prerequisites": [
+      "了解字符串、数字与对象",
+      "能读懂 if 条件"
+    ],
+    "sections": [
+      {
+        "title": "比较运算会得到一个布尔值",
+        "paragraphs": [
+          "相等运算的结果是 true 或 false，可以用于 if、过滤数组或决定是否显示提示。严格相等 === 先看类型，不主动把字符串变成数字，因此 3 与 \"3\" 不相等。对表单读取的字符串，可先按业务规则解析，再比较解析结果。",
+          "宽松相等 == 在某些类型组合下会进行隐式转换。它并非随机工作，但需要记住额外规则，容易掩盖输入格式问题。学习时先掌握严格比较和明确转换，特别要分清空字符串、零、false 与未填写值。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const input = \"3\";\nconsole.log(input === 3); // false\nconsole.log(Number(input) === 3); // true\nconsole.log(\"\" === 0); // false",
+          "explanation": "input 原来是字符串。Number 创建数字值，再与数字 3 比较；空字符串与零始终是不同类型的值。"
+        }
+      },
+      {
+        "title": "对象比较的是身份，不是内容长相",
+        "paragraphs": [
+          "对象可以理解为一份有自己身份的数据集合。两个独立创建的对象即使字段完全相同，也仍是两份对象；把同一个对象赋给另一个变量，则两边指向同一对象，严格比较得到 true。数组也遵循对象身份规则。",
+          "因此寻找商品时，通常比较稳定的商品 ID，而不是比较两个接口返回对象是否 ===。如果需要比较内容，应明确比较哪些字段；复杂结构还涉及顺序、日期、循环引用等，不能把任何情况都草率称为深比较。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const first = { id: 7 };\nconst alias = first;\nconsole.log(first === alias); // true\nconsole.log(first === { id: 7 }); // false",
+          "explanation": "alias 没有创建新对象。第二个比较的右侧对象字面量却每次都会创建一份新对象。"
+        }
+      },
+      {
+        "title": "特殊数值需要特殊判断",
+        "paragraphs": [
+          "NaN 表示无效的数字运算结果，例如 Number(\"hello\")。NaN 与自身使用 === 比较仍为 false；检查一个值是否正是 NaN，可用 Number.isNaN，避免把普通字符串也当成数字错误。正零和负零用 === 比较为 true。",
+          "Object.is 提供另一套相同值判断：它认为 NaN 与 NaN 相同，却区分 +0 和 -0。它并不会递归比较对象内容。选择比较方式应服从业务需求，不能只因为函数名字像“对象相等”就拿来比较两份商品详情。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "console.log(Number.isNaN(Number(\"hello\"))); // true\nconsole.log(Object.is(NaN, NaN)); // true\nconsole.log(Object.is(+0, -0)); // false",
+          "explanation": "这些结果只说明不同相等规则的边界。普通数量判断通常仍可使用 ===。"
+        }
+      },
+      {
+        "title": "从比较一个值，走到列表去重与选择状态",
+        "paragraphs": [
+          "页面常会收到两个内容相同、但分别创建的对象。Set 可以去掉重复的原始值，却不会把“属性长得一样”的对象自动合并；它仍将不同对象视为两个成员。如果需求是同一商品只能出现一次，就应明确哪个字段代表身份，再用商品 ID 建立索引。也不要随手把 ID 转为数字：“001”和“1”是否同一商品，应该由数据约定决定。",
+          "集合和查找方法还可能采用不同的相等规则。Set 和 includes 使用 SameValueZero：NaN 与 NaN 视为相同，正零和负零也视为相同；indexOf 使用严格相等规则，因而找不到 NaN。先描述你要判断的是数值、对象身份还是业务身份，再选择运算符或数据结构，才能避免选择项莫名失效。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const first = { id: \"001\", name: \"笔记本\" };\nconst second = { id: \"001\", name: \"笔记本\" };\nconsole.log(first === second);                  // false\nconsole.log(new Set([first, second]).size);     // 2\nconsole.log(new Set([first.id, second.id]).size);// 1\nconsole.log(new Set([\"001\", \"1\"]).size);        // 2\nconsole.log([NaN].includes(NaN));               // true\nconsole.log([NaN].indexOf(NaN));                // -1",
+          "explanation": "微实验：把 second 改为 first，再观察对象 Set 的大小为何变为 1。接着保留两个对象，只按 id 比较：这表达的是“同一业务记录”，并不说明两个对象的其他字段都一致。"
+        },
+        "points": [
+          "去重之前先定义“重复”的含义：同一个值、同一个对象，还是同一个业务 ID。",
+          "练习：同一 ID 的两个对象价格不同，你会保留哪一个？先写业务规则，再考虑 Map 或 Set。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "核对输入的商品数量",
+      "scenario": "页面输入框得到 \"3\"，库存系统保存数字 3，需要判断数量是否符合预期。",
+      "steps": [
+        "先检查输入是否为空，避免把未填写直接转换为零。",
+        "用 Number 转换，并检查结果是否为允许范围内的整数。",
+        "再与目标数量严格比较；寻找商品对象则比较其 id 字段。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "两个分别创建的 {id:1} 为什么不严格相等？怎样判断它们代表同一件商品？",
+      "answer": "它们是两个不同身份的对象。若业务规定 id 唯一标识商品，就比较两边的 id，而不是比较对象引用。"
+    },
+    "takeaways": [
+      "相等规则由业务问题决定",
+      "=== 不进行跨类型转换",
+      "Object.is 不是深比较工具"
+    ],
+    "references": [
+      {
+        "title": "MDN：相等比较与相同值",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Equality_comparisons_and_sameness"
+      }
+    ]
+  },
+  "js-prototype": {
+    "title": "对象如何借用别人的属性和方法",
+    "intro": "许多对象都需要相同的方法。如果每份对象都复制一整套函数，既重复又难维护。JavaScript 的原型机制让对象在自身没有某个属性时，沿着一条明确的关联继续寻找。",
+    "objectives": [
+      "理解自有属性与继承属性",
+      "能追踪一次属性读取的查找过程",
+      "分清原型对象与构造函数的 prototype 属性"
+    ],
+    "prerequisites": [
+      "会创建对象并读取属性",
+      "理解函数调用"
+    ],
+    "sections": [
+      {
+        "title": "对象有自己的属性，也可以有原型",
+        "paragraphs": [
+          "自有属性是直接属于当前对象的属性。原型则是该对象关联的另一个对象；读取属性时先查自己，找不到才去原型。原型也可能有自己的原型，连续起来就是原型链，最终以 null 结束。",
+          "这种查找机制并不是复制：借到的方法仍属于原型对象。修改共享原型会影响后续查找它的对象，所以不应随意修改 Array.prototype 等内置原型。业务中通常创建自己的原型，或使用 class 表达共享行为。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const methods = { greet() { return \"你好，\" + this.name; } };\nconst user = Object.create(methods);\nuser.name = \"小林\";\nconsole.log(user.greet()); // 你好，小林\nconsole.log(Object.hasOwn(user, \"greet\")); // false",
+          "explanation": "greet 在 user 自身不存在，但能在 methods 中找到。调用形式 user.greet() 让方法读取当前 user 的 name。"
+        }
+      },
+      {
+        "title": "同名属性会遮蔽，不会擦掉原型属性",
+        "paragraphs": [
+          "如果对象自身与原型都有同名属性，读取时优先使用自身属性，这叫遮蔽。删除自身属性后，原型上的同名属性仍可能重新被找到。in 运算符会检查整条原型链，而 Object.hasOwn 只检查对象自身。",
+          "设计配置对象时，这种差别很重要：从原型继承来的默认值并不等于用户明确填写过的值。如果要判断用户有没有自行设置主题，应该检查自有属性，而不是只看读取结果是否存在。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const defaults = { theme: \"light\" };\nconst settings = Object.create(defaults);\nsettings.theme = \"dark\";\nconsole.log(settings.theme); // dark\ndelete settings.theme;\nconsole.log(settings.theme); // light",
+          "explanation": "delete 只删除 settings 的自有 theme，并没有修改 defaults 中的默认主题。"
+        }
+      },
+      {
+        "title": "构造实例时建立原型关联",
+        "paragraphs": [
+          "普通构造函数配合 new 创建对象时，会把新对象的原型关联到构造函数的 prototype 对象。注意对象自身的原型关联与函数上名为 prototype 的属性不是同一个概念；Object.getPrototypeOf 可读取前者。",
+          "class 的方法通常也放在类的 prototype 上供实例共享。instanceof 检查的是特定原型是否出现在对象的链上，并不等于读取一个不可伪造的“类型标签”。跨窗口对象、原型被修改等情况都需要更具体的判断。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "class User {\n  greet() { return \"hello\"; }\n}\nconst user = new User();\nconsole.log(Object.getPrototypeOf(user) === User.prototype); // true\nconsole.log(user.greet()); // hello",
+          "explanation": "new 建立实例与 User.prototype 的关联，实例通过这条关联找到共享的 greet 方法。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "给多名用户共享打招呼能力",
+      "scenario": "通讯录有很多用户，每位用户名字不同，但打招呼的规则相同。",
+      "steps": [
+        "把每个人的 name 作为实例自己的数据保存。",
+        "把 greet 定义为类的方法，让实例通过原型共享行为。",
+        "调用某个实例的方法时，沿“实例自身 → 原型”的顺序寻找方法，再用该实例的数据产生结果。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "对象自己没有 theme，但原型有 theme，Object.hasOwn 与 in 分别会得到什么？",
+      "answer": "Object.hasOwn(object,\"theme\") 为 false；\"theme\" in object 为 true。它们检查的范围不同。"
+    },
+    "takeaways": [
+      "原型是查找后备，不是字段复制",
+      "自有属性可以遮蔽继承属性",
+      "实例数据与共享方法应分别设计"
+    ]
+  },
+  "js-copy": {
+    "title": "变量绑定、对象引用与复制的层次",
+    "intro": "“复制了一个变量”不一定“复制了整份数据”。当编辑草稿意外改变原始资料时，先分清变量保存了什么，以及两个变量是否仍指向同一份对象。",
+    "objectives": [
+      "理解 const 限制的是变量重新绑定",
+      "区分赋值、浅复制和更深层复制",
+      "会按修改路径创建新对象"
+    ],
+    "prerequisites": [
+      "了解对象、数组与赋值语句"
+    ],
+    "sections": [
+      {
+        "title": "const 固定的是名称与值的绑定",
+        "paragraphs": [
+          "const 声明后不能让这个变量重新指向另一个值。对于对象，禁止的是 user = 另一个对象，而不是禁止 user.name = 新名字。对象里面的属性能否修改，还取决于对象自身的属性设置。",
+          "原始值不可被原地修改，例如字符串拼接会产生新字符串。对象却可以在保持身份不变时更新内部字段。不要只凭 let 或 const 判断数据是否会改变；应同时看变量绑定和被指向的数据结构。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const user = { name: \"小林\" };\nuser.name = \"小雨\";\nconsole.log(user.name); // 小雨\n// user = {}; // 取消注释会因重新赋值 const 而报错",
+          "explanation": "改变对象里的 name 没有重新给 user 变量赋值；两种操作的约束不同。"
+        }
+      },
+      {
+        "title": "浅复制只处理最外面一层",
+        "paragraphs": [
+          "赋值 const copy = original 只复制对对象的引用，两边指向同一对象。展开语法 {...original} 会创建新对象并复制可枚举的自有属性，但属性值若还是对象，复制过去的仍是该内层对象的引用。",
+          "因此浅复制适合只改顶层字段的情况。嵌套资料中，只复制外层再修改内层，会让原资料一起变化。数组展开也只是创建新数组并复制元素值，数组里的对象不会自动逐个变成独立副本。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const original = { address: { city: \"杭州\" } };\nconst copy = { ...original };\ncopy.address.city = \"苏州\";\nconsole.log(original.address.city); // 苏州\nconsole.log(copy === original); // false",
+          "explanation": "外层身份不同，但两者的 address 都指向同一对象，所以内层修改仍被共享。"
+        }
+      },
+      {
+        "title": "沿着修改路径创建新结构",
+        "paragraphs": [
+          "在界面状态更新中，经常只需要复制发生变化的路径：修改 address.city，就创建新的外层对象和 address 对象，其他未变化的数据可以继续共享。这样既保留原记录，又能用对象身份变化判断哪些部分更新。",
+          "真正需要独立结构时，可评估 structuredClone 对所用数据类型的支持；它并不复制函数或 DOM 节点。JSON 转来转去会丢失某些信息，不能当作通用深复制。复制策略要先说明数据范围及保留哪些语义。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const original = { name: \"小林\", address: { city: \"杭州\" } };\nconst next = { ...original, address: { ...original.address, city: \"苏州\" } };\nconsole.log(original.address.city); // 杭州\nconsole.log(next.address.city); // 苏州",
+          "explanation": "需要修改的两层都新建了；没有修改的字符串 name 可以直接复用，因为原始值不可原地改变。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "编辑收货地址但允许取消",
+      "scenario": "用户打开地址编辑页，保存前不应改变已提交订单中的地址。",
+      "steps": [
+        "先确认编辑对象有哪些嵌套层级，例如订单中的 address。",
+        "创建独立的编辑路径，把输入变化写入草稿对象。",
+        "取消时丢弃草稿，保存时才把新地址交给负责状态更新的逻辑。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "const b = {...a} 后 b.profile === a.profile 为 true，说明哪里被复制、哪里被共享？",
+      "answer": "外层对象新建了；profile 属性仍引用同一内层对象。要独立修改 profile，需要再创建这一层的新对象。"
+    },
+    "takeaways": [
+      "const 不等于对象冻结",
+      "展开语法通常是浅复制",
+      "复制深度由实际修改和数据类型决定"
+    ]
+  },
+  "js-objects": {
+    "title": "把相关数据与行为组织成对象",
+    "intro": "对象适合表达“一个东西有哪些特征、能做什么”：课程有标题和价格，购物车有商品和总价计算。先学会构建和使用对象，再理解属性枚举、描述符和继承各自解决的问题。",
+    "objectives": [
+      "用字面量、工厂和类组织对象",
+      "理解属性键、可枚举性与访问器",
+      "选择适合的创建方式并认识复制边界"
+    ],
+    "prerequisites": [
+      "了解对象属性和函数参数"
+    ],
+    "sections": [
+      {
+        "title": "从一份具体数据开始",
+        "paragraphs": [
+          "对象字面量用花括号把相关的键和值组织起来。键通常是字符串，也可以是 Symbol；值可以是任何类型。点语法适合固定名称，方括号适合变量决定的键。方法就是保存为属性的函数，用来表达对象相关的行为。",
+          "创建一份课程资料时，字面量最直接。若多处都要按相同规则创建课程，可以写工厂函数：接收参数、校验或补默认值，再返回一个对象。工厂函数不是新类型语法，而是普通函数的一种使用方式。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function createCourse(title, price = 0) {\n  return { title, price };\n}\nconst course = createCourse(\"JavaScript 入门\", 20);\nconst key = \"title\";\nconsole.log(course[key]); // JavaScript 入门",
+          "explanation": "参数简写 title 等价于 title:title。方括号读取 key 变量的内容，点语法 course.key 则会寻找名为 key 的属性。"
+        }
+      },
+      {
+        "title": "属性除了值，还有使用规则",
+        "paragraphs": [
+          "属性描述符记录 writable（是否可写）、enumerable（是否参与常见枚举）和 configurable（是否可删除或重新定义）等规则。访问器属性则用 getter/setter 函数处理读写。读取 getter 可能执行代码，不只是取一个静态值。",
+          "Object.keys 返回自有、可枚举的字符串键；Reflect.ownKeys 会包含自有 Symbol 与不可枚举键。选工具时先说明要处理哪些属性。普通展开会读取属性值，无法完整保留访问器和全部描述符。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const course = { title: \"入门课\" };\nObject.defineProperty(course, \"internalId\", { value: 7, enumerable: false });\nconsole.log(Object.keys(course)); // [\"title\"]\nconsole.log(Reflect.ownKeys(course)); // [\"title\", \"internalId\"]",
+          "explanation": "internalId 真实存在，只是被标记为不可枚举；这不是安全隐藏机制，知道名称仍能读取它。"
+        }
+      },
+      {
+        "title": "共享行为时再考虑类与继承",
+        "paragraphs": [
+          "class 用构造方法初始化实例数据，普通方法由原型共享。extends 用来表达子类与父类的关系，super 可调用父级初始化。父类提供的规则应该确实适用于子类，否则继承会制造难以解释的耦合。",
+          "普通配置和接口数据通常不需要复杂继承，组合多个函数或对象也能复用能力。保留原型与属性描述符的浅复制只适用于明确范围的普通对象；Date、Map 等还有内部数据，不能靠照搬属性制造正确副本。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "class Course {\n  constructor(title) { this.title = title; }\n  describe() { return \"课程：\" + this.title; }\n}\nconsole.log(new Course(\"入门课\").describe()); // 课程：入门课",
+          "explanation": "每个实例拥有自己的 title，而 describe 方法通常通过类的原型共享。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "为课程列表建立清楚的数据结构",
+      "scenario": "课程列表需要展示标题和价格，后台还提供一个内部编号。",
+      "steps": [
+        "用普通对象保存接口返回的数据，不为了显得复杂而创建继承层级。",
+        "写创建函数统一默认价格与字段检查，防止页面各处采用不同规则。",
+        "导出或遍历时明确白名单字段；需要共享行为后，再评估类是否比普通函数更清楚。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "Object.keys 没列出一个属性，就能认定这个属性不存在或无法访问吗？",
+      "answer": "不能。它可能是不可枚举属性、Symbol 属性或继承属性；应根据需求使用 Object.hasOwn、Reflect.ownKeys 或直接读取。"
+    },
+    "takeaways": [
+      "对象组织相关数据与行为",
+      "枚举工具的范围各不相同",
+      "简单业务优先选择清楚的结构"
+    ]
+  },
+  "js-this": {
+    "title": "函数调用时，this 指向谁",
+    "intro": "同一个函数有时需要服务不同对象，例如用相同的介绍方法读取不同用户的名字。this 为普通函数提供了一个由调用方式决定的上下文，但它不是“函数在哪写就永远属于谁”。",
+    "objectives": [
+      "根据调用形式判断普通函数的 this",
+      "理解 call、apply、bind 的用途",
+      "分清箭头函数与普通方法的场景"
+    ],
+    "prerequisites": [
+      "会写函数、对象方法和回调"
+    ],
+    "sections": [
+      {
+        "title": "先观察函数是怎样被调用的",
+        "paragraphs": [
+          "对普通函数，obj.method() 这种调用形式通常把 obj 作为 this。函数体并不永久绑定最初存放它的对象；把 method 取出来再单独调用，就失去了原来的接收者。严格模式下，普通独立调用中的 this 是 undefined。",
+          "这能解释“在对象中能用，传给回调却报错”的现象。回调由别的代码调用，调用者未必保留原对象。不要用变量名或函数定义位置猜 this，而要沿着实际执行位置检查是谁发起调用。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "\"use strict\";\nfunction readName() { return this.name; }\nconst a = { name: \"小林\", readName };\nconst b = { name: \"小雨\", readName };\nconsole.log(a.readName()); // 小林\nconsole.log(b.readName()); // 小雨",
+          "explanation": "两个对象保存同一个函数，但每次点语法调用传入的接收者不同，因此读到不同 name。"
+        }
+      },
+      {
+        "title": "需要明确上下文时，主动提供它",
+        "paragraphs": [
+          "call 指定 this 并逐个传参数，apply 指定 this 并用数组或类数组提供参数。二者立即调用函数。bind 则创建一个以后再调用的新函数，可预先固定 this 和部分参数；它不会立即执行原函数。",
+          "绑定适合把对象方法交给外部调用的情形，但也要保存绑定后的函数引用。每次 bind 都会产生新函数；注册和移除监听器若分别调用 bind，传入的不是同一个函数，就可能无法正确清理。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const user = { name: \"小林\" };\nfunction greet(prefix) { return prefix + this.name; }\nconst callback = greet.bind(user, \"你好，\");\nconsole.log(callback()); // 你好，小林\nconsole.log(greet.call(user, \"欢迎，\")); // 欢迎，小林",
+          "explanation": "bind 返回准备好的回调；call 则在这一行马上执行 greet。"
+        }
+      },
+      {
+        "title": "箭头函数借用外层的 this",
+        "paragraphs": [
+          "箭头函数不创建自己的 this，而是沿词法作用域使用外层的 this。这对方法内部的回调很有用：回调可以继续访问当前实例，不受稍后的调用方式改变。call、apply 或 bind 都不能替换箭头函数捕获的 this。",
+          "但把对象的方法直接写成箭头函数，通常不能得到“当前对象”的 this，因为对象字面量本身不是一个建立 this 的函数作用域。箭头函数也不能作为构造函数使用 new。选择写法时先想它是否需要独立的调用上下文。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const counter = {\n  value: 3,\n  makeReader() { return () => this.value; }\n};\nconst read = counter.makeReader();\nconsole.log(read.call({ value: 9 })); // 3",
+          "explanation": "箭头函数在 makeReader 执行时捕获 counter 作为外层 this，后续 call 无法把它改成另一个对象。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "把控制器的方法传给按钮",
+      "scenario": "页面控制器保存状态，按钮点击后需要调用控制器的更新方法。",
+      "steps": [
+        "确认直接调用 controller.update() 能正确读取控制器状态。",
+        "传入监听器时用保存好的 boundUpdate，或用箭头回调显式调用 controller.update()。",
+        "离开页面时移除同一个监听函数，避免残留控制器引用。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "const f = obj.method 以后调用 f()，为什么不能认定 this 还是 obj？",
+      "answer": "赋值取出的是函数值，不保留点语法调用时的接收者。调用 f() 时应按独立调用规则判断，或预先绑定所需对象。"
+    },
+    "takeaways": [
+      "普通函数看调用形式",
+      "bind 创建可稍后调用的绑定函数",
+      "箭头函数使用外层 this"
+    ]
+  },
+  "js-proxy": {
+    "title": "给对象操作增加一层可观察的入口",
+    "intro": "假设你希望年龄不能被写成负数，或希望读取配置时记录访问行为。Proxy 可以在普通对象操作发生时插入自定义逻辑，让使用者仍通过属性读写与对象交互。",
+    "objectives": [
+      "认识目标对象、代理对象和拦截器",
+      "会对赋值增加校验并正确转发",
+      "理解代理并非自动的深层保护"
+    ],
+    "prerequisites": [
+      "了解对象属性读写",
+      "知道函数参数和返回值"
+    ],
+    "sections": [
+      {
+        "title": "目标、代理和处理器各负责什么",
+        "paragraphs": [
+          "new Proxy(target, handler) 创建代理对象。target 是保存实际数据的目标，handler 是定义拦截规则的处理器对象。代理拥有自己的身份，通常不等于目标；代码通过代理访问时，才会进入相应拦截逻辑。",
+          "get 拦截属性读取，set 拦截赋值，其他操作还有对应入口。这些入口称为陷阱或拦截器，并不是安全漏洞的意思。没有定义某个入口时，相关操作通常按默认行为转发给目标。直接操作原目标则会绕过代理。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const target = { score: 80 };\nconst view = new Proxy(target, {\n  get(obj, key, receiver) {\n    console.log(\"读取\", key);\n    return Reflect.get(obj, key, receiver);\n  }\n});\nconsole.log(view.score); // 先输出 读取 score，再输出 80",
+          "explanation": "读取 view.score 进入 get。Reflect.get 继续执行对应的对象读取操作，最后由代理返回实际值。"
+        }
+      },
+      {
+        "title": "Reflect 帮你继续默认操作",
+        "paragraphs": [
+          "Reflect 是一组执行对象基础操作的方法，例如 Reflect.get、Reflect.set。拦截器常在检查或记录之后使用它转发操作，避免自己重新实现属性查找和访问器规则。receiver 表示本次访问应使用的接收者，转发它有助于保持访问器中的 this 语义。",
+          "set 拦截器需要返回表示成功与否的布尔结果，不能只赋值却忘记返回。对非法值可以明确抛错，让调用者知道哪里违反了数据约定。Reflect.set 返回实际写入是否成功，适合作为转发后的结果。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const person = new Proxy({ age: 18 }, {\n  set(target, key, value, receiver) {\n    if (key === \"age\" && (!Number.isInteger(value) || value < 0)) {\n      throw new RangeError(\"年龄必须是非负整数\");\n    }\n    return Reflect.set(target, key, value, receiver);\n  }\n});\nperson.age = 20;\nconsole.log(person.age); // 20",
+          "explanation": "合法赋值交给默认对象规则执行；负数、小数等不满足约定的 age 会在写入前被拒绝。"
+        }
+      },
+      {
+        "title": "代理能力有边界",
+        "paragraphs": [
+          "外层代理不会自动把每个嵌套对象也变成代理。例如 state.profile.name 的后半段可能直接在普通 profile 对象上进行。若要观察深层变化，需要设计递归包装与代理复用，避免同一对象被无节制重复包装。",
+          "代理还必须遵守目标不可配置属性等不变量，不能随意谎报任何结果。Map 等内置对象的方法可能依赖内部槽，不能把普通空处理器代理当成完全透明替身。Proxy 适合实现明确的协议，不应被描述成万能校验或安全隔离。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "给后台表单增加年龄约定",
+      "scenario": "一个表单模型允许修改姓名，但年龄必须保持为非负整数。",
+      "steps": [
+        "先在创建模型时检查初始年龄，避免只校验后续修改。",
+        "把模型的对外访问统一经由代理，并在 set 中只针对 age 添加规则。",
+        "用正常值、负数和非数字值验证行为，同时说明删除属性等其他操作尚未被这段规则限制。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "创建代理后，仍然直接写 target.age = -1，会触发代理的 set 吗？",
+      "answer": "不会。代理只拦截经由代理对象发起的相应操作；直接访问原目标会绕过它。"
+    },
+    "takeaways": [
+      "Proxy 在操作入口加入逻辑",
+      "Reflect 用于转发基础操作",
+      "外层代理不自动覆盖嵌套对象和所有操作"
+    ]
+  },
+  "js-json": {
+    "title": "在 JavaScript 数据和传输文本之间转换",
+    "intro": "对象方便程序处理，文本方便保存与传输。JSON 是一种约定好的文本格式，让浏览器、服务器及不同语言的程序可以交换结构化数据；它不是全部 JavaScript 语法的另一种写法。",
+    "objectives": [
+      "区分对象值和 JSON 文本",
+      "会使用 stringify 与 parse",
+      "知道解析后为什么仍需检查数据结构"
+    ],
+    "prerequisites": [
+      "了解对象、数组与字符串"
+    ],
+    "sections": [
+      {
+        "title": "JSON 只描述有限种数据",
+        "paragraphs": [
+          "JSON 文本支持对象、数组、字符串、数字、true、false 和 null。对象键必须用双引号包围，不能写注释、函数或 undefined。JavaScript 对象是运行中的值，JSON 则是一段字符，两者不能混用。",
+          "序列化是把值编码为文本，JSON.stringify 承担这个方向；反序列化是从文本恢复值，JSON.parse 承担反方向。存入 localStorage 或发送请求时常需要序列化，读取后再按约定解析。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const course = { title: \"入门课\", tags: [\"JS\"], published: true };\nconst text = JSON.stringify(course);\nconsole.log(typeof text); // string\nconst restored = JSON.parse(text);\nconsole.log(restored.title); // 入门课",
+          "explanation": "text 是可以传输的 JSON 字符串。restored 是解析生成的新对象，并不是原对象身份的恢复。"
+        }
+      },
+      {
+        "title": "转换会丢失哪些信息",
+        "paragraphs": [
+          "JSON 不保留对象原型、方法、属性描述符等运行时信息。对象中值为 undefined、函数或 Symbol 的属性通常会被忽略；数组中的对应位置则会变为 null。日期对象通常序列化成字符串，解析后不会自动恢复成 Date 实例。",
+          "循环引用无法直接表示，会导致 stringify 抛错；默认规则下 BigInt 也不能直接序列化。NaN 与 Infinity 会变成 null。由此可见，先 stringify 再 parse 只适合明确的数据范围，不能当成适用于所有值的深复制。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "console.log(JSON.stringify({ name: \"小林\", extra: undefined })); // {\"name\":\"小林\"}\nconsole.log(JSON.stringify([undefined, NaN])); // [null,null]\nconsole.log(JSON.stringify(new Date(\"2020-01-01T00:00:00Z\"))); // 日期字符串的 JSON 表示",
+          "explanation": "对象属性可能消失，数组位置则要保留，所以结果不同。日期字符串还需要业务明确决定是否转换回日期对象。"
+        }
+      },
+      {
+        "title": "格式正确不代表内容可信",
+        "paragraphs": [
+          "parse 只检查文本是否符合 JSON 语法，不检查它是否符合你的课程、用户或订单结构。即使文本能解析，结果也可能是 null、数字、数组或字段类型完全错误的对象。处理外部数据时要继续检查字段和允许的范围。",
+          "解析可能因为损坏文本而抛错，应在合适位置捕获并提供恢复策略。构造白名单对象通常比把解析结果直接合并进应用状态更清楚；这样既排除多余字段，也能区分缺失数据与默认值。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function readCount(text) {\n  try {\n    const value = JSON.parse(text);\n    return Number.isSafeInteger(value?.count) && value.count >= 0 ? value.count : 0;\n  } catch { return 0; }\n}\nconsole.log(readCount(\"{坏数据\")); // 0\nconsole.log(readCount('{\"count\":3}')); // 3",
+          "explanation": "先处理语法错误，再验证 count 的类型和范围。这里选择零作为恢复值，是明确的业务策略。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "保存一个学习进度记录",
+      "scenario": "页面关闭后希望恢复已完成题数，只需要保存版本号与计数。",
+      "steps": [
+        "把允许保存的字段组成 {version:1,count}，不要把整个页面状态或密钥直接打包。",
+        "序列化后写入存储，读取时捕获损坏 JSON。",
+        "验证版本和 count 的范围；遇到不支持的旧结构时迁移或回退，而不是盲目使用。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "JSON.parse 成功后，可以直接假定结果有合法的 age 数字字段吗？",
+      "answer": "不能。语法有效只是第一步，仍需检查结果的结构、字段类型和年龄范围。"
+    },
+    "takeaways": [
+      "JSON 是文本交换格式",
+      "序列化不保留所有 JavaScript 语义",
+      "外部数据必须在解析后继续验证"
+    ]
+  },
+  "js-regexp": {
+    "title": "用正则表达式描述文本模式",
+    "intro": "如果要找出文本中的数字、检查简单编号格式，逐个字符写条件会很繁琐。正则表达式把一组字符规律写成模式，适合做匹配、提取和替换，但不能替代所有文本解析工作。",
+    "objectives": [
+      "读懂字符集合、数量与边界",
+      "区分验证整串文本和提取局部片段",
+      "理解全局匹配状态与重复调用"
+    ],
+    "prerequisites": [
+      "了解字符串与布尔值",
+      "会调用对象方法"
+    ],
+    "sections": [
+      {
+        "title": "从普通字符和数量规则开始",
+        "paragraphs": [
+          "/cat/ 匹配文本中的 cat；[0-9] 表示一个数字字符，[A-Za-z] 表示一个 ASCII 字母。紧跟的 {3} 表示重复三次，+ 表示一次或多次，* 表示零次或多次。规则描述的是字符形状，不等于数字的业务范围。",
+          "锚点 ^ 和 $ 在默认模式下分别约束字符串开头和结尾。用它们把规则包起来，才能要求整段输入都符合格式；若缺少边界，文本中只要存在一个匹配片段也可能通过 test。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const exactCode = /^[A-Z]{2}[0-9]{3}$/;\nconsole.log(exactCode.test(\"JS123\")); // true\nconsole.log(exactCode.test(\"前缀JS123后缀\")); // false",
+          "explanation": "规则要求先出现两个大写英文字母，再出现三个数字，并且没有额外前后字符。"
+        }
+      },
+      {
+        "title": "匹配、提取与替换是不同用途",
+        "paragraphs": [
+          "test 返回是否找到匹配，适合格式判断。exec 可返回匹配文本和捕获组；圆括号可以把模式的一部分捕获出来，用于提取日期或编号中的不同段。replace 则根据模式生成替换后的新字符串，原字符串不会原地改变。",
+          "正则字面量和字符串构造器的转义层数不同。字面量 /\\d+/ 中的反斜杠属于正则语法；new RegExp(\"\\\\d+\") 的字符串先经过 JavaScript 解析，所以要再写一层转义。面对用户输入，还要避免把任意文本直接当成可执行的正则模式。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const match = /^(\\d{4})-(\\d{2})$/.exec(\"2026-11\");\nconsole.log(match[1], match[2]); // 2026 11\nconsole.log(\"a1b2\".replace(/[0-9]/g, \"#\")); // a#b#",
+          "explanation": "捕获组得到年份和月份的字符片段，但月份是否介于 01 与 12 仍需要后续数值检查。"
+        }
+      },
+      {
+        "title": "g 和 y 会让匹配器记住位置",
+        "paragraphs": [
+          "g 表示全局匹配，y 表示粘连匹配。带这两个标志的正则会通过 lastIndex 记录后续匹配的起点，因此反复对同一正则调用 test，结果可能受上次调用影响。一个长期复用的表单校验器通常不需要这些状态。",
+          "验证固定格式时优先使用不带 g/y 的模式；连续扫描文本时才有意识地利用匹配位置。复杂、不受控制的模式还可能造成大量回溯。HTML 等有嵌套结构的内容通常应使用专门的解析器，不靠一条越来越长的正则解决。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const scanner = /a/g;\nconsole.log(scanner.test(\"a\"), scanner.lastIndex); // true 1\nconsole.log(scanner.test(\"a\"), scanner.lastIndex); // false 0\nconst validator = /^a$/;\nconsole.log(validator.test(\"a\"), validator.test(\"a\")); // true true",
+          "explanation": "scanner 第二次从索引 1 开始查找，找不到后重置位置；validator 没有这种全局扫描状态。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "验证课程兑换码",
+      "scenario": "兑换码约定为两个大写字母加三个数字，输入前后不能混入其他内容。",
+      "steps": [
+        "把格式拆成字母段、数字段和整串边界，写出清楚的模式。",
+        "先确保输入是字符串，再调用没有全局状态的 test。",
+        "覆盖长度不足、额外字符和重复调用；兑换码是否存在仍由服务器判断。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "正则 /[0-9]{3}/ 能保证整段文本恰好是三个数字吗？",
+      "answer": "不能，它可以匹配更长文本里的三个连续数字。要求完整格式时还要约束开头和结尾。"
+    },
+    "takeaways": [
+      "先拆字符规则再写模式",
+      "格式判断与业务有效性不同",
+      "校验通常不需要 g 或 y"
+    ]
+  },
+  "js-loading": {
+    "title": "浏览器怎样获取并执行脚本",
+    "intro": "网页中的 HTML 决定结构，JavaScript 负责行为。浏览器需要协调解析页面、下载脚本和执行代码；脚本放在哪里、采用什么加载方式，会影响元素是否已存在以及用户何时能看到内容。",
+    "objectives": [
+      "区分下载脚本与执行脚本",
+      "了解经典脚本、defer、async 和模块入口",
+      "按依赖关系选择加载策略"
+    ],
+    "prerequisites": [
+      "了解 HTML 的 script 标签",
+      "会区分同步代码与网络等待"
+    ],
+    "sections": [
+      {
+        "title": "经典脚本可能暂停 HTML 解析",
+        "paragraphs": [
+          "浏览器逐步解析 HTML 并建立文档节点。遇到普通经典外部脚本时，通常要暂停解析，获取并执行脚本后再继续。这是因为脚本可能读取或改变正在构建的文档。下载等待与代码执行是两个不同阶段。",
+          "如果脚本在某个按钮的 HTML 前执行，查询该按钮可能得到 null。可把脚本放在合适位置，或选择延后执行的方式。即使脚本早已下载，运行一段很长的同步计算仍会占用主线程，加载属性并不会自动把计算搬到后台。"
+        ],
+        "code": {
+          "language": "html",
+          "source": "<!doctype html>\n<button id=\"save\">保存</button>\n<script>\n  const button = document.querySelector(\"#save\");\n  button.textContent = \"可以保存\";\n</script>",
+          "explanation": "这个完整 HTML 片段把按钮放在脚本之前，因此脚本执行时能查询到按钮。"
+        }
+      },
+      {
+        "title": "defer 和 async 回答不同问题",
+        "paragraphs": [
+          "对于解析器插入的外部经典脚本，defer 允许获取过程与 HTML 解析并行，等文档解析完成后按文档顺序执行。它适合需要页面结构或依赖前一个脚本的代码。DOMContentLoaded 会等待这些延后脚本完成。",
+          "async 也是并行获取，但准备好后就尽快执行，彼此顺序没有保证，适合相互独立的脚本。普通内联经典脚本不能仅靠 defer 获得外部脚本同样的延后行为。模块脚本默认延后执行，并使用自己的依赖加载规则。"
+        ],
+        "code": {
+          "language": "html",
+          "source": "<script defer src=\"library.js\"></script>\n<script defer src=\"page.js\"></script>\n<script async src=\"independent-stats.js\"></script>\n<script type=\"module\" src=\"main.js\"></script>",
+          "explanation": "前两项示意有顺序依赖的经典脚本。统计脚本必须确实独立；module 入口需要通过 import 明确它的模块依赖。"
+        }
+      },
+      {
+        "title": "DOM 就绪与所有资源就绪不同",
+        "paragraphs": [
+          "DOMContentLoaded 表示文档已完成解析并处理了相关延后脚本，不要求普通图片等所有资源都加载完。window 的 load 则等待范围更广。只需要绑定按钮事件时，通常不必等到所有图片完成。",
+          "一段工具代码可能在 DOMContentLoaded 之前或之后被调用，因此只注册监听可能错过已经发生的事件。可以先检查 document.readyState：仍为 loading 才等待，否则就执行需要 DOM 的初始化。这个判断不等于保证所有业务异步数据都已加载。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function whenDomReady(doc, callback) {\n  if (doc.readyState === \"loading\") {\n    doc.addEventListener(\"DOMContentLoaded\", callback, { once: true });\n  } else {\n    callback();\n  }\n}\n// 浏览器使用：whenDomReady(document, () => console.log(\"可以访问页面结构\"));",
+          "explanation": "doc 参数方便测试。代码处理的是文档结构就绪，不承诺图片、接口数据和业务初始化全部完成。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "加载一个需要操作表单的页面",
+      "scenario": "page.js 依赖 library.js，并要给表单按钮绑定事件。",
+      "steps": [
+        "明确两个经典脚本存在执行先后依赖。",
+        "按顺序为它们使用 defer，或改用模块 import 明确依赖，不把两者都随意设为 async。",
+        "在开发者工具中分别观察下载和执行耗时；如果界面仍卡顿，继续检查执行中的长任务。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "下载采用 async，就说明脚本会在独立线程执行而不影响页面吗？",
+      "answer": "不是。async 改变获取与执行时机，脚本执行仍可能占用页面主线程并影响渲染和交互。"
+    },
+    "takeaways": [
+      "下载与执行必须分开看",
+      "顺序依赖不能交给 async 碰运气",
+      "DOM 就绪不等于所有资源就绪"
+    ]
+  },
+  "js-dom-bom": {
+    "title": "JavaScript 如何与网页和浏览器互动",
+    "intro": "JavaScript 语言本身提供变量、函数和对象；网页上的按钮、地址栏和屏幕尺寸则来自运行环境提供的接口。把语言能力与浏览器能力分开，才能理解为什么某段代码在浏览器可用，在服务器却不存在。",
+    "objectives": [
+      "理解 DOM 与浏览器宿主接口的职责",
+      "会查询节点、更新文字并监听交互",
+      "建立注册与清理成对的习惯"
+    ],
+    "prerequisites": [
+      "会调用函数并读取对象属性",
+      "了解基本 HTML 元素"
+    ],
+    "sections": [
+      {
+        "title": "DOM 把文档表示成可操作的节点树",
+        "paragraphs": [
+          "DOM 是文档对象模型：浏览器把 HTML 组织为节点之间的树状关系，并通过 document 提供访问入口。元素节点对应标签，文本节点承载文字。querySelector 按 CSS 选择器寻找第一个匹配元素，找不到时返回 null。",
+          "找到元素后，可以修改文字、属性或创建子节点。显示普通用户文字时优先使用 textContent，不应直接把输入当作 HTML。修改 DOM 只改变当前页面文档，不会自动修改服务器文件或原始 HTML 源码。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const title = document.querySelector(\"#course-title\");\nif (title) title.textContent = \"今天学习 DOM\";\nconst item = document.createElement(\"li\");\nitem.textContent = \"完成一次练习\";\ndocument.querySelector(\"#tasks\")?.append(item);",
+          "explanation": "此例在含有相应元素的浏览器页面中运行。先处理元素可能不存在的情况，再把普通文本写入新节点。"
+        }
+      },
+      {
+        "title": "浏览器还提供文档以外的能力",
+        "paragraphs": [
+          "BOM 常被用来统称浏览器对象模型相关能力，包括 window、location、history、navigator 等。这个名称不像 DOM 那样指一套单独统一的标准。location 反映当前地址，history 管理导航历史，navigator 暴露部分运行环境能力。",
+          "这些接口有各自的安全限制和生命周期：修改 location 可能发起导航，剪贴板等能力可能要求用户操作和权限。写通用函数时可把需要的窗口或服务作为参数传入，避免所有逻辑都依赖全局 window，也更便于测试。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function describeViewport(win) {\n  return { width: win.innerWidth, height: win.innerHeight };\n}\nconsole.log(describeViewport({ innerWidth: 800, innerHeight: 600 }));\n// { width: 800, height: 600 }",
+          "explanation": "真实页面可传 window，测试可传简单对象。函数只依赖所需宽高，不需要启动完整浏览器。"
+        }
+      },
+      {
+        "title": "事件让页面对用户动作作出反应",
+        "paragraphs": [
+          "addEventListener 注册监听函数，事件到来时浏览器再调用它。例如 click 对应点击，resize 对应窗口尺寸变化。注册动作和回调执行不是同一时刻，因此回调使用的数据需要在执行时仍有效。",
+          "移除监听器要使用注册时的同一个函数引用，并匹配 capture 设置。页面区域销毁后还保留监听、计时器或观察器，会造成重复响应和资源滞留。把清理函数与注册过程放在一起，能清楚说明资源由谁负责。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function observeWidth(win, onWidth) {\n  const update = () => onWidth(win.innerWidth);\n  win.addEventListener(\"resize\", update);\n  update();\n  return () => win.removeEventListener(\"resize\", update);\n}",
+          "explanation": "函数返回停止订阅的方法。立即调用 update 让使用者先收到当前宽度，而不是等用户第一次调整窗口。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "制作一个跟随窗口变化的课程栏",
+      "scenario": "课程栏需要根据可用宽度决定展示一列还是两列。",
+      "steps": [
+        "优先评估 CSS 布局能否直接完成，只有业务确实需要时才由脚本读取宽度。",
+        "通过 resize 监听更新必要状态，避免每次变化都重建整个页面。",
+        "课程栏退出时执行清理函数，防止重进页面后出现重复监听。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "document.querySelector 找到元素后修改文字，会自动保存到服务器上的 HTML 文件吗？",
+      "answer": "不会。DOM 操作修改的是当前页面内存中的文档；持久化需要另外设计存储或服务器请求。"
+    },
+    "takeaways": [
+      "DOM 提供文档操作接口",
+      "宿主环境决定额外能力是否存在",
+      "注册外部资源时就考虑如何释放"
+    ]
+  },
+  "js-fetch": {
+    "title": "从页面发出请求并处理服务器结果",
+    "intro": "页面里的课程列表常由服务器提供。fetch 是浏览器提供的请求接口：把“要访问哪里、使用什么方法、携带什么数据”组织成请求，再异步取得服务器返回的响应。",
+    "objectives": [
+      "理解请求、响应和异步读取响应体",
+      "会分别处理网络、HTTP和解析失败",
+      "会在请求不再需要时进行取消"
+    ],
+    "prerequisites": [
+      "了解函数与对象",
+      "已读过 Promise 或先了解其表示未来结果的基本含义"
+    ],
+    "sections": [
+      {
+        "title": "请求和响应各包含哪些信息",
+        "paragraphs": [
+          "请求有地址、方法、请求头以及可选的请求体。GET 常用于读取资源，POST 常用于提交数据。响应则包含状态码、响应头与响应体。状态码描述服务器处理的结果，响应体才通常装着课程、用户等实际数据。",
+          "fetch 返回 Promise，表示将来可以获得 Response 对象。获得响应头不等于已经拿到解析好的数据，response.json() 或 response.text() 还要异步读取响应体。响应体一般只能消费一次；若确实需要重复读取，应在读取前考虑 clone。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "async function readText(url) {\n  const response = await fetch(url);\n  if (!response.ok) throw new Error(\"HTTP \" + response.status);\n  return response.text();\n}\n// 浏览器中调用 readText(\"/notice.txt\")，得到通知文本的 Promise。",
+          "explanation": "await fetch 等到响应对象；最后返回的 Promise 继续等待文本体读取完成。此函数假定服务器提供文本响应。"
+        }
+      },
+      {
+        "title": "错误发生在不同阶段",
+        "paragraphs": [
+          "断网、DNS 或某些安全限制可能使 fetch 的 Promise 拒绝。服务器返回 404 或 500 时，请求仍成功得到了 HTTP 响应，因此 fetch 通常不会仅因为状态码而拒绝，需要主动检查 response.ok 或 status。",
+          "状态码正常也不能保证响应内容符合约定：期待 JSON 却收到 HTML，解析仍会失败。即使 JSON 语法正确，还应检查数据结构。对于 204 这类没有响应体的结果，不应不加区分地调用 json()。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "async function getJson(url) {\n  const response = await fetch(url);\n  if (!response.ok) throw new Error(\"服务器返回 \" + response.status);\n  if (response.status === 204) return null;\n  return response.json();\n}",
+          "explanation": "这个工具明确允许无内容响应，并区分HTTP失败与解析失败。业务取得结果后，还需要检查字段是否符合自己的数据结构。"
+        }
+      },
+      {
+        "title": "请求的寿命应该跟随使用场景",
+        "paragraphs": [
+          "AbortController 提供一个 signal，把它传给 fetch 后，可以通过 controller.abort() 发出取消信号。比如用户离开页面、换了搜索词或旧请求已经没有价值时，可以停止继续等待旧结果。",
+          "取消请求并不代表服务器一定没有执行过操作，尤其是提交订单等写请求。读取场景还要考虑竞态：较早请求可能较晚返回，覆盖新的搜索结果。取消机制与请求序号、当前条件检查可以共同保证界面展示的是想要的数据。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const controller = new AbortController();\n// 浏览器示意：\n// fetch(\"/api/courses\", { signal: controller.signal })\n//   .then(response => response.json())\n//   .catch(error => { if (error.name !== \"AbortError\") console.error(error); });\ncontroller.abort();\nconsole.log(controller.signal.aborted); // true",
+          "explanation": "示例保留了实际请求的使用位置但未自动发送网络请求。abort 改变信号状态，使用该信号的可取消操作会据此结束。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "在搜索框展示课程结果",
+      "scenario": "用户连续修改关键词，希望结果跟随最后一次输入，而不是被旧响应覆盖。",
+      "steps": [
+        "把关键词放入 URL 查询参数，并为每次查询建立独立的取消控制器或请求编号。",
+        "收到响应后先判断 HTTP 状态，再解析与验证课程数组。",
+        "仅把仍对应当前查询的结果写入页面；取消属于正常流程，不应总显示为系统故障。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "fetch 返回了 Response，是否就意味着服务器成功提供了合法 JSON？",
+      "answer": "不意味着。还要检查 HTTP 状态、是否有响应体、JSON 能否解析以及解析后的结构是否符合约定。"
+    },
+    "takeaways": [
+      "获得响应和读完数据是两步",
+      "HTTP失败需要主动识别",
+      "取消与防止旧结果覆盖要明确设计"
+    ]
+  },
+  "js-url": {
+    "title": "把网页地址拆成结构化数据",
+    "intro": "URL 不只是一段看起来很长的字符串。它由协议、主机、路径、查询参数和锚点等部分组成。理解这些部分后，才能安全生成搜索链接、读取筛选条件，并避免特殊字符被误当作分隔符。",
+    "objectives": [
+      "识别URL的主要组成部分",
+      "会用URL和URLSearchParams读写参数",
+      "理解编码一次与解码一次的边界"
+    ],
+    "prerequisites": [
+      "了解字符串和对象属性",
+      "知道请求地址的基本用途"
+    ],
+    "sections": [
+      {
+        "title": "URL 的各部分承担不同作用",
+        "paragraphs": [
+          "以 https://example.test/courses?page=2#intro 为例，https 是协议，example.test 是主机，/courses 是路径，? 后面是查询部分，# 后面是锚点片段。片段通常由客户端使用，不会作为 HTTP 请求目标的一部分发送。",
+          "new URL 可以把合法地址解析成对象，再分别读取 pathname、searchParams 和 hash。相对地址需要一个明确的基准地址；手工用斜杠或问号拆字符串，容易遇到已有参数、端口或转义字符而出错。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const url = new URL(\"../courses?page=2#intro\", \"https://example.test/app/home\");\nconsole.log(url.pathname); // /courses\nconsole.log(url.searchParams.get(\"page\")); // 2\nconsole.log(url.hash); // #intro",
+          "explanation": "page 读取出来仍是字符串。若要当页码使用，后续还要转换并检查它是否为允许范围内的整数。"
+        }
+      },
+      {
+        "title": "参数键和值都应交给专用工具",
+        "paragraphs": [
+          "URLSearchParams 管理查询参数。set 替换某个名称的值，append 可保留同名多值，get 返回第一个值，getAll 返回全部值。它会按查询参数格式处理必要编码，因此通常直接传原始文字，而不是先自行编码。",
+          "如果把 a&b 直接拼到 ?q= 后面，& 可能被当成下一个参数的分隔符。通过 searchParams.set 写入时，这个 & 会被作为值的一部分编码。多个 tag 参数也不应该随意用逗号合并，除非前后端已经这样约定。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const url = new URL(\"https://example.test/search\");\nurl.searchParams.set(\"q\", \"a&b + 中文\");\nurl.searchParams.append(\"tag\", \"JS\");\nurl.searchParams.append(\"tag\", \"Vue\");\nconsole.log(url.searchParams.get(\"q\")); // a&b + 中文\nconsole.log(url.searchParams.getAll(\"tag\")); // [\"JS\", \"Vue\"]",
+          "explanation": "读取结果恢复了原始值；序列化后的地址则会为分隔符和非ASCII字符使用适合传输的形式。"
+        }
+      },
+      {
+        "title": "编码解决的是表达，不是安全许可",
+        "paragraphs": [
+          "encodeURIComponent 适合编码一个组件值，encodeURI 则保留某些完整地址中的分隔符，两者不能随意替换。手工解码时还要处理无效百分号序列。已经编码的值再次编码，会把百分号也转义，导致服务器收到错误内容。",
+          "URLSearchParams 的字符串解析使用表单式查询规则，原始加号可被解释为空格；要表达真正的加号，使用 set/append 传入加号即可让它正确编码。一个地址能解析不代表允许访问，跳转或请求还要检查协议与可信目的地。"
+        ]
+      }
+    ],
+    "walkthrough": {
+      "title": "生成可分享的筛选链接",
+      "scenario": "课程页已有排序参数和介绍锚点，现在要加入关键词与多个标签。",
+      "steps": [
+        "用 URL 解析原地址，从而保留原有路径、无关参数和 hash。",
+        "用 set 更新关键词，先 delete 旧 tag，再按选中顺序 append 新标签。",
+        "用 toString 输出地址，测试中文、空格、加号与 &，不要在参数工具外再重复编码。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "把 encodeURIComponent(query) 的结果再交给 searchParams.set，可能出现什么问题？",
+      "answer": "参数工具本身还会编码，已有百分号可能再次被转义，产生重复编码。通常直接传原始 query。"
+    },
+    "takeaways": [
+      "地址先解析，参数再修改",
+      "set与append表达不同的多值语义",
+      "编码不替代协议和目的地检查"
+    ]
+  },
+  "js-iteration": {
+    "title": "让数据按自己的顺序逐个提供值",
+    "intro": "数组、字符串和 Map 都可以被逐项遍历，但它们提供的内容并不一样。迭代协议给不同数据结构一个统一的“取下一个值”的方式，让 for...of、展开和生成器能够协作。",
+    "objectives": [
+      "区分遍历属性名与遍历数据值",
+      "认识可迭代对象和迭代器",
+      "能写出可重复遍历的简单范围"
+    ],
+    "prerequisites": [
+      "会使用数组和 for 循环",
+      "理解对象方法与Symbol类型"
+    ],
+    "sections": [
+      {
+        "title": "for...in 和 for...of 问的是不同问题",
+        "paragraphs": [
+          "for...in 枚举对象可枚举的字符串属性名，也可能包括继承属性，适合明确需要处理属性键的场景。若只想处理自有属性，可以使用 Object.keys 或在循环中配合 Object.hasOwn。",
+          "for...of 则请求对象按迭代协议提供值。数组通常给出元素，字符串给出按 Unicode 码点迭代的字符串片段，Map 给出键值对。普通对象默认不可迭代，因此不能只因为它有很多属性就直接使用 for...of。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const colors = [\"红\", \"蓝\"];\nfor (const key in colors) console.log(key); // \"0\"、\"1\"\nfor (const value of colors) console.log(value); // 红、蓝\nfor (const pair of new Map([[\"score\", 90]])) console.log(pair); // [\"score\",90]",
+          "explanation": "属性名和数据值不是同一层含义。数组如果有额外属性或继承属性，for...in 更不能当作纯元素循环的替代品。"
+        }
+      },
+      {
+        "title": "迭代器描述下一步是否还有值",
+        "paragraphs": [
+          "可迭代对象提供 Symbol.iterator 方法，调用它得到迭代器。迭代器的 next() 返回一个结果对象，value 是本次值，done 说明遍历是否结束。消费者不需要知道底层是数组、网络序列还是按规则计算出的数字。",
+          "每次取得迭代器可以拥有独立的读取进度。因此“可迭代对象”与“某次迭代过程”需要分开理解。直接把同一个生成器对象反复交给消费者，可能发现它已经耗尽；要重复从头开始，就应创建新的迭代器。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const iterator = [\"第一课\", \"第二课\"][Symbol.iterator]();\nconsole.log(iterator.next()); // {value:\"第一课\",done:false}\nconsole.log(iterator.next()); // {value:\"第二课\",done:false}\nconsole.log(iterator.next()); // {value:undefined,done:true}",
+          "explanation": "next 每次推进一个位置。done 为 true 后，正常消费者就结束循环，不再把结束标记当作新元素。"
+        }
+      },
+      {
+        "title": "生成器把暂停与继续写成普通流程",
+        "paragraphs": [
+          "function* 声明生成器函数，调用后得到生成器对象，函数体并不会立即完整执行。yield 交出一个值并暂停，下次 next 才继续。生成器很适合按需生成序列，避免先构造一个巨大数组。",
+          "把生成器放在 Symbol.iterator 方法中，可以让每次遍历都有独立进度。数字范围还需要定义边界和合法输入，例如只接受安全整数；过大的数字可能因精度限制而不能正常加一，不能只检查它看起来像整数。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function range(start, end) {\n  if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end)) throw new TypeError(\"需要安全整数\");\n  return { *[Symbol.iterator]() { for (let n = start; n < end; n++) yield n; } };\n}\nconst values = range(2, 5);\nconsole.log([...values]); // [2,3,4]\nconsole.log([...values]); // [2,3,4]",
+          "explanation": "每次展开都调用 Symbol.iterator 创建新生成器，因此可以重复遍历。end 是不包含的上界。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "逐页安排待学习章节",
+      "scenario": "需要按章节编号从第2章走到第4章，不想提前保存一大份编号数组。",
+      "steps": [
+        "约定范围采用包含起点、不包含终点的形式，写出 range(2,5)。",
+        "用 for...of 消费生成器，每次得到一个编号再安排对应任务。",
+        "再次复习时重新获取迭代器，不复用已经耗尽的单次遍历进度。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "对象 {a:1,b:2} 默认能直接使用 for...of 吗？如果只要自有键值对怎么办？",
+      "answer": "不能，它默认没有迭代协议。可以使用 Object.entries 得到键值对数组，再对该数组使用 for...of。"
+    },
+    "takeaways": [
+      "属性枚举与值迭代不要混淆",
+      "迭代器保存单次遍历进度",
+      "生成器适合按需提供序列"
+    ]
+  },
+  "js-modules": {
+    "title": "把程序拆成有明确接口的小文件",
+    "intro": "当课程页、搜索页和订单页共享工具时，把所有函数放到全局容易出现重名和相互依赖。模块让文件声明自己提供什么、需要什么，使依赖关系可以被阅读、加载和维护。",
+    "objectives": [
+      "理解模块作用域与导入导出",
+      "能区分ESM和CommonJS的基本写法",
+      "认识共享模块状态与动态加载"
+    ],
+    "prerequisites": [
+      "会写函数和对象",
+      "理解变量作用域"
+    ],
+    "sections": [
+      {
+        "title": "模块通过接口连接，而不是共享所有名称",
+        "paragraphs": [
+          "ESM 是 JavaScript 标准模块系统，使用 export 声明对外提供的名称，用 import 引入其他模块的接口。模块内没有导出的变量通常属于该模块自己的作用域，别的模块不能随意按名字读取。",
+          "命名导出适合一个模块提供多个清楚的能力，默认导出则提供一个默认接口。导入名称需要与导出方式匹配。浏览器使用模块入口时通常通过 script type=\"module\"，模块地址与普通本地文件路径也需要按运行环境处理。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "// math.mjs：保存为独立文件\nexport function add(a, b) { return a + b; }\n\n// main.mjs：另一个独立文件\nimport { add } from \"./math.mjs\";\nconsole.log(add(2, 3)); // 5",
+          "explanation": "这两段应分别保存为注释标明的文件，不能当作单文件一起执行。main 显式声明它依赖 math 的 add 接口。"
+        }
+      },
+      {
+        "title": "导入绑定与随手复制一个值不同",
+        "paragraphs": [
+          "ESM 的命名导入是与导出绑定关联的只读引用：导出方通过合法代码更新导出的 let 变量，导入方后续读取可以看到变化；导入方不能直接给这个导入绑定重新赋值。这里的“只读”不等于导出的对象自动被冻结。",
+          "CommonJS 常见于 Node.js，使用 require 与 module.exports。它与 ESM 的语法、加载机制及互操作规则不同。require 得到导出值后，如果再把某个数字属性解构到普通变量，这个变量不会自动跟随原对象属性变化。不要把所有模块系统都简化成同一种复制规则。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "// state.mjs\nexport let count = 0;\nexport function increment() { count += 1; }\n\n// demo.mjs\nimport { count, increment } from \"./state.mjs\";\nincrement();\nconsole.log(count); // 1",
+          "explanation": "这也是两个文件。count 的修改发生在导出模块内部，导入方通过 increment 请求它更新，而不是直接对 count 赋值。"
+        }
+      },
+      {
+        "title": "模块组织与按需加载各有目的",
+        "paragraphs": [
+          "静态 import 通常写在模块顶层，依赖关系便于提前分析。动态 import() 在运行时返回 Promise，适合用户进入某个功能后再加载相关模块；它可以与打包工具的代码分割协作，但并不保证任何导入都会自动变小。",
+          "同一模块通常会被运行环境缓存和复用，因此模块顶层可变状态可能被多个使用者共享。测试和业务设计应明确是否想要这种共享；若需要每个页面拥有独立实例，可导出工厂函数，而不是导出唯一的可变对象。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "export function createCounter() {\n  let count = 0;\n  return { increment() { count++; }, read() { return count; } };\n}\n// 消费方每次调用 createCounter() 可获得独立计数状态。",
+          "explanation": "模块提供创建能力，而不是替所有使用者保存唯一的一份计数。是否共享状态是设计选择，不是模块语法自动替你决定的。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "把学习计数逻辑从页面中抽出来",
+      "scenario": "两个页面都需要计数器，但各自的练习次数不能混在一起。",
+      "steps": [
+        "把通用规则放进独立模块，并导出 createCounter 工厂。",
+        "每个页面显式导入工厂，再创建自己的计数器实例。",
+        "将只在高级练习中需要的大型工具改为按需导入，并检查构建产物是否真正拆分。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "导出的对象不能通过 import 重新赋值，是否意味着它的所有属性都不能修改？",
+      "answer": "不是。导入绑定不能被导入方重新赋值，与对象内部属性是否可变是两件事。需要只读约定或冻结时要另行设计。"
+    },
+    "takeaways": [
+      "模块声明明确的依赖和接口",
+      "ESM导入绑定不等于普通值复制",
+      "模块共享状态要有意设计"
+    ]
+  },
+  "js-closure": {
+    "title": "函数为什么还能记得创建时的变量",
+    "intro": "一个计数器可以记住上一次的次数，一个搜索回调可以保留对应的查询条件。这些能力来自函数与词法作用域的关联：函数不仅有代码，还能访问它创建时可见的变量环境。",
+    "objectives": [
+      "理解作用域和名称查找",
+      "能用闭包保存独立状态",
+      "知道循环、异步和长期引用的边界"
+    ],
+    "prerequisites": [
+      "了解函数参数和返回值",
+      "会使用 let 与 const"
+    ],
+    "sections": [
+      {
+        "title": "作用域规定变量在哪里可见",
+        "paragraphs": [
+          "作用域是变量名称可以被访问的范围。块级作用域由 let、const 与代码块配合形成，函数也会创建自己的作用域。当函数读取一个名字时，先查自己的环境，再按定义时的外层关系逐级查找。",
+          "这种关系叫词法作用域，因为它主要由代码书写和定义结构决定，而不是由“谁调用了函数”临时决定。外层不能随意访问内层局部变量，但内层函数通常可以读取外层定义的变量。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const unit = \"次\";\nfunction makeLabel(count) {\n  return function label() { return count + unit; };\n}\nconst label = makeLabel(3);\nconsole.log(label()); // 3次",
+          "explanation": "label 创建于 makeLabel 内部，能够继续访问那次调用的 count；unit 则来自更外层作用域。"
+        }
+      },
+      {
+        "title": "闭包保留的是访问环境的能力",
+        "paragraphs": [
+          "闭包常指函数及其关联的词法环境。外层函数返回后，若仍有内层函数需要访问某些变量，这些变量就仍可能被保留。它不是把所有变量在创建时拍成永不变化的照片，而是继续访问相关绑定。",
+          "每次调用工厂函数，都可以建立不同的局部环境。因此两次 createCounter 得到的计数器可以各自记数，而同一次调用返回的多个方法则可以共享那一次的变量。这是一种组织私有状态的实用方式。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function createCounter() {\n  let count = 0;\n  return { add() { count++; }, read() { return count; } };\n}\nconst a = createCounter(), b = createCounter();\na.add();\nconsole.log(a.read(), b.read()); // 1 0",
+          "explanation": "a 的两个方法共享 a 那次调用的 count；b 来自另一轮调用，拥有独立的 count。"
+        }
+      },
+      {
+        "title": "时间变化不会重新定义作用域规则",
+        "paragraphs": [
+          "延迟执行的回调仍然按词法关系读取变量，只是读取发生得更晚。循环中使用 var 可能让多个回调共享同一个循环变量；使用 let 的相应循环则为迭代建立独立绑定，因此得到不同结果。",
+          "闭包本身不是内存泄漏。真正需要关注的是函数被保存了多久、它保留的对象是否还需要。长期注册的监听器若捕获大型页面对象，应在页面退出时清理，避免不必要的数据继续可达。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const readers = [];\nfor (let i = 0; i < 3; i++) readers.push(() => i);\nconsole.log(readers.map(read => read())); // [0,1,2]",
+          "explanation": "每次迭代的 let 绑定不同。把 let 改为 var 后，回调会在之后读取同一个已变为 3 的变量。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "给每张练习卡保留独立计数",
+      "scenario": "页面有多张练习卡，每张卡都要记住自己被尝试了多少次。",
+      "steps": [
+        "通过工厂函数为每张卡创建局部 count，不放到一个共享全局变量里。",
+        "只返回需要的 add/read 方法，由闭包访问局部状态。",
+        "移除卡片时也移除外部监听或引用，让不再使用的计数环境有机会被回收。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "同一次工厂调用返回的两个方法，访问的 count 是两份复制还是同一个绑定？",
+      "answer": "通常是同一个词法环境里的绑定，因此一个方法修改后，另一个方法能够读到新值。不同工厂调用才各有自己的环境。"
+    },
+    "takeaways": [
+      "名称查找依据定义时的作用域",
+      "闭包能保存并共享局部状态",
+      "保留多久由引用生命周期决定"
+    ]
+  },
+  "js-event-loop": {
+    "title": "浏览器如何安排同步代码与异步回调",
+    "intro": "用户点击、计时器、网络结果和页面绘制都需要被安排执行。事件循环不是一句“先微后宏”的口诀，而是一套协调当前代码、后续任务和渲染机会的机制。先建立执行过程，再推导输出顺序。",
+    "objectives": [
+      "理解调用栈、任务和微任务",
+      "能按注册与执行时机推导简单顺序",
+      "认识长任务与微任务对交互的影响"
+    ],
+    "prerequisites": [
+      "了解函数调用与回调",
+      "知道 Promise.then 会注册后续处理"
+    ],
+    "sections": [
+      {
+        "title": "当前同步代码会先运行完",
+        "paragraphs": [
+          "调用栈记录当前正在执行的函数调用关系。调用函数时进入一层，返回时退出一层。JavaScript 的普通同步代码会持续运行，直到本轮调用栈清空或发生异常；定时器不会在函数执行到一半时强行插入普通回调。",
+          "浏览器宿主可以处理网络等待和定时器计时，再把需要执行的回调排入合适的调度队列。异步等待不等于多个普通函数在同一主线程上同时运行。耗时循环即使放在 Promise 的执行器里，仍然会同步占用线程。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "console.log(\"A\");\nsetTimeout(() => console.log(\"T\"), 0);\nconsole.log(\"B\");\n// 顺序：A、B、T",
+          "explanation": "0 表示不主动增加较长的计时等待，并不表示立即打断当前代码。定时器回调要等到后续有机会执行。"
+        }
+      },
+      {
+        "title": "微任务在特定检查点集中处理",
+        "paragraphs": [
+          "浏览器中的 Promise 反应和 queueMicrotask 回调属于微任务。当前任务的同步代码结束后，在微任务检查点通常会持续处理队列，直到队列为空，然后才进入后续调度步骤。微任务里再追加微任务，也会继续进入这一轮清空过程。",
+          "常见输出题可以先执行全部同步语句，再按入队顺序处理微任务，最后考虑之后的计时器任务。实际浏览器还有不同来源的任务、渲染时机和其他规范细节，所以不能把所有场景都硬套成唯一全局队列。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "console.log(\"A\");\nsetTimeout(() => console.log(\"T\"), 0);\nPromise.resolve().then(() => console.log(\"P\"));\nqueueMicrotask(() => console.log(\"Q\"));\nconsole.log(\"B\");\n// 此例顺序：A、B、P、Q、T",
+          "explanation": "同步输出 A、B。then 和 queueMicrotask 按此例注册顺序进入微任务队列，处理后才轮到后续计时器任务。"
+        }
+      },
+      {
+        "title": "让出执行机会才有助于页面响应",
+        "paragraphs": [
+          "一个持续很久的任务会使点击处理、样式更新等工作等待。将重计算仅包进 Promise.then 并不会让它自动在后台运行；不断递归追加微任务还可能让队列长时间清不完，推迟其他工作。",
+          "需要 DOM 的大量操作可以拆成合理批次，让浏览器在批次间处理其他任务；适合并行的纯计算可放到 Web Worker。requestAnimationFrame 用于与绘制节奏协调，但回调里写长循环仍会拖慢这一帧。优化时应测量真实输入延迟和主线程工作。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "let remaining = 3;\nfunction runBatch() {\n  console.log(\"处理一批\", remaining);\n  remaining--;\n  if (remaining > 0) setTimeout(runBatch, 0);\n}\nrunBatch();",
+          "explanation": "这里通过后续任务继续处理批次，而不是一次同步跑完。真实批次大小需要测量；计时器也不保证每批严格相隔零毫秒。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "导入大量练习题时保持界面能操作",
+      "scenario": "一次导入许多记录，若同步处理全部内容，进度条可能直到结束才显示变化。",
+      "steps": [
+        "先测量单批工作量，确定主要时间是在纯计算还是DOM操作。",
+        "把可拆分工作按批次推进，在批次之间给其他任务执行机会。",
+        "纯计算量很大时评估Worker，并检查取消导入与进度通知是否按预期工作。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "在 Promise.then 中做一秒钟的同步循环，是否就不会阻塞页面？",
+      "answer": "仍会阻塞。微任务不是后台线程，执行这段同步循环时主线程不能同时处理其他普通页面代码。"
+    },
+    "takeaways": [
+      "先分析同步调用栈",
+      "再按实际入队顺序处理回调",
+      "异步语法不会自动把计算搬到后台"
+    ]
+  },
+  "js-promise": {
+    "title": "用一个对象表示未来完成的结果",
+    "intro": "网络请求和文件读取不能立刻给出最终结果。Promise 用一个对象承载“以后成功得到什么，或为什么失败”，让多个异步步骤可以按统一规则连接起来。",
+    "objectives": [
+      "认识pending、fulfilled与rejected状态",
+      "会通过then返回值连接异步步骤",
+      "能选择批量结果与失败处理策略"
+    ],
+    "prerequisites": [
+      "了解函数回调与返回值",
+      "理解异常和try/catch的用途"
+    ],
+    "sections": [
+      {
+        "title": "Promise 表示结果，不是线程",
+        "paragraphs": [
+          "一个 Promise 最初可能处于 pending，即结果尚未确定；成功后是 fulfilled，失败后是 rejected。一旦落定便不会再次改变最终状态。它并不创建新线程，也不会使本来同步的运算自动变成后台运算。",
+          "new Promise 接收执行器函数，该函数会在构造时立即运行，resolve 和 reject 用于提供成功或失败结果。then、catch 注册的后续处理在稍后的调度中运行。通常已有 fetch 等 Promise 接口时，不需要再额外套一层 new Promise。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "console.log(\"开始\");\nconst result = new Promise(resolve => {\n  console.log(\"执行器\");\n  resolve(5);\n});\nresult.then(value => console.log(\"结果\", value));\nconsole.log(\"结束\");\n// 开始 → 执行器 → 结束 → 结果 5",
+          "explanation": "执行器同步执行，但已经成功的 Promise 所注册的 then 也不会在这一行同步插入回调执行。"
+        }
+      },
+      {
+        "title": "每一步返回什么，决定下一步得到什么",
+        "paragraphs": [
+          "then 会返回一个新的 Promise。处理函数返回普通值，下一步会得到这个值；返回另一个 Promise，后续链会等待它的结果；抛出异常，后续链进入失败路径。忘记 return 会使下一步得到 undefined 或无法等待真正的异步工作。",
+          "catch 用于处理拒绝，处理后若返回正常值，相当于恢复成成功路径；若继续抛错，错误继续传播。finally 适合清理加载状态，不应被当成修改业务结果的默认地方，因为它有自己的返回与异常传播规则。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "Promise.resolve(3)\n  .then(value => value * 2)\n  .then(value => { if (value > 5) throw new Error(\"超过限制\"); return value; })\n  .catch(() => 0)\n  .then(value => console.log(value)); // 0",
+          "explanation": "乘法得到6，检查时抛错；catch选择以0恢复，最后一个then因此接到成功值0。"
+        }
+      },
+      {
+        "title": "多个结果要说明等待策略",
+        "paragraphs": [
+          "Promise.all 适合所有结果都必须成功的场景，结果数组保持输入顺序；任何成员拒绝会让整体尽早拒绝，但不会自动取消其他已经运行的任务。Promise.allSettled 则等待全部结束并分别记录成功与失败。",
+          "Promise.race 关注最先落定的结果，Promise.any 关注最先成功的结果。这些组合器不替你限制并发数量，也不提供统一取消。真正的业务还需决定部分失败是否可接受、超时后如何清理，以及是否会同时发出过多请求。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "Promise.all([Promise.resolve(\"基础\"), Promise.resolve(\"进阶\")])\n  .then(values => console.log(values)); // [\"基础\",\"进阶\"]\nPromise.allSettled([Promise.resolve(1), Promise.reject(\"失败\")])\n  .then(results => console.log(results.map(item => item.status)));\n// [\"fulfilled\",\"rejected\"]",
+          "explanation": "all 返回成功值数组；allSettled 返回每一项的状态记录，业务可以保留成功内容并单独展示失败信息。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "组合课程资料与章节资料",
+      "scenario": "页面展示需要课程基本信息和章节清单，两项都取得后才算完整。",
+      "steps": [
+        "分别发起两个请求，得到两份Promise；不必等第一份成功后才开始无依赖的第二份。",
+        "用all等待两者并按输入顺序接收结果；失败时显示清楚的恢复入口。",
+        "若章节缩略图允许部分失败，则为那一批资源选择allSettled，并处理失败占位。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "then 中启动一个请求却没有 return，这条链还会自动等待那个请求吗？",
+      "answer": "不会自动等待。需要返回请求的Promise，后续then才会跟随它的结果；否则该异步工作脱离了这条链。"
+    },
+    "takeaways": [
+      "Promise统一表示未来结果",
+      "return把步骤真正接在一起",
+      "组合方式不等于并发限制和取消策略"
+    ]
+  },
+  "js-async": {
+    "title": "把异步步骤写成容易跟随的控制流程",
+    "intro": "Promise 能组合异步结果，但复杂分支和循环有时不容易阅读。async/await 允许用接近普通顺序代码的写法组织异步工作，同时仍然遵守 Promise 的成功、失败和调度规则。",
+    "objectives": [
+      "理解async函数为何总返回Promise",
+      "会用await与try/catch组织流程",
+      "能判断任务应串行还是并发"
+    ],
+    "prerequisites": [
+      "已理解Promise与then返回规则",
+      "会使用条件、循环和异常处理"
+    ],
+    "sections": [
+      {
+        "title": "async 和 await 分别做什么",
+        "paragraphs": [
+          "给函数加上 async 后，它的调用结果总是 Promise：直接返回的普通值会成为成功结果，未被处理的异常会成为拒绝。函数体从调用时开始执行，在遇到 await 等待时暂停自己的后续流程。",
+          "await 等待的是某个值或可被采用的异步结果；暂停的是当前 async 函数，而不是整个浏览器线程。其他任务仍有机会被调度。等待结束后，函数的后续执行会在相应微任务调度中恢复，并不是同步插入当前调用栈。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "async function answer() { return 42; }\nconst result = answer();\nconsole.log(result instanceof Promise); // true\nresult.then(value => console.log(value)); // 42",
+          "explanation": "即使函数里没有网络请求，也没有await，async仍改变了返回接口，调用方拿到的是Promise而不是直接的数字。"
+        }
+      },
+      {
+        "title": "只有真正等待的错误才进入对应流程",
+        "paragraphs": [
+          "在 try 块里 await 一个失败的 Promise，异常会在 await 处表现出来，因此 catch 能处理它。若只调用异步函数却既不 await 也不 return，后续拒绝可能已脱离当前 try/catch 的控制范围。",
+          "finally 可用于恢复按钮状态、结束加载提示或释放资源。处理错误时应决定是恢复为某个值、展示失败，还是继续抛出交给上层；不要为了让页面不报错就把所有异常静默吞掉，否则失败数据可能被当作正常空结果。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "async function readValue(task) {\n  try { return await task(); }\n  catch (error) { return \"读取失败：\" + error.message; }\n}\nreadValue(() => Promise.reject(new Error(\"断网\")))\n  .then(value => console.log(value)); // 读取失败：断网",
+          "explanation": "task被真正await，所以拒绝进入catch。这里返回文字是演示恢复策略，真实应用可返回明确错误状态或继续抛出。"
+        }
+      },
+      {
+        "title": "等待顺序不等于启动顺序",
+        "paragraphs": [
+          "如果第二步需要第一步的结果，应先 await 第一步，再启动第二步。若两个请求互不依赖，连续 await 可能无意串行；可以先分别启动任务，再通过 Promise.all 等待两者，减少总等待时间。",
+          "for...of 配合 await 可以有意逐个处理任务。forEach 不会等待它的异步回调全部完成，不能在后面立刻声称处理结束。批量并发也不是越多越好，应根据请求数量与服务承受能力考虑限流或分批。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "async function runSequential(tasks) {\n  const results = [];\n  for (const task of tasks) results.push(await task());\n  return results;\n}\nrunSequential([() => 1, () => Promise.resolve(2)])\n  .then(values => console.log(values)); // [1,2]",
+          "explanation": "这里传入任务工厂而不是已经启动的Promise，才能保证调用下一任务的时机确实在前一个完成之后。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "先登录，再读取用户课程",
+      "scenario": "登录结果提供用户标识，因此课程请求依赖登录成功；两个课程统计接口则彼此独立。",
+      "steps": [
+        "先await登录并处理失败，只有成功后才取得读取课程所需的信息。",
+        "课程统计若互不依赖，先发起各请求，再用all统一等待。",
+        "用finally结束加载状态；若用户退出当前流程，结合取消信号阻止无效结果写回。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "把三个互不依赖的请求写成连续三次 await，可能造成什么影响？",
+      "answer": "后一个请求可能直到前一个完成才启动，等待时间被累加。可以先启动，再统一等待，同时考虑是否需要控制并发量。"
+    },
+    "takeaways": [
+      "async的返回接口是Promise",
+      "await暂停当前函数而非整个线程",
+      "任务依赖决定串行与并发"
+    ]
+  },
+  "js-memory": {
+    "title": "理解对象为什么还留在内存里",
+    "intro": "创建数组、闭包或页面节点都会使用内存。JavaScript 会自动回收不再可达的数据，但它无法替业务判断“虽然还被引用，却早就不需要了”的对象。学会管理引用与资源寿命，是页面长期运行稳定的基础。",
+    "objectives": [
+      "理解分配、使用与回收的过程",
+      "区分可达性与业务是否需要",
+      "会为监听器、计时器和缓存设计清理"
+    ],
+    "prerequisites": [
+      "了解对象引用与闭包",
+      "知道事件监听和计时器"
+    ],
+    "sections": [
+      {
+        "title": "垃圾回收依据能否继续访问",
+        "paragraphs": [
+          "垃圾回收器从仍然可访问的根开始寻找对象，例如当前执行环境和全局对象所保留的数据。若某个对象已没有可达路径，通常就有机会被回收。程序不能依赖某一行后立刻发生回收，也不应把内存曲线短时上升直接判定为泄漏。",
+          "两个对象互相引用并不必然导致现代垃圾回收失败；如果这整个小环已经从根不可达，它们仍可被回收。相反，把不用的数据一直放在全局数组里，即使没有循环引用，也会持续保留。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "let course = { title: \"旧课程\" };\nconst archive = [course];\ncourse = null;\nconsole.log(archive[0].title); // 旧课程",
+          "explanation": "把一个变量设为null只断开了这一条引用。archive仍能访问对象，所以对象并没有因为course变成null就失去所有可达路径。"
+        }
+      },
+      {
+        "title": "资源生命周期应与界面生命周期匹配",
+        "paragraphs": [
+          "事件监听器可能保留回调，回调又通过闭包保留页面数据。计时器、观察器、订阅和长连接也各自占用资源。组件退出时，如果这些资源仍持续工作，就可能留下无效回调或不再需要的大对象。",
+          "在创建资源的同一处返回或记录清理方法，能让所有权清楚。清理应允许重复执行，并使用注册时的同一函数引用。取消定时器只停止未来回调，不代表其他变量持有的对象引用也被自动清除。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "function listen(button, onClick) {\n  button.addEventListener(\"click\", onClick);\n  let active = true;\n  return () => {\n    if (!active) return;\n    active = false;\n    button.removeEventListener(\"click\", onClick);\n  };\n}\n// 页面退出时调用返回的stop函数。",
+          "explanation": "清理函数有明确职责且重复调用安全。真正使用时还应避免把已经退出的页面对象继续保存在全局集合里。"
+        }
+      },
+      {
+        "title": "缓存需要容量与失效规则",
+        "paragraphs": [
+          "缓存会有意延长数据存活时间，以减少重复计算或请求。但如果键不断增加又从不删除，它就可能无限增长。应根据用途设置容量、过期时间或淘汰策略，而不是认为使用 Map 就自动具有缓存管理能力。",
+          "WeakMap 允许对象键不因映射关系本身被强行保留，适合给对象附加一些关联信息，但它不是任何缓存的通用替代品。排查疑似泄漏时，可重复进入退出同一页面，比较堆快照中的保留路径，寻找究竟是谁还在引用旧对象。"
+        ],
+        "code": {
+          "language": "javascript",
+          "source": "const cache = new Map();\nfunction remember(key, value) {\n  if (cache.has(key)) cache.delete(key);\n  cache.set(key, value);\n  if (cache.size > 2) cache.delete(cache.keys().next().value);\n}\nremember(\"a\", 1); remember(\"b\", 2); remember(\"c\", 3);\nconsole.log([...cache.keys()]); // [\"b\",\"c\"]",
+          "explanation": "这个简化缓存只保留最近写入的两个键，并非完整LRU实现。它展示的是明确容量规则，防止无界增长。"
+        }
+      }
+    ],
+    "walkthrough": {
+      "title": "关闭练习弹窗后释放相关资源",
+      "scenario": "弹窗打开时启动计时器并注册按钮事件，用户可能反复打开和关闭。",
+      "steps": [
+        "把监听与计时器的创建集中管理，保存停止方法和必要标识。",
+        "关闭时取消计时器、移除监听，并从管理集合中移除旧弹窗引用。",
+        "多次开关后检查回调是否重复执行，再用内存工具观察旧弹窗对象的保留路径。"
+      ]
+    },
+    "checkpoint": {
+      "prompt": "变量被设成 null 后，对象是否一定马上释放？",
+      "answer": "不一定。还可能存在其他可达引用，而且垃圾回收发生时间由运行环境决定。应检查整个引用关系，而不只看一个变量。"
+    },
+    "takeaways": [
+      "自动回收不等于自动识别业务过期数据",
+      "清理资源与断开无用引用都重要",
+      "缓存必须有明确的增长边界"
+    ]
+  }
+}
