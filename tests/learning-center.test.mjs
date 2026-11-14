@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {buildLearningCenter,centerState,centerQuery,centerHref,centerLessonHref,lessonCenterEntry,centerQuestions,centerNotes,centerSuggestions,notesMarkdown} from '../public/learning-center.js';
+import {buildLearningCenter,centerState,centerQuery,centerHref,centerLessonHref,lessonCenterEntry,centerQuestions,centerNotes,centerSuggestions,notesMarkdown,updateCenterNote,mountLearningCenter} from '../public/learning-center.js';
 
 const chapters=[{id:'js',name:'JavaScript'},{id:'css',name:'CSS'}];
 const lessons=[
@@ -105,4 +105,89 @@ test('full current catalog is represented without losing any course or objective
  assert.equal(catalog.flatMap(lesson=>lesson.quiz).filter(q=>!q.introducedIn).length,425);
  assert.equal(centerQuestions(model,options({scope:'all',status:'unanswered'})).length,count);
  assert.equal(new Set(model.questions.map(q=>q.lessonId+':'+q.question.id)).size,count);
+});
+
+
+test('class notes and self-check reflections coexist with separate source searches',()=>{
+ const progress={types:{notes:'课堂记录 Array',studyCheck:{reflection:'自检回忆 <script> Array',rating:'again',dueAt:123}},equal:{studyCheck:{reflection:'相等比较回忆'}}};
+ const before=structuredClone(progress),model=buildLearningCenter(lessons,progress,chapters);
+ assert.equal(model.notes.length,3);assert.equal(model.counts.notes,3);assert.equal(new Set(model.notes.map(n=>n.key)).size,3);
+ assert.equal(model.notes.find(n=>n.key==='lesson:types').notes,'课堂记录 Array');
+ assert.equal(centerNotes(model,options({noteSource:'reflection',query:'ＡＲＲＡＹ'}))[0].key,'reflection:types');
+ assert.equal(centerNotes(model,options({noteSource:'lesson'})).length,1);assert.equal(centerNotes(model,options({query:'自检回忆'})).length,2);
+ assert.deepEqual(progress,before);
+});
+
+test('editing one source preserves classroom notes, scheduling, grades, and other lessons',()=>{
+ const p={types:{notes:'课堂旧笔记',studyCheck:{reflection:'回忆旧笔记',rating:'again',dueAt:123,attempts:2},quizResult:{score:80}},equal:{notes:'另一课'}};
+ const before=structuredClone(p);
+ assert.equal(updateCenterNote(p,lessons,'reflection:types','新回忆'),'新回忆');assert.equal(p.types.notes,before.types.notes);
+ assert.deepEqual({...p.types.studyCheck,reflection:before.types.studyCheck.reflection},before.types.studyCheck);
+ assert.equal(updateCenterNote(p,lessons,'lesson:types','新课堂'),'新课堂');assert.equal(p.types.studyCheck.reflection,'新回忆');
+ assert.deepEqual(p.types.quizResult,before.types.quizResult);assert.deepEqual(p.equal,before.equal);
+ assert.equal(updateCenterNote(p,lessons,'reflection:types','字'.repeat(3001)).length,3000);
+ for(const key of ['unknown:types','reflection:missing',{},null])assert.equal(updateCenterNote(p,lessons,key,'bad'),null);
+ updateCenterNote(p,lessons,'reflection:types','');assert.equal(buildLearningCenter(lessons,p,chapters).notes.filter(n=>n.kind==='reflection').length,0);
+ assert.equal(p.types.notes,'新课堂');
+});
+
+test('self-check deep links and Markdown retain source and return filter without replacing old note links',()=>{
+ const state=options({tab:'notes',noteSource:'reflection',query:'回忆 & <',chapter:'js',page:2});
+ const p={types:{notes:'旧课堂',studyCheck:{reflection:'<script>\n```js\nconst x = 1;\n```'}}};
+ const rows=buildLearningCenter(lessons,p,chapters).notes,reflection=rows.find(n=>n.kind==='reflection');
+ const href=centerLessonHref(reflection,{notes:true,returnState:state}),params=new URLSearchParams(href.split('?')[1]);
+ assert.equal(params.get('stage'),'conclusion');assert.equal(params.get('check'),'1');assert.equal(params.has('notes'),false);
+ assert.deepEqual(centerState(new URLSearchParams(params.get('review'))),state);
+ assert.equal(new URLSearchParams(centerLessonHref(rows[0],{notes:true}).split('?')[1]).get('notes'),'1');
+ const markdown=notesMarkdown(rows);assert.match(markdown,/来源：课堂笔记/);assert.match(markdown,/来源：自检回忆/);assert.match(markdown,/stage=conclusion/);assert.match(markdown,/check=1/);assert.match(markdown,/````text/);
+ assert.ok(markdown.includes(p.types.studyCheck.reflection));assert.ok(markdown.includes(p.types.notes));
+});
+
+function mountFixture(progress,{params=new URLSearchParams('tab=notes'),onNotesChange=()=>{},catalog=lessons,download=()=>{}}={}){
+ const listeners={},formListeners={},results={innerHTML:''},status={textContent:'',focus(){},scrollIntoView(){}},count={textContent:''};
+ const form={elements:Object.fromEntries(['chapter','status','scope','order','noteSource','q'].map(k=>[k,{value:''}])),addEventListener(type,fn){formListeners[type]=fn;},removeEventListener(type){delete formListeners[type];}};
+ const hidden={};const view={querySelector(sel){return sel==='form'?form:sel==='.center-results'?results:sel==='.center-results-status'?status:sel==='[data-center-stat="notes"] b'?count:hidden[sel]||=( {} );},querySelectorAll(){return [];},addEventListener(type,fn){listeners[type]=fn;},removeEventListener(type){delete listeners[type];}};
+ const root={innerHTML:'',querySelector(){return view;}};
+ const controller=mountLearningCenter(root,{lessons:catalog,chapters,progress,params,onNotesChange,download});
+ return {root,view,form,results,status,listeners,formListeners,controller};
+}
+
+test('central note input saves the selected source without rerendering or dropping active filters',()=>{
+ const previous=globalThis.history;let url='';globalThis.history={state:null,replaceState(_a,_b,value){url=value;}};
+ try{
+  const p={types:{notes:'class note',studyCheck:{reflection:'<img src=x onerror=alert(1)>',dueAt:15}}};let saves=0;
+  const mounted=mountFixture(p,{params:new URLSearchParams('tab=notes&noteSource=reflection&q=img'),onNotesChange:()=>{saves++;}});
+  assert.ok(mounted.results.innerHTML.includes('&lt;img'));assert.ok(!mounted.results.innerHTML.includes('<img src=x'));assert.ok(mounted.results.innerHTML.includes('maxlength="3000"'));
+  const rendered=mounted.results.innerHTML,target={dataset:{centerNote:'reflection:types'},value:'编辑后不再匹配搜索'};
+  mounted.listeners.input({target});assert.equal(saves,1);assert.equal(p.types.studyCheck.reflection,target.value);assert.equal(p.types.notes,'class note');assert.equal(p.types.studyCheck.dueAt,15);
+  assert.equal(mounted.results.innerHTML,rendered);assert.equal(mounted.form.elements.q.value,'img');assert.ok(url.includes('noteSource=reflection'));
+  mounted.formListeners.submit({preventDefault(){}});assert.match(mounted.results.innerHTML,/没有匹配的笔记/);
+  mounted.controller.destroy();assert.equal(mounted.listeners.input,undefined);
+ }finally{globalThis.history=previous;}
+});
+
+test('source-filtered pagination and export use independent note entries',async()=>{
+ const previous=globalThis.history;globalThis.history={state:null,replaceState(){}};
+ try{
+  const catalog=Array.from({length:14},(_,i)=>({...lessons[0],id:'lesson-'+i})),progress=Object.fromEntries(catalog.map(l=>[l.id,{notes:'课堂 '+l.id,studyCheck:{reflection:'回忆 '+l.id}}]));let exported='';
+  const mounted=mountFixture(progress,{catalog,params:new URLSearchParams('tab=notes&noteSource=reflection&page=2'),download:value=>{exported=value;}});
+  assert.match(mounted.status.textContent,/找到 14 篇笔记 · 当前显示 13–14/);assert.equal((mounted.results.innerHTML.match(/data-center-note="reflection:/g)||[]).length,2);
+  const button={dataset:{centerExport:'filtered'},hasAttribute(name){return name==='data-center-export';}};
+  await mounted.listeners.click({target:{closest(){return button;}}});assert.match(exported,/共 14 篇/);assert.equal(exported.includes('来源：课堂笔记'),false);
+  mounted.controller.destroy();
+ }finally{globalThis.history=previous;}
+});
+
+
+test('clearing the final note updates status and disables both exports without replacing its editor',()=>{
+ const previous=globalThis.history;globalThis.history={state:null,replaceState(){}};
+ try{
+  const progress={types:{studyCheck:{reflection:'唯一笔记'}}},mounted=mountFixture(progress),buttons=[{dataset:{centerExport:'filtered'}},{dataset:{centerExport:'all'}}];
+  mounted.view.querySelectorAll=selector=>selector==='[data-center-export]'?buttons:[];
+  const rendered=mounted.results.innerHTML;
+  mounted.listeners.input({target:{dataset:{centerNote:'reflection:types'},value:''}});
+  assert.match(mounted.status.textContent,/笔记 0 篇/);assert.equal(buttons[0].disabled,true);assert.equal(buttons[1].disabled,true);assert.equal(buttons[0].textContent,'导出筛选结果 · 0 篇');assert.equal(mounted.results.innerHTML,rendered);
+  mounted.listeners.input({target:{dataset:{centerNote:'reflection:types'},value:'继续写'}});
+  assert.equal(buttons[0].disabled,false);assert.equal(buttons[1].disabled,false);mounted.controller.destroy();
+ }finally{globalThis.history=previous;}
 });

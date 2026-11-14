@@ -21,8 +21,8 @@
   },
   {
     "path": "README.md",
-    "sha256": "e91f8dffadabb6906894933468170010c7bb437452feecf9ef84bc0bbda06962",
-    "bytes": 4458
+    "sha256": "a43d536463a8ec18b159682109db2d76617e851b6c6e24ad4f7574c7f5314381",
+    "bytes": 5422
   },
   {
     "path": "lib/config.mjs",
@@ -86,13 +86,13 @@
   },
   {
     "path": "package.json",
-    "sha256": "461f0eff20ebb9294a4d56756faa647478affba8fa715e07c1d6286aabdaf8aa",
+    "sha256": "401996c1f7f96ee9910d6cb018de77cbce11564aae43f56703eafb89cf542d42",
     "bytes": 304
   },
   {
     "path": "public/app.js",
-    "sha256": "bd3b76704f932217ab14d97bdc396be1ca6bda4a1c552ca331f8b90c9852d60d",
-    "bytes": 74538
+    "sha256": "63bd09f625700f928d8578454577a37ae186824f80f760bdf64049cbdac58eae",
+    "bytes": 74805
   },
   {
     "path": "public/backup-manager.css",
@@ -136,8 +136,8 @@
   },
   {
     "path": "public/index.html",
-    "sha256": "97afe11cec12349a634ad6b3c9f7151e0d1790809267469d0d8aee1b1e20d5bc",
-    "bytes": 5101
+    "sha256": "52cf1458b318595701f425ae4aae138fbb19d4a8c94308bf62d37d048c812d6c",
+    "bytes": 5211
   },
   {
     "path": "public/learning-center.css",
@@ -146,8 +146,8 @@
   },
   {
     "path": "public/learning-center.js",
-    "sha256": "e0d9982d04a2fb23a5bc801fb3ceb8781d953083a9e9bf3cabb1bad4f9a39d66",
-    "bytes": 23502
+    "sha256": "c98b76ec731f37185dd8aabd58cb0be4206851e5d27fb3f1da024c2c3f3b2aee",
+    "bytes": 28181
   },
   {
     "path": "public/learning-ux.js",
@@ -160,6 +160,11 @@
     "bytes": 3880
   },
   {
+    "path": "public/lesson-recall.css",
+    "sha256": "1acbf639907a0aab20909f66c07efa38451fe3b9735b28fbf9110ac4070f75ee",
+    "bytes": 1531
+  },
+  {
     "path": "public/local-config.js",
     "sha256": "ed7773689a9bd8f122c3fab0dd763b3ca96dae0347474a218db7be8f482c47b1",
     "bytes": 1189
@@ -170,6 +175,11 @@
     "bytes": 11869
   },
   {
+    "path": "public/quiz-feedback.js",
+    "sha256": "9b6dbfcf46714cdf3e8cb6dc8350f3d5f64a71be7ec38afed1c1ab0fd174e2f1",
+    "bytes": 2963
+  },
+  {
     "path": "public/quiz-presentation.js",
     "sha256": "0e5a37ed50afe3ef450e25599e56488acd23f15be386a24b6bcdb4c171c847f2",
     "bytes": 1942
@@ -178,6 +188,16 @@
     "path": "public/releases/1.11.0.md",
     "sha256": "602ce705a2a51bb2c548672e92efded1f06d3d7b9ae929ad2918ff1e89ce1b60",
     "bytes": 2776
+  },
+  {
+    "path": "public/releases/1.12.0.md",
+    "sha256": "068b393340b4da2cb41c998f32a8496ded0f2a9408dbfe89ed1cfb40ccb0b356",
+    "bytes": 2488
+  },
+  {
+    "path": "public/review-snapshot.js",
+    "sha256": "7d19326727a61e4b6ca6f3e7645eedbf774ff04443bd264590fff6b588863832",
+    "bytes": 1442
   },
   {
     "path": "public/run-examples.json",
@@ -311,8 +331,8 @@
   },
   {
     "path": "public/updates.html",
-    "sha256": "10d1a9c307d9a84a6c98633fda66d6a23f06410fe17d19875e7db59844232fde",
-    "bytes": 10607
+    "sha256": "7d2e1aaf4cf7626c5d5891a8674539aacda6fb2e5027f430c4f01766f3a79427",
+    "bytes": 12442
   },
   {
     "path": "public/vendor/LICENSES.txt",
@@ -366,8 +386,8 @@
   },
   {
     "path": "server.mjs",
-    "sha256": "33f148629114a0a2672611bb5c1208bf10b9ada4efe0d68f37c5b2f86050f5da",
-    "bytes": 8772
+    "sha256": "88b62464396530a00610f3063281e5f77865a52ef9a0dea2710d7a29bcf608a7",
+    "bytes": 8907
   },
   {
     "path": "start-learning.ps1",
@@ -431,8 +451,8 @@
   },
   {
     "path": "tests/learning-center.test.mjs",
-    "sha256": "c1ec7512032e2138e8c4c996d48d5e01ff0d71c7db1efd37e50f9ef40f135bf5",
-    "bytes": 9442
+    "sha256": "71526c6b481e35e58338fed4055a396944a596a4370204bdc561048d37eee600",
+    "bytes": 17629
   },
   {
     "path": "tests/learning-ux.test.mjs",
@@ -480,6 +500,11 @@
     "bytes": 5208
   },
   {
+    "path": "tests/quiz-feedback.test.mjs",
+    "sha256": "175f96d91c55343291a3a90227b9d48534997d364b4bb0969dae846366ce5a25",
+    "bytes": 1472
+  },
+  {
     "path": "tests/quiz-history-compat.test.mjs",
     "sha256": "29a78eb6643668b143579539a730128e59da6ade1fe315b0ec7dea671a9c3033",
     "bytes": 6116
@@ -493,6 +518,11 @@
     "path": "tests/remote-access.test.mjs",
     "sha256": "0ecbcd724fa290782ebfccf094ee4a2334979615796a01bf5b9e1be36d9e8da8",
     "bytes": 8143
+  },
+  {
+    "path": "tests/review-snapshot.test.mjs",
+    "sha256": "b5a516c960cf23785f7858ea35e5b29a40b756a68c5a495758215fa302962ce2",
+    "bytes": 1311
   },
   {
     "path": "tests/run-examples.test.mjs",
