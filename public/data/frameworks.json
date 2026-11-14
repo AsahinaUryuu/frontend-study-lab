@@ -956,6 +956,38 @@
         "caseSensitive": true,
         "explanation": "call/apply 会立即执行，bind 返回预绑定函数。",
         "caseReason": "本题填写代码中的实际 API、属性或标识符，大小写属于名称的一部分。"
+      },
+      {
+        "type": "choice",
+        "prompt": "这段严格模式代码会发生什么？",
+        "options": [
+          "输出 8",
+          "输出 undefined，但不会报错",
+          "读取 undefined 的 price 时抛出 TypeError",
+          "自动使用 window.price"
+        ],
+        "answer": 2,
+        "explanation": "方法被取出后，fn() 是普通调用。严格模式下 this 为 undefined；错误发生在读取 this.price，而不是取出方法时。",
+        "code": {
+          "language": "javascript",
+          "source": "\"use strict\";\nconst item = { price: 8, getPrice() { return this.price; } };\nconst fn = item.getPrice;\nfn();"
+        },
+        "id": "js-this-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "已用 fn.bind(a) 得到 bound，再执行 bound.call(b)，普通调用的 this 是谁？",
+        "options": [
+          "b",
+          "a",
+          "同时是 a 和 b",
+          "一定为 undefined"
+        ],
+        "answer": 1,
+        "explanation": "绑定函数保留先前的 thisArg；call 提供的 thisArg 不能覆盖它。这里讨论普通调用，不涉及 new 调用绑定函数。",
+        "id": "js-this-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -966,10 +998,13 @@
       "rubric": [
         "始终以 obj 为 this",
         "传递任意参数",
-        "返回原函数结果"
+        "返回原函数结果",
+        "原方法的返回值与抛出的错误原样向调用者传递，不转换为 undefined。"
       ],
       "hints": [
-        "apply 接收参数数组。"
+        "apply 接收参数数组。",
+        "用两个参数和返回对象的方法测试，避免只对零参数示例碰巧正确。",
+        "把返回函数放进另一个对象调用，检查是否仍使用原 obj。"
       ]
     },
     "summary": {
@@ -980,6 +1015,10 @@
       {
         "title": "this 与箭头函数：看调用方式还是定义位置 · MDN",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this"
+      },
+      {
+        "title": "MDN：bind 的接收者与返回函数",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind"
       }
     ],
     "deepDives": [
@@ -1872,6 +1911,34 @@
         "caseSensitive": true,
         "explanation": "调用控制器的 abort 可以通知使用该 signal 的请求中止。",
         "caseReason": "本题填写代码中的实际 API、属性或标识符，大小写属于名称的一部分。"
+      },
+      {
+        "type": "choice",
+        "prompt": "HTTP 200 的正文实际是 HTML，执行 await response.json() 会怎样？",
+        "options": [
+          "只要200就一定得到对象",
+          "可能因正文不是合法 JSON 而拒绝",
+          "自动把HTML转换为JSON",
+          "返回 Response 本身"
+        ],
+        "answer": 1,
+        "explanation": "HTTP 状态和正文格式是两个关口。json() 异步读取并解析正文；状态成功不保证格式正确，解析错误也需要向调用方传递。",
+        "id": "js-fetch-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "搜索 a 的旧请求晚于 ab 完成，最可靠的页面更新条件是什么？",
+        "options": [
+          "哪个后完成就展示哪个",
+          "响应状态为200即可覆盖",
+          "结果属于当前最新请求，再更新内容和加载状态",
+          "所有请求共用一个无条件 finally 关闭 loading"
+        ],
+        "answer": 2,
+        "explanation": "结果是否仍有效取决于请求身份，而不是完成时间。取消旧请求可配合减少工作，但页面提交和错误/加载状态仍应防止旧请求覆盖。",
+        "id": "js-fetch-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -1882,10 +1949,13 @@
       "rubric": [
         "检查 HTTP 状态",
         "正确 await/返回解析结果",
-        "取消信号传递且错误不吞掉"
+        "取消信号传递且错误不吞掉",
+        "非JSON正文的解析异常与网络/取消异常均继续传出；HTTP失败错误包含原状态码。"
       ],
       "hints": [
-        "Response 与解析后的数据是两个阶段。"
+        "Response 与解析后的数据是两个阶段。",
+        "用 fetch 替身分别提供404、合法JSON、非法JSON、拒绝Promise，检查错误不会被空对象掩盖。",
+        "记录替身收到的 options.signal，确认透传的是调用方传入的同一个信号。"
       ]
     },
     "summary": {
@@ -1896,6 +1966,10 @@
       {
         "title": "fetch：HTTP 失败不等于网络拒绝 · MDN",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch"
+      },
+      {
+        "title": "React：忽略过期网络结果",
+        "url": "https://react.dev/learn/synchronizing-with-effects"
       }
     ],
     "deepDives": [
@@ -2471,6 +2545,38 @@
         "caseSensitive": true,
         "explanation": "let 在这种 for 循环中为各轮建立对应绑定，异步回调可以记住各自的索引。",
         "caseReason": "本题补全 JavaScript 关键字，大小写必须与语言规定一致。"
+      },
+      {
+        "type": "choice",
+        "prompt": "下面为什么输出 0 和 1？",
+        "options": [
+          "闭包只能记住最旧的值",
+          "saved 保存计算结果，read 每次读取同一变量绑定",
+          "add 创建了第二个全局变量",
+          "const 使全部外层变量不能变化"
+        ],
+        "answer": 1,
+        "explanation": "saved 是工厂执行时得到的数值副本；read 是函数，调用时才读取 n。n 的绑定被 add 修改后，read 能看到新值。",
+        "code": {
+          "language": "javascript",
+          "source": "function make() {\n  let n = 0;\n  return { saved: n, add: () => ++n, read: () => n };\n}\nconst meter = make();\nmeter.add();\nconsole.log(meter.saved, meter.read());"
+        },
+        "id": "js-closure-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "给每个上传任务创建独立重试计数器，应把可变计数放在哪里？",
+        "options": [
+          "所有任务共用的全局变量",
+          "每次 next 调用的函数体里",
+          "每次工厂调用的局部环境里，由返回方法共同访问",
+          "HTML 的 title 属性里"
+        ],
+        "answer": 2,
+        "explanation": "每次工厂调用建立独立环境，同一实例的方法共享该环境。全局状态会串号，放在 next 内会被反复初始化。",
+        "id": "js-closure-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -2481,10 +2587,13 @@
       "rubric": [
         "使用私有闭包变量",
         "next/reset 的返回值符合约定",
-        "多个实例状态互不干扰"
+        "多个实例状态互不干扰",
+        "边界自检：默认 start、负数 start、连续两次 reset 与两个实例交错调用均满足原约定。"
       ],
       "hints": [
-        "把状态放在工厂内部，不放在外部全局。"
+        "把状态放在工厂内部，不放在外部全局。",
+        "先列出 start=-2 的 next/reset/next 结果：-1、-2、-1，再检查实现。",
+        "解构取出 next 再调用也应可用；本题的状态归闭包所有，不依赖 this。"
       ]
     },
     "summary": {
@@ -2495,6 +2604,10 @@
       {
         "title": "作用域与闭包：函数为何记得旧变量 · MDN",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures"
+      },
+      {
+        "title": "MDN：闭包与共享词法环境",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures"
       }
     ],
     "deepDives": [
@@ -2612,6 +2725,38 @@
         "caseSensitive": true,
         "id": "js-event-loop-q5",
         "caseReason": "本题填写代码中的实际 API、属性或标识符，大小写属于名称的一部分。"
+      },
+      {
+        "type": "choice",
+        "prompt": "浏览器常规脚本中，以下代码输出顺序是什么？",
+        "options": [
+          "A C B",
+          "A B C",
+          "B A C",
+          "C A B"
+        ],
+        "answer": 1,
+        "explanation": "初始队列中 A 在 B 前；A 执行时把 C 加在已有 B 后面。同一检查点会继续处理 B、C。",
+        "code": {
+          "language": "javascript",
+          "source": "queueMicrotask(() => {\n  console.log('A');\n  queueMicrotask(() => console.log('C'));\n});\nqueueMicrotask(() => console.log('B'));"
+        },
+        "id": "js-event-loop-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "处理大量同步计算的循环里反复 await Promise.resolve()，能否保证每轮都有页面绘制？",
+        "options": [
+          "能，每个 await 都产生一个动画帧",
+          "不能，连续微任务仍可能阻塞后续任务与绘制机会",
+          "能，它会自动创建 Worker",
+          "不能，因为 await 完全不让出执行"
+        ],
+        "answer": 1,
+        "explanation": "await 会暂停当前异步函数，但已经兑现的 Promise 把继续执行安排为微任务；持续微任务不等于给浏览器留出任务和绘制机会。",
+        "id": "js-event-loop-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -2623,10 +2768,13 @@
         "逐个调用任务工厂，不能先 map 触发全部任务",
         "await 同时兼容普通值和 Promise",
         "保留结果顺序并正确处理空数组",
-        "抛错后不再执行后续任务"
+        "抛错后不再执行后续任务",
+        "同步抛错和异步拒绝都应停止后续工厂；验证启动次数，不能仅看最终返回值。"
       ],
       "hints": [
-        "串行的是函数调用时机，而不只是事后等待已经启动的 Promise。"
+        "串行的是函数调用时机，而不只是事后等待已经启动的 Promise。",
+        "用 []、普通值任务、异步任务、第二项抛错四组输入检查。",
+        "失败用一个额外数组记录已启动任务，确认失败后第三项工厂从未被调用。"
       ]
     },
     "summary": {
@@ -2765,6 +2913,38 @@
         "caseSensitive": true,
         "explanation": "allSettled 返回每项的状态和对应 value 或 reason，不因单项失败立刻整体拒绝。",
         "caseReason": "本题填写代码中的实际 API、属性或标识符，大小写属于名称的一部分。"
+      },
+      {
+        "type": "choice",
+        "prompt": "下面最后一个 then 得到什么？",
+        "options": [
+          "MORI",
+          "undefined",
+          "整个 user 对象",
+          "必然拒绝"
+        ],
+        "answer": 1,
+        "explanation": "带花括号的箭头回调没有 return，正常结束的返回值是 undefined。toUpperCase 虽被调用，但结果没有交给链。",
+        "code": {
+          "language": "javascript",
+          "source": "Promise.resolve({ name: 'mori' })\n  .then(user => { user.name.toUpperCase(); })\n  .then(value => console.log(value));"
+        },
+        "id": "js-promise-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "想记录异常但继续让 loadUserName 的调用方识别失败，catch 应怎么处理？",
+        "options": [
+          "只 console.log 后结束",
+          "return null",
+          "记录后 throw 原错误",
+          "return \"失败\""
+        ],
+        "answer": 2,
+        "explanation": "throw 让后续链保持拒绝。其余正常返回都代表恢复为成功值，调用方的 catch 就不再因这个错误触发。",
+        "id": "js-promise-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -2775,10 +2955,13 @@
       "rubric": [
         "返回 Promise 链",
         "使用用户 name 并转大写",
-        "同步抛错或异步拒绝均传给调用方"
+        "同步抛错或异步拒绝均传给调用方",
+        "失败不得转换成空字符串或 undefined；调用方必须能通过 catch 捕获同步抛错及异步拒绝。"
       ],
       "hints": [
-        "Promise.resolve().then(fetchUser) 也能接住同步抛错。"
+        "Promise.resolve().then(fetchUser) 也能接住同步抛错。",
+        "分别让 fetchUser 同步抛错、返回拒绝 Promise、成功返回姓名，核对三个路径。",
+        "成功用小写姓名验证转换；异常用同一个 Error 实例验证没有被吞掉。"
       ]
     },
     "summary": {
@@ -2789,6 +2972,10 @@
       {
         "title": "Promise 链：返回值和错误如何传递 · MDN",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then"
+      },
+      {
+        "title": "MDN：Promise.finally",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/finally"
       }
     ],
     "deepDives": [
@@ -2923,6 +3110,40 @@
           "source": "for (const item ____ items) {\n  await save(item);\n}"
         },
         "caseReason": "本题补全循环语句关键字，大小写必须与语言规定一致。"
+      },
+      {
+        "type": "choice",
+        "prompt": "两项独立任务按 B、A 的顺序完成，Promise.all([getA(),getB()]) 的结果顺序是？",
+        "options": [
+          "按完成顺序 B、A",
+          "按输入位置 A、B",
+          "顺序随机",
+          "只返回 A"
+        ],
+        "answer": 1,
+        "explanation": "聚合结果按输入位置保存；并发缩短等待并不改变每个结果与请求的对应关系。",
+        "id": "js-async-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "希望并发保存所有 items，并在全部成功后继续，应选哪种写法？",
+        "options": [
+          "await items.forEach(async x => save(x))",
+          "await Promise.all(items.map(x => save(x)))",
+          "Promise.all([save])",
+          "items.forEach(x => save(x)); return \"完成\""
+        ],
+        "answer": 1,
+        "explanation": "map 返回每项保存的 Promise，all 才有可等待的任务集合。forEach 返回 undefined；放入函数引用不会启动保存。",
+        "id": "js-async-v111-q2",
+        "introducedIn": "1.11.0",
+        "codeOptions": [
+          0,
+          1,
+          2,
+          3
+        ]
       }
     ],
     "challenge": {
@@ -2933,10 +3154,13 @@
       "rubric": [
         "等待前启动两个任务",
         "返回字段 a、b 对应正确结果",
-        "不吞掉拒绝"
+        "不吞掉拒绝",
+        "结果映射按参数身份而非完成先后；失败路径不返回伪造的成功对象。"
       ],
       "hints": [
-        "把函数调用放进 Promise.all 的数组。"
+        "把函数调用放进 Promise.all 的数组。",
+        "用可手动 resolve 的两个 Promise 检查：两次调用都发生后，再完成 B、A，结果仍为 {a,b}。",
+        "构造一个拒绝的异步任务，检查调用方能捕获；不要声称另一个任务已自动取消。"
       ]
     },
     "summary": {
@@ -2947,6 +3171,14 @@
       {
         "title": "async/await：串行、并发与错误处理 · MDN",
         "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function"
+      },
+      {
+        "title": "MDN：Promise.all 的顺序与拒绝",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all"
+      },
+      {
+        "title": "MDN：forEach 不等待 Promise",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach"
       }
     ],
     "deepDives": [
@@ -3229,6 +3461,32 @@
         "caseSensitive": true,
         "explanation": "toRefs 为对象已有的可枚举属性建立对应 ref，保持与原对象属性的连接。",
         "caseReason": "本题填写代码中的实际 API、属性或标识符，大小写属于名称的一部分。"
+      },
+      {
+        "type": "choice",
+        "prompt": "在Vue3脚本中state为reactive对象，调用toRefs后修改state.count，count.value会怎样？",
+        "options": [
+          "保持旧值",
+          "读取到对应属性的新值",
+          "永远是undefined",
+          "必须重新调用toRefs"
+        ],
+        "answer": 1,
+        "explanation": "toRefs创建与已有属性关联的ref；它不是复制数值。直接解构基本类型才会得到与该属性读写断开的局部值。",
+        "id": "vue-reactivity-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "fill",
+        "prompt": "Vue中修改响应式状态后，需要等待本轮DOM更新再测量，可 `await ____()`。",
+        "answer": [
+          "nextTick"
+        ],
+        "explanation": "nextTick等待Vue的DOM更新刷新。数据本身不必等待才变更，它也不承诺全部网络请求或图片加载已经结束。",
+        "caseSensitive": true,
+        "caseReason": "本题填写代码中的实际API名称，大小写属于名称的一部分，必须按规范拼写。",
+        "id": "vue-reactivity-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -3239,10 +3497,13 @@
       "rubric": [
         "通过 toRefs 保留连接",
         "脚本正确使用 value",
-        "点击按钮更新展示"
+        "点击按钮更新展示",
+        "保留state.count与解构ref的双向连接，不能只复制初始数值后维护两份独立计数。"
       ],
       "hints": [
-        "ref 在模板里不用写 .value。"
+        "ref 在模板里不用写 .value。",
+        "连续点击、通过state.count赋值、通过count.value赋值三种路径都应反映到同一状态。",
+        "脚本里修改count.value，模板中使用顶层count；不要在模板里误把ref对象当普通数值参与脚本计算。"
       ]
     },
     "summary": {
@@ -3253,6 +3514,10 @@
       {
         "title": "响应式：Vue 2 与 Vue 3 的侦测边界 · Vue 官方文档",
         "url": "https://vuejs.org/guide/essentials/reactivity-fundamentals.html"
+      },
+      {
+        "title": "Vue：toRefs属性连接",
+        "url": "https://vuejs.org/api/reactivity-utilities.html#torefs"
       }
     ],
     "deepDives": [
@@ -6086,6 +6351,38 @@
         "caseSensitive": true,
         "explanation": "useState 返回本次渲染的状态快照与更新函数。",
         "caseReason": "本题填写代码中的实际 API、属性或标识符，大小写属于名称的一部分。"
+      },
+      {
+        "type": "choice",
+        "prompt": "本次count为1，下面同一事件处理器排队后最终count是多少？",
+        "options": [
+          "10",
+          "2",
+          "9",
+          "6"
+        ],
+        "answer": 1,
+        "explanation": "替换3，更新函数乘3得9，最后count+1仍用本次快照1算出2，所以替换为2。若最后写c=>c+1才为10。",
+        "code": {
+          "language": "javascript",
+          "source": "setCount(count + 2);\nsetCount(c => c * 3);\nsetCount(count + 1);"
+        },
+        "id": "react-state-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "const next=[...items]之后写next[0].done=true，为什么仍可能修改旧状态？",
+        "options": [
+          "数组展开不会创建新数组",
+          "展开是浅复制，next[0]与items[0]仍是同一个对象",
+          "React不支持数组",
+          "布尔值不能作为状态"
+        ],
+        "answer": 1,
+        "explanation": "外层数组复制不复制内部对象。应复制被修改项并生成新数组，而不是对共享对象直接赋值。",
+        "id": "react-state-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -6096,10 +6393,13 @@
       "rubric": [
         "使用 useState 初始化",
         "循环使用函数式更新",
-        "展示新状态且不修改旧变量"
+        "展示新状态且不修改旧变量",
+        "更新函数保持纯净；连续多次点击仍每次增加5，不能依赖首次渲染的旧count。"
       ],
       "hints": [
-        "循环里不要重复使用捕获到的 count。"
+        "循环里不要重复使用捕获到的 count。",
+        "点击一次显示5，两次显示10；不要只测试初始0的一次点击。",
+        "更新函数内只返回c+1；请求、日志统计等副作用放在适当的事件处理流程。"
       ]
     },
     "summary": {
@@ -6114,6 +6414,10 @@
       {
         "title": "React 官方：18 版自动批处理",
         "url": "https://react.dev/blog/2022/03/29/react-v18"
+      },
+      {
+        "title": "React：不可变更新数组",
+        "url": "https://react.dev/learn/updating-arrays-in-state"
       }
     ],
     "deepDives": [
@@ -6546,6 +6850,34 @@
         "caseSensitive": true,
         "explanation": "useLayoutEffect 在提交后、浏览器绘制前执行，适合必要的同步测量但可能阻塞绘制。",
         "caseReason": "本题填写代码中的实际 API、属性或标识符，大小写属于名称的一部分。"
+      },
+      {
+        "type": "choice",
+        "prompt": "依赖从A变B，旧Effect返回的cleanup应释放哪份资源？",
+        "options": [
+          "最新的B资源",
+          "那一次setup建立的A资源",
+          "两份资源都永不释放",
+          "任意资源"
+        ],
+        "answer": 1,
+        "explanation": "cleanup闭包对应旧setup，先释放A，再建立B。把清理目标绑定到那次注册返回的句柄能避免清错新资源。",
+        "id": "react-effects-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "开发Strict Mode中出现setup→cleanup→setup，应该怎样验证订阅实现？",
+        "options": [
+          "用ref跳过第二次setup就算修复",
+          "删除cleanup减少调用",
+          "检查每次注册都有对应清理，最终只有所需订阅",
+          "省略全部依赖"
+        ],
+        "answer": 2,
+        "explanation": "额外循环用于暴露不完整清理。目标是可重复建立/释放而不泄漏，不是阻止检查流程运行；生产行为不应依赖跳过一次setup。",
+        "id": "react-effects-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -6556,10 +6888,13 @@
       "rubric": [
         "以当前频道建立订阅",
         "依赖完整包含 channelId 和 subscribe",
-        "返回清理函数并返回消息状态"
+        "返回清理函数并返回消息状态",
+        "每个setup返回的unsubscribe在对应清理时调用，不误清理新频道，不遗留重复订阅。"
       ],
       "hints": [
-        "setup 中创建的资源由对应 cleanup 释放。"
+        "setup 中创建的资源由对应 cleanup 释放。",
+        "用subscribe替身记录每次id与unsubscribe调用；切换频道、替换subscribe、卸载各测一次。",
+        "旧订阅解除后不应继续推送；若真实订阅可能有在途消息，拓展时为回调增加有效标记。"
       ]
     },
     "summary": {
@@ -6570,6 +6905,10 @@
       {
         "title": "useEffect：把外部系统和组件同步起来 · React 官方文档",
         "url": "https://react.dev/reference/react/useEffect"
+      },
+      {
+        "title": "React：Effect的同步、清理与竞态",
+        "url": "https://react.dev/learn/synchronizing-with-effects"
       }
     ],
     "deepDives": [

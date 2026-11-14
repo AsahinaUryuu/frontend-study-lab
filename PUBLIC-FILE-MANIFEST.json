@@ -21,8 +21,8 @@
   },
   {
     "path": "README.md",
-    "sha256": "68b114978dbf6ab6471362177c9df060e4ed962f9c693f7efcd8770d30d06cba",
-    "bytes": 3459
+    "sha256": "e91f8dffadabb6906894933468170010c7bb437452feecf9ef84bc0bbda06962",
+    "bytes": 4458
   },
   {
     "path": "lib/config.mjs",
@@ -81,18 +81,18 @@
   },
   {
     "path": "lib/tutor.mjs",
-    "sha256": "622422113b859717b387424259f448a938d566070e243b52249a0ef3df5b1c42",
-    "bytes": 8635
+    "sha256": "02b676b9b24081fc5c9fc3196f08551ab3a73ef5aa4084b9574363b73dfc5073",
+    "bytes": 9688
   },
   {
     "path": "package.json",
-    "sha256": "7df53d0a73d6ad6a0cb081cfc02ec82869cab0fe179a191dc1cd757760feb696",
+    "sha256": "461f0eff20ebb9294a4d56756faa647478affba8fa715e07c1d6286aabdaf8aa",
     "bytes": 304
   },
   {
     "path": "public/app.js",
-    "sha256": "bbdaf1141f1aa5b19f7f8a32f57771cbf300c860363a1db661dee7fe6059d9a5",
-    "bytes": 72022
+    "sha256": "bd3b76704f932217ab14d97bdc396be1ca6bda4a1c552ca331f8b90c9852d60d",
+    "bytes": 74538
   },
   {
     "path": "public/backup-manager.css",
@@ -111,13 +111,13 @@
   },
   {
     "path": "public/data/frameworks.json",
-    "sha256": "df5c3ed0a33a47a58cbd4202a194cf2c10a3af490d42fd3c7912df38077ea144",
-    "bytes": 423182
+    "sha256": "aa8b1068f00d3447888324c0ddde316cc8fd3500cc87c6a0ff068d94e7b63b29",
+    "bytes": 439733
   },
   {
     "path": "public/data/platform.json",
-    "sha256": "e3cff969fdba7c61323f8dca31223251364a883b9b9b537557a7b52b7597163f",
-    "bytes": 314374
+    "sha256": "09ba05e459e60d8bf158fae44f4202429fcf8c293fd6a0a3fb503835ddcd6d42",
+    "bytes": 326115
   },
   {
     "path": "public/dom-runner.js",
@@ -136,8 +136,8 @@
   },
   {
     "path": "public/index.html",
-    "sha256": "ab1905f9c880ad79155f01a779652de132eee4eb2a208e4e7cefaa64734e70d6",
-    "bytes": 5111
+    "sha256": "97afe11cec12349a634ad6b3c9f7151e0d1790809267469d0d8aee1b1e20d5bc",
+    "bytes": 5101
   },
   {
     "path": "public/learning-center.css",
@@ -146,18 +146,18 @@
   },
   {
     "path": "public/learning-center.js",
-    "sha256": "5f18ad22480447c3d047d0ac87998b8e1c3c080c0da69be4a1478c61cb144d93",
-    "bytes": 22820
+    "sha256": "e0d9982d04a2fb23a5bc801fb3ceb8781d953083a9e9bf3cabb1bad4f9a39d66",
+    "bytes": 23502
   },
   {
     "path": "public/learning-ux.js",
-    "sha256": "cea223bd7190fb6f00e14be6d6fc036beca3d953212a0ebe019b79deee95384d",
-    "bytes": 2193
+    "sha256": "19543280076e1b45a78da3bb856013bb5ffcd543fce2ea5deabc7f8d5a69ffcb",
+    "bytes": 2347
   },
   {
     "path": "public/learning.js",
-    "sha256": "fda3492e47992a9b13b6ce0e9280df2df6692cd6e3aba2fc5f6b98b1c61cb578",
-    "bytes": 3344
+    "sha256": "7d34e6c7edbabaf909a6ca50dee8a5c9a6cd6f16dee43a0b6008434b73cfad2a",
+    "bytes": 3880
   },
   {
     "path": "public/local-config.js",
@@ -175,6 +175,11 @@
     "bytes": 1942
   },
   {
+    "path": "public/releases/1.11.0.md",
+    "sha256": "602ce705a2a51bb2c548672e92efded1f06d3d7b9ae929ad2918ff1e89ce1b60",
+    "bytes": 2776
+  },
+  {
     "path": "public/run-examples.json",
     "sha256": "389df974ebc9f3a99af1e6cb2cf32a48b82ecd5992b776b79c9d0384f3ae1d01",
     "bytes": 46072
@@ -188,6 +193,16 @@
     "path": "public/settings.js",
     "sha256": "76abc551dd9afe7e0d3068532dfdbd7aab0ed62f0c24c7475ed2eb36363d170e",
     "bytes": 6990
+  },
+  {
+    "path": "public/study-check.css",
+    "sha256": "a83bb5a115e83c6511e31874eb86d314b61242c16997cd816611b26225f665b5",
+    "bytes": 1788
+  },
+  {
+    "path": "public/study-check.js",
+    "sha256": "d5defbc564c46e142b37452dd06ddd3d3b49e63153e24055fc5ce6d8e46653c0",
+    "bytes": 6119
   },
   {
     "path": "public/style.css",
@@ -216,28 +231,28 @@
   },
   {
     "path": "public/textbook/css.json",
-    "sha256": "36fff33f7f5a22706a63bc6f8b1b0a033f6ab2f8d1cc86d13c13ce16e9cb002e",
-    "bytes": 39176
+    "sha256": "ca786c5423c36879fb7ec4988ae734ea3aaf1af5bc575b4a6778ca4afc6d1b6c",
+    "bytes": 45890
   },
   {
     "path": "public/textbook/frameworks.json",
-    "sha256": "abb69d13550a5696faf808c4b104de19a3d0c45d4c5de9ca50fe64ee3d5ecaad",
-    "bytes": 119576
+    "sha256": "7ac890149937383a61fbd30d8b12143cab9ae3765b95a8a9bb101bbbe4ffe2ff",
+    "bytes": 129113
   },
   {
     "path": "public/textbook/javascript.json",
-    "sha256": "de70fb0f30f2f7409a990529893f90260be806ba72ae794db0bf466299c70d16",
-    "bytes": 96452
+    "sha256": "2ea6a7e7c067505e4ca1b36459d1dcd7184b733fb6ea079412d0c715b279a511",
+    "bytes": 115611
   },
   {
     "path": "public/textbook/platform.json",
-    "sha256": "24d42cd7cbaf55f696919d5a8ad61489ee7bf09d52dde23167bd61630769b6d3",
-    "bytes": 124955
+    "sha256": "d1d1213550789b11a1069721e7db3e68428ef553b1279d32c7315504c3ef4af6",
+    "bytes": 137840
   },
   {
     "path": "public/tutor-context.js",
-    "sha256": "3ecf52cd5a196935e58429fc0b8320132e2c2083519a65b6825ecef16812e70d",
-    "bytes": 14375
+    "sha256": "a73f558513bf08cce37ce6d67997946046c356197849b90c8daae10ede50367d",
+    "bytes": 20708
   },
   {
     "path": "public/tutor-input-tools.js",
@@ -296,8 +311,8 @@
   },
   {
     "path": "public/updates.html",
-    "sha256": "e4f80fd67481cb866cf3f34d2fab7ef539d57ef4f7918bfea99337c48f1062ec",
-    "bytes": 8856
+    "sha256": "10d1a9c307d9a84a6c98633fda66d6a23f06410fe17d19875e7db59844232fde",
+    "bytes": 10607
   },
   {
     "path": "public/vendor/LICENSES.txt",
@@ -345,9 +360,14 @@
     "bytes": 693
   },
   {
+    "path": "scripts/enrich-foundations-1.11.py",
+    "sha256": "3f532cfd7d9ac8d2974ee3d08c9455318dd59b110efef855d37256f1caace4ee",
+    "bytes": 71203
+  },
+  {
     "path": "server.mjs",
-    "sha256": "c38a5a1c3254375cc5d1204361955e126766f0f7382571e92e0e7f6ee0d198a7",
-    "bytes": 8907
+    "sha256": "33f148629114a0a2672611bb5c1208bf10b9ada4efe0d68f37c5b2f86050f5da",
+    "bytes": 8772
   },
   {
     "path": "start-learning.ps1",
@@ -371,8 +391,13 @@
   },
   {
     "path": "tests/fill-case.test.mjs",
-    "sha256": "177be6c61817ac2f0cb222529cb6ef78679e38110887694e22984016ac3419b2",
-    "bytes": 3774
+    "sha256": "fc03bd314212f74853021230c61902ccf2565ca0ba730a8d4a480f6f3498078f",
+    "bytes": 3933
+  },
+  {
+    "path": "tests/fixtures/foundations-1.11-audit.json",
+    "sha256": "ab5a40a63d5749e58067d95d2a910e8af8e12fbdd5015e0e17e327bc4f834e2b",
+    "bytes": 109766
   },
   {
     "path": "tests/fixtures/pdf-questions.json",
@@ -395,14 +420,19 @@
     "bytes": 3222
   },
   {
+    "path": "tests/foundations-content.test.mjs",
+    "sha256": "d9c4c24e5fd646bd8decc72f7942eac6a1b5776d175393d29e7bf81f96974836",
+    "bytes": 10303
+  },
+  {
     "path": "tests/launcher.test.mjs",
     "sha256": "179fc368e2c0aaafa4b5706632791f4037205b90ed47d4ce1794bbd4d4927c62",
     "bytes": 3963
   },
   {
     "path": "tests/learning-center.test.mjs",
-    "sha256": "ddeb52d99dcb43c5d049d6bf4de4f11eadb1447ece9a5cd49d1ddc78c7c8c5c7",
-    "bytes": 9276
+    "sha256": "c1ec7512032e2138e8c4c996d48d5e01ff0d71c7db1efd37e50f9ef40f135bf5",
+    "bytes": 9442
   },
   {
     "path": "tests/learning-ux.test.mjs",
@@ -450,9 +480,14 @@
     "bytes": 5208
   },
   {
+    "path": "tests/quiz-history-compat.test.mjs",
+    "sha256": "29a78eb6643668b143579539a730128e59da6ade1fe315b0ec7dea671a9c3033",
+    "bytes": 6116
+  },
+  {
     "path": "tests/quiz-presentation.test.mjs",
-    "sha256": "b1907c567177d12bd46a97a253552fa8732be7dbdc88f623bc1ec8e4403a1384",
-    "bytes": 4860
+    "sha256": "3b34032eda929eb1334941f89d0c5171fb8a547a68dbf00d96a49d6bbd5cf25a",
+    "bytes": 4927
   },
   {
     "path": "tests/remote-access.test.mjs",
@@ -475,14 +510,24 @@
     "bytes": 9346
   },
   {
+    "path": "tests/study-check.test.mjs",
+    "sha256": "6564f12a07601920f25778cc22e872d7382ec437cbd355c6fd2ba93733f4f2d2",
+    "bytes": 3145
+  },
+  {
+    "path": "tests/teaching-integration.test.mjs",
+    "sha256": "04ef8ac25a619a6ebd4f8944056ec3f68643eb1174663bd7983e486f2a83d0ba",
+    "bytes": 2895
+  },
+  {
     "path": "tests/textbook.test.mjs",
     "sha256": "eaae157fdec6da50a342c89dfe7e37b1b2f00b05a5a560a8a695823e695461ec",
     "bytes": 4799
   },
   {
     "path": "tests/tutor-context.test.mjs",
-    "sha256": "ce09bba74d5dcce0d3a1474b28b45caa61695361c36161d584c5b8c986a892f7",
-    "bytes": 12738
+    "sha256": "097047cba1657e0e087f9cb9bd2af650ea13acce6bffd579b74b3805b8436a5d",
+    "bytes": 13719
   },
   {
     "path": "tests/tutor.test.mjs",
@@ -496,8 +541,8 @@
   },
   {
     "path": "tests/upgrade.test.mjs",
-    "sha256": "61a7373c626d77805c0fd089c7a13c13a82c7706f2bf85624f633ccdfff9993d",
-    "bytes": 2860
+    "sha256": "1f81bed5186116267e892d48e4c314d758e97c4051abb893400aeae79ef96278",
+    "bytes": 2957
   },
   {
     "path": "tests/web-files.test.mjs",

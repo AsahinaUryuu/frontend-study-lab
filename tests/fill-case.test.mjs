@@ -8,10 +8,11 @@ const fills=lessons.flatMap(l=>l.quiz).filter(q=>q.type==='fill');
 const byId=Object.fromEntries(fills.map(q=>[q.id,q]));
 const correct=(id,value)=>gradeQuiz([byId[id]],{[id]:value}).items[0].correct;
 
-test('全部170道填空均声明大小写规则和原因，原有正确答案仍然有效',()=>{
-  assert.equal(fills.length,170);
-  assert.equal(fills.filter(q=>q.caseSensitive).length,102);
-  assert.equal(fills.filter(q=>!q.caseSensitive).length,68);
+test('全部填空均声明大小写规则和原因，170道原有填空规则不变，新增题也逐题验证',()=>{
+  const original=fills.filter(q=>!q.introducedIn);
+  assert.equal(original.length,170);
+  assert.equal(original.filter(q=>q.caseSensitive).length,102);
+  assert.equal(original.filter(q=>!q.caseSensitive).length,68);
   for(const q of fills){
     assert.equal(typeof q.caseSensitive,'boolean',q.id);
     assert.ok(q.caseReason?.length>=15,q.id);
@@ -58,12 +59,13 @@ test('var 函数名可变大小写，但自定义属性名仍必须对应 --z-mo
   for(const value of ['var(--Z-MODAL)','VAR(--z-Modal)','var(--wrong)'])assert.equal(correct(q.id,value),false);
 });
 
-test('旧答题记录按新规则重新评价，不改写原答案或代码草稿',()=>{
+test('无题目快照或逐题判定的最古老记录只恢复已保存答案，不推测未答题或改写代码',()=>{
   const original={answers:{'js-event-loop-q2':'MicroTask'},code:'// keep my draft',codeEdited:true,quizResult:{score:0},completed:true};
   const restored=validateProgress({version:1,progress:{'js-event-loop':original}},lessons)['js-event-loop'];
   assert.equal(restored.answers['js-event-loop-q2'],'MicroTask');
   assert.equal(restored.quizResult.correct,1);
-  assert.equal(restored.quizResult.unanswered,4);
+  assert.equal(restored.quizResult.unanswered,0);
+  assert.equal(restored.quizResult.total,1);
   assert.equal(restored.code,original.code);
   assert.equal(restored.completed,true);
 });

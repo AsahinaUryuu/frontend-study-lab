@@ -1406,6 +1406,34 @@
         "explanation": "textContent 不把字符串当作 HTML 解析，适合昵称、留言等纯文本内容。",
         "caseSensitive": true,
         "caseReason": "本题填写代码中的实际 API、属性或标识符，大小写属于名称的一部分。"
+      },
+      {
+        "type": "choice",
+        "prompt": "只展示用户留言里的“<b>你好</b>”原文字，最直接的安全做法是什么？",
+        "options": [
+          "拼进innerHTML后删script",
+          "赋给textContent并保留原文字",
+          "使用eval解析",
+          "只要HTTPS就能直接innerHTML"
+        ],
+        "answer": 1,
+        "explanation": "纯文本需求用textContent让浏览器不按HTML解析。手写黑名单容易漏掉其他可执行上下文，HTTPS也不改变DOM解释方式。",
+        "id": "browser-security-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "“攻击者读不到跨源响应，所以不能诱导登录用户改资料”这句话错在哪里？",
+        "options": [
+          "所有跨源响应都公开",
+          "CSRF可能只需要发起携带凭据的操作，不必读取响应",
+          "Cookie永远不会自动发送",
+          "只要POST就无需服务端验证"
+        ],
+        "answer": 1,
+        "explanation": "响应可读性与请求是否能触发服务端副作用不同。需要针对状态变更验证来源或操作意图，而不能只依赖CORS、POST或HttpOnly。",
+        "id": "browser-security-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -1416,10 +1444,13 @@
       "rubric": [
         "使用创建节点与 textContent，不把输入解释为 HTML",
         "结构包含 article、strong、p",
-        "处理缺省文本并保留用户内容的文字表达"
+        "处理缺省文本并保留用户内容的文字表达",
+        "恶意样式的输入仍保留为文字；不能用删除危险字样代替正确的文本节点输出。"
       ],
       "hints": [
-        "测试输入可以包含 <img> 字样，页面应显示字样而不是创建图片。"
+        "测试输入可以包含 <img> 字样，页面应显示字样而不是创建图片。",
+        "测试作者和正文分别为标签字符串、空字符串、缺失字段，观察结构与字面内容。",
+        "渲染后检查article内没有用户输入生成的img、script或事件属性。"
       ]
     },
     "summary": {
@@ -1434,6 +1465,10 @@
       {
         "title": "MDN：CSRF",
         "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/CSRF"
+      },
+      {
+        "title": "MDN：textContent与innerHTML区别",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent"
       }
     ],
     "level": "基础",
@@ -1581,6 +1616,34 @@
         "explanation": "no-store 与允许存储但复用前验证的 no-cache 含义不同。",
         "caseSensitive": false,
         "caseReason": "Cache-Control 指令名不区分大小写，本题接受大小写变体。"
+      },
+      {
+        "type": "choice",
+        "prompt": "接口按Accept-Language返回不同语言，同URL的缓存应如何区分？",
+        "options": [
+          "只把响应文字颜色改掉",
+          "响应声明Vary: Accept-Language，使对应请求头参与缓存区分",
+          "所有请求强制复用首次正文",
+          "ETag永远固定相同值"
+        ],
+        "answer": 1,
+        "explanation": "Vary描述选择表示所依据的请求头；缓存不能仅凭URL把中文与日文响应混用。它不负责生成翻译，也不替代权限控制。",
+        "id": "browser-cache-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "服务器返回304时，客户端要显示的正文通常来自哪里？",
+        "options": [
+          "304里新传的一份完整正文",
+          "之前已经存储、验证后可复用的响应体",
+          "由ETag字符串自动解码生成",
+          "一定为空白页面"
+        ],
+        "answer": 1,
+        "explanation": "304表示条件验证未发现表示改变，没有新的完整正文；缓存复用之前保存的响应体。第一次没有可用副本时不能凭304生成页面。",
+        "id": "browser-cache-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -1591,10 +1654,13 @@
       "rubric": [
         "精确匹配题设实体标签",
         "304 分支不返回新 body",
-        "200 分支包含 body 且两个分支保留 ETag"
+        "200 分支包含 body 且两个分支保留 ETag",
+        "严格保留本题简化边界，不把未要求支持的标签列表或弱标签误判为匹配。"
       ],
       "hints": [
-        "字符串里的双引号属于标签值的一部分。"
+        "字符串里的双引号属于标签值的一部分。",
+        "检查缺失If-None-Match、精确\"v2\"、不同版本三种输入；注意双引号是标签字符串的一部分。",
+        "304返回对象应没有body字段，200必须有hello；不要对304拼造空JSON。"
       ]
     },
     "summary": {
@@ -1605,6 +1671,10 @@
       {
         "title": "MDN：Cache-Control",
         "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control"
+      },
+      {
+        "title": "MDN：HTTP缓存、验证与Vary",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching"
       }
     ],
     "level": "基础",
@@ -1897,6 +1967,38 @@
         "explanation": "target 可能是内部图标，currentTarget 则是正在执行这个监听器的绑定对象。",
         "caseSensitive": true,
         "caseReason": "本题填写代码中的实际 API、属性或标识符，大小写属于名称的一部分。"
+      },
+      {
+        "type": "choice",
+        "prompt": "可取消的链接点击中调用 preventDefault，但没有停止传播，祖先冒泡监听器会怎样？",
+        "options": [
+          "一定不执行",
+          "通常仍执行，传播与默认行为分别控制",
+          "被自动移到捕获阶段",
+          "只能执行一次"
+        ],
+        "answer": 1,
+        "explanation": "preventDefault 取消默认动作，例如跳转；它不自动停止传播。祖先监听器是否运行还取决于其他传播控制和监听器状态。",
+        "id": "browser-events-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "下面为什么没有成功移除监听器？",
+        "options": [
+          "click 不能移除",
+          "两个箭头表达式产生不同函数引用",
+          "必须刷新页面才生效",
+          "removeEventListener 需要Promise"
+        ],
+        "answer": 1,
+        "explanation": "解绑要求匹配原回调引用和捕获标志。应保存 handler 后，把同一个 handler 用于注册和移除。",
+        "code": {
+          "language": "javascript",
+          "source": "button.addEventListener('click', () => save());\nbutton.removeEventListener('click', () => save());"
+        },
+        "id": "browser-events-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -1907,10 +2009,13 @@
       "rubric": [
         "只在 list 上使用单个监听器",
         "用 closest 兼容子元素点击并检查范围",
-        "返回解绑函数且删除正确 li"
+        "返回解绑函数且删除正确 li",
+        "新增条目、按钮内嵌元素、非删除区域与解绑后的行为均按约定处理。"
       ],
       "hints": [
-        "解绑需要同一个函数引用。"
+        "解绑需要同一个函数引用。",
+        "在注册后动态追加li再删除，证明不是给原有按钮逐个绑定。",
+        "调用返回的解绑函数后再次点击，检查没有继续删除；重复解绑应无额外副作用。"
       ]
     },
     "summary": {
@@ -1925,6 +2030,14 @@
       {
         "title": "MDN：事件冒泡",
         "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/Event_bubbling"
+      },
+      {
+        "title": "MDN：preventDefault 与事件传播",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault"
+      },
+      {
+        "title": "MDN：移除监听器的匹配条件",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener"
       }
     ],
     "level": "基础",
@@ -2687,6 +2800,32 @@
         "explanation": "button 类型不触发表单提交；submit 用于提交动作。",
         "caseSensitive": false,
         "caseReason": "本题所填的 HTML 枚举关键字不区分 ASCII 大小写；通常推荐小写。"
+      },
+      {
+        "type": "choice",
+        "prompt": "label的for、input的id和name分别应怎样理解？",
+        "options": [
+          "三个属性完全等价",
+          "for关联id，name用于提交字段名，id需在页面唯一",
+          "name控制字号，id只供CSS使用",
+          "有placeholder就不需要label"
+        ],
+        "answer": 1,
+        "explanation": "名称关联与提交键是不同职责。重复id会造成关联歧义；placeholder输入后会消失，不能完全替代可见label。",
+        "id": "html-semantics-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "fill",
+        "prompt": "给输入框关联补充说明段落，可把说明段的id写入 `____` 属性。",
+        "answer": [
+          "aria-describedby"
+        ],
+        "explanation": "aria-describedby引用同一文档中说明元素的id；它提供补充描述，不替代label的字段名称。",
+        "caseSensitive": false,
+        "caseReason": "本题填写HTML普通属性名，ASCII字母不区分大小写；参考答案采用推荐的小写形式。",
+        "id": "html-semantics-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -2697,10 +2836,13 @@
       "rubric": [
         "label 的 for 与输入 id 正确匹配",
         "输入类型为 email 且有 name、required",
-        "使用原生提交按钮而非模拟按钮"
+        "使用原生提交按钮而非模拟按钮",
+        "页面内id唯一、label关联正确，键盘焦点可辨识；不可仅靠placeholder或颜色解释输入要求。"
       ],
       "hints": [
-        "placeholder 不能完全替代可见的 label。"
+        "placeholder 不能完全替代可见的 label。",
+        "用鼠标点label、用Tab定位输入、空值提交和无效邮箱提交分别检查原生行为。",
+        "增加“查看说明”操作时写type=button，避免误提交；保留提交按钮type=submit。"
       ]
     },
     "summary": {
@@ -2711,6 +2853,18 @@
       {
         "title": "MDN：语义",
         "url": "https://developer.mozilla.org/en-US/docs/Glossary/Semantics"
+      },
+      {
+        "title": "MDN：label的关联与唯一id",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label"
+      },
+      {
+        "title": "MDN：aria-describedby说明关联",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-describedby"
+      },
+      {
+        "title": "MDN：键盘可访问性",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Keyboard"
       }
     ],
     "level": "基础",
@@ -3427,6 +3581,34 @@
         "explanation": "display:none 与保留空间的 visibility:hidden 有不同布局效果。",
         "caseSensitive": false,
         "caseReason": "本题所填的普通 CSS 属性、规则名或关键字不区分 ASCII 大小写；不涉及自定义属性名。"
+      },
+      {
+        "type": "choice",
+        "prompt": "Flex工具条中标题很长，flex:1仍把按钮挤出，首先该检查什么？",
+        "options": [
+          "标题项目的最小宽度约束与文本换行策略",
+          "按钮文字颜色",
+          "把所有祖先设为display:none",
+          "增加标题的固定width"
+        ],
+        "answer": 0,
+        "explanation": "可伸缩项目可能受自动最小尺寸约束，min-width:0允许收缩，文本还需换行或局部滚动。直接隐藏溢出可能掩盖被裁掉的按钮。",
+        "id": "css-display-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "两列Grid希望允许轨道收缩，同时处理长代码，哪种组合更合理？",
+        "options": [
+          "仅用两个50%再加gap",
+          "minmax(0,1fr)定义轨道，并让代码容器局部overflow:auto",
+          "给所有卡片固定1000px宽",
+          "把正文全部缩小到8px"
+        ],
+        "answer": 1,
+        "explanation": "轨道分配和内容溢出是不同层面。两个50%加gap可能超宽；允许轨道收缩后仍应为不可换行代码提供局部滚动。",
+        "id": "css-display-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -3437,10 +3619,13 @@
       "rubric": [
         "使用 border-box 且外部边框盒宽度240px",
         "padding、border、margin 与题设一致",
-        "正确说明204px内容区且margin不被算入width"
+        "正确说明204px内容区且margin不被算入width",
+        "计算检查：边框盒240px、内容204px；左右margin另占16px，不通过裁剪来伪造尺寸正确。"
       ],
       "hints": [
-        "margin 影响外部空间，不改变边框盒宽度。"
+        "margin 影响外部空间，不改变边框盒宽度。",
+        "给card放很长的文字，并用开发者工具测边框盒，区分内容溢出与盒子本身的240px。",
+        "同时检查水平margin总占16px，但不要把它加进边框盒width。"
       ]
     },
     "summary": {
@@ -3451,6 +3636,14 @@
       {
         "title": "MDN：盒模型",
         "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Styling_basics/Box_model"
+      },
+      {
+        "title": "MDN：min-width 的自动最小尺寸",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-width"
+      },
+      {
+        "title": "MDN：Grid 的 minmax",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/minmax"
       }
     ],
     "level": "基础",
@@ -3728,6 +3921,34 @@
         "explanation": "浮动参与环绕规则，需与父容器的高度计算、清除浮动和 BFC 一起分析。",
         "caseSensitive": false,
         "caseReason": "本题所填的普通 CSS 属性、规则名或关键字不区分 ASCII 大小写；不涉及自定义属性名。"
+      },
+      {
+        "type": "choice",
+        "prompt": "flow-root容器内两个相邻普通块，下margin为20px、上margin为12px，满足折叠条件时中间间隔是？",
+        "options": [
+          "32px",
+          "20px",
+          "12px",
+          "0px"
+        ],
+        "answer": 1,
+        "explanation": "建立BFC阻止某些跨边界折叠，并不取消内部普通兄弟之间的垂直margin折叠；此处两个正外边距取较大值。",
+        "id": "css-bfc-v111-q1",
+        "introducedIn": "1.11.0"
+      },
+      {
+        "type": "choice",
+        "prompt": "只含浮动头像的容器靠height:80px撑开，头像后来变120px，哪种修复更符合自动布局？",
+        "options": [
+          "继续固定80px",
+          "创建flow-root并移除不必要固定高度，再检查溢出",
+          "给头像opacity:0",
+          "只增大z-index"
+        ],
+        "answer": 1,
+        "explanation": "目标是自动高度包含内部浮动，而不是为一张头像硬编码高度。flow-root能表达包含浮动的意图，尺寸变化后仍应验证。",
+        "id": "css-bfc-v111-q2",
+        "introducedIn": "1.11.0"
       }
     ],
     "challenge": {
@@ -3738,10 +3959,13 @@
       "rubric": [
         "profile 用 flow-root 创建 BFC",
         "头像浮动和尺寸间距准确",
-        "没有使用会裁剪内容的 overflow:hidden"
+        "没有使用会裁剪内容的 overflow:hidden",
+        "父容器采用自动高度；不通过写死80px绕过浮动包含规则。"
       ],
       "hints": [
-        "不需要为父容器写死80px高度。"
+        "不需要为父容器写死80px高度。",
+        "把头像临时改高再恢复80px，确认父容器靠布局规则包含浮动，而非固定高度。",
+        "检查没有为了解决浮动高度而添加隐藏越界内容的裁剪。"
       ]
     },
     "summary": {
@@ -3752,6 +3976,14 @@
       {
         "title": "MDN：块级格式化上下文",
         "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_display/Block_formatting_context"
+      },
+      {
+        "title": "MDN：BFC包含浮动与折叠边界",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Display/Block_formatting_context"
+      },
+      {
+        "title": "MDN：外边距折叠条件",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Margin_collapsing"
       }
     ],
     "level": "进阶",

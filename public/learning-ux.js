@@ -7,7 +7,8 @@ export function answeredQuestions(quiz,answers={}){
 }
 export function retryIncorrect(quiz,answers,result){
   const next={...answers};
-  quiz.forEach((q,i)=>{if(!result?.items?.[i]?.correct)delete next[q.id];});
+  const identified=result?.items?.some(item=>typeof item.id==='string');
+  quiz.forEach((q,i)=>{const item=identified?result.items.find(item=>item.id===q.id):result?.items?.[i];if(item&&!item.correct||!result)delete next[q.id];});
   return next;
 }
 export function normalizeReading(value){

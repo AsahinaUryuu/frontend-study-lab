@@ -37,6 +37,35 @@
           "source": "<script setup>\nimport { ref } from 'vue';\nconst count = ref(1);\nconst price = 12;\n</script>\n<template>\n  <p>数量 {{ count }}，总价 {{ count * price }} 元</p>\n  <button @click=\"count++\">增加一件</button>\n</template>",
           "explanation": "初始显示数量 1、总价 12。点击一次后，数量变为 2、总价变为 24；price 没有变化，因此这里用普通常量即可。"
         }
+      },
+      {
+        "title": "解构的是普通数值，还是到属性的连接",
+        "paragraphs": [
+          "reactive返回代理对象。读取state.count时能经过代理，直接let {count}=state得到的却是当时的普通数值；后来给局部count重新赋值，不会回到代理属性。toRefs把已有属性映射为ref，使脚本通过count.value访问时仍连到state.count。",
+          "这种“丢失连接”要看拿走的是什么。解构到一个嵌套代理对象后，继续改这个对象的属性仍可能触发响应；因此不能笼统背成“任何解构都不响应”。入门时先把普通数值、代理对象、ref三种变量标出来，再逐行说明读写走哪条路径。"
+        ],
+        "points": [
+          "步骤：标出snapshot为数值、count为ref；修改state.count，比较snapshot与count.value。",
+          "误区：toRefs只为调用时已有的可枚举属性建立ref；需要单个属性连接时可了解toRef。",
+          "迁移练习：把count传给子逻辑前，写明接口接收的是数值快照、ref还是getter。"
+        ],
+        "code": {
+          "source": "<script setup>\nimport { reactive, toRefs } from 'vue';\nconst state = reactive({ count: 0 });\nconst snapshot = state.count;\nconst { count } = toRefs(state);\nfunction increase() { state.count++; }\n</script>\n<template>\n  <button @click=\"increase\">增加</button>\n  <p>快照：{{ snapshot }}；连接：{{ count }}</p>\n</template>",
+          "language": "html",
+          "explanation": "这是Vue单文件组件，需Vue构建环境。点击后快照仍为0，模板中的顶层ref自动解包并显示新count。"
+        }
+      },
+      {
+        "title": "数据已经变了，DOM更新还需要等一个时机",
+        "paragraphs": [
+          "Vue的响应式数据写入可以立刻读取到新值，但相关DOM更新会被缓冲，在下一次更新周期统一处理。因此state.count++后马上读取按钮textContent，可能仍看到旧文字。需要在DOM更新后测量或聚焦时，await nextTick，而不是随意猜一个setTimeout毫秒数。",
+          "脚本中访问ref通常写.value，模板自动解包也有范围限制。顶层模板变量count很常见，但reactive数组里的ref不会因读取books[0]就自动解包。先确认所在位置和变量种类，再决定是否写.value；不要把模板便利规则推广到所有JavaScript表达式。"
+        ],
+        "points": [
+          "观察：在Vue组件中修改count后先读数据，再await nextTick读DOM，区分数据变化与渲染完成。",
+          "误区：nextTick等待Vue本轮DOM更新，不代表所有网络请求、图片加载或浏览器绘制都已结束。",
+          "迁移练习：点击展开输入框后await nextTick，再通过模板ref聚焦；解释直接focus为什么可能拿不到元素。"
+        ]
       }
     ],
     "walkthrough": {
@@ -1117,6 +1146,40 @@
           "source": "import { useState } from 'react';\nexport default function Counter() {\n  const [count, setCount] = useState(0);\n  function addThree() {\n    setCount(n => n + 1);\n    setCount(n => n + 1);\n    setCount(n => n + 1);\n  }\n  return <button onClick={addThree}>当前 {count}，增加三次</button>;\n}",
           "explanation": "从 0 点击一次变成 3。若三行都改为 setCount(count + 1)，这一轮提交的是相同快照算出的值，通常只增加 1。"
         }
+      },
+      {
+        "title": "逐项处理更新队列，而不是修改当前变量",
+        "paragraphs": [
+          "一次事件处理器看到的是本次渲染的状态快照。setCount(count+2)先用快照算出一个具体替换值；setCount(c=>c*3)则把更新函数排入队列，之后接收队列前一步的结果。混用二者时，应逐项推演：替换为多少、再变换为多少，而不是数setCount被调用了几次。",
+          "下面假设本次count是1，第一步排入替换为3，第二步把3乘以3，第三步又排入由旧快照算出的2，因此最终为2。若把最后一步改成c=>c+1，最终才是10。更新函数应只计算新值，不做请求、弹窗或修改外部计数；开发检查可能重复调用它来发现不纯的行为。"
+        ],
+        "points": [
+          "步骤：手写队列表：1→替换3→变换9→替换2，再运行组件观察。",
+          "误区：setCount不会同步改写当前闭包中的count，后续表达式仍使用同一渲染快照。",
+          "迁移练习：为一次点击加五写函数式队列，并验证连续点击两次得到10。"
+        ],
+        "code": {
+          "source": "// 位于React事件处理器中；这次渲染的count为1\nsetCount(count + 2);\nsetCount(c => c * 3);\nsetCount(count + 1);",
+          "language": "javascript",
+          "explanation": "这不是独立脚本：放入useState组件的点击处理器，最终显示2。函数式最后一步才会基于队列中的9继续加一。"
+        }
+      },
+      {
+        "title": "新数组不等于里面的对象都已经复制",
+        "paragraphs": [
+          "React状态中的对象应按不可变方式更新。items.slice()或[...items]只创建新数组，里面每个对象引用仍指向原对象；接着next[0].done=true，仍然修改了旧状态里的对象。这样会破坏其他渲染快照或共享这些对象的界面，不能只检查外层数组是不是新引用。",
+          "更新一项时，可以map生成新数组，对目标项使用对象展开产生新对象，其他未改项保留引用。只复制变化路径，不必为所有数据做深拷贝。下面使用函数式更新读取待处理状态，适合与其他更新排队；服务端返回数据也要先看契约，再决定替换还是合并。"
+        ],
+        "points": [
+          "观察：保存旧数组和目标对象引用，更新后检查旧对象字段没有变化、新目标对象引用不同。",
+          "误区：展开语法是浅复制；新数组内的旧对象不会自动成为深层副本。",
+          "迁移练习：给课程列表切换某一课的收藏，按id定位并只复制该项，保持其他项引用。"
+        ],
+        "code": {
+          "source": "setItems(previous => previous.map(item =>\n  item.id === targetId ? { ...item, done: !item.done } : item\n));",
+          "language": "javascript",
+          "explanation": "用于React组件事件处理器。新数组和被修改项是新引用；未改项可复用引用，旧状态不被直接修改。"
+        }
       }
     ],
     "walkthrough": {
@@ -1296,6 +1359,40 @@
           "language": "jsx",
           "source": "import { useEffect, useState } from 'react';\nexport default function WidthInfo() {\n  const [width, setWidth] = useState(null);\n  useEffect(() => {\n    const update = () => setWidth(window.innerWidth);\n    update();\n    window.addEventListener('resize', update);\n    return () => window.removeEventListener('resize', update);\n  }, []);\n  return <p>窗口宽度：{width === null ? '等待浏览器信息' : width}</p>;\n}",
           "explanation": "首次提交后读取窗口宽度；缩放窗口时更新显示；卸载时移除监听。这里没有在渲染阶段读取并修改外部系统。"
+        }
+      },
+      {
+        "title": "每次 setup 的资源，由那次 cleanup 收回",
+        "paragraphs": [
+          "Effect用于让组件与外部系统保持同步，例如订阅频道。依赖变化时，旧Effect的清理先释放旧资源，新Effect再建立新资源。清理函数闭包保存的是那一次setup的输入，所以切换A→B时，应解除A的订阅，不是临时读取最新频道B再去取消。",
+          "开发环境的Strict Mode可能额外执行setup→cleanup→setup来检查配对是否正确，不能靠一个“已经执行过”的ref跳过问题。正确目标是无论经历多少次建立与清理，当前都只有所需的一份订阅，卸载后不再接收消息。真实测试应统计注册与释放，而不只看页面是否出现一次消息。"
+        ],
+        "points": [
+          "步骤：记录subscribe(A)、unsubscribe(A)、subscribe(B)、unsubscribe(B)，最后一项发生在卸载。",
+          "误区：依赖变化时清理旧资源，使用的是旧Effect自己的闭包，不应通过全局变量猜旧id。",
+          "迁移练习：把订阅换成setInterval，确保更改周期和卸载时都clear对应的timer。"
+        ],
+        "code": {
+          "source": "useEffect(() => {\n  const unsubscribe = subscribe(channelId, message => {\n    setMessage(message);\n  });\n  return () => unsubscribe();\n}, [channelId, subscribe]);",
+          "language": "javascript",
+          "explanation": "放在React组件或自定义Hook中。每次setup返回的unsubscribe被该次cleanup捕获。"
+        }
+      },
+      {
+        "title": "清理异步任务时，同时决定是否接受旧结果",
+        "paragraphs": [
+          "网络请求不一定能撤销已经完成的服务端处理，某些第三方异步接口也没有取消方法。组件切到新用户后，旧用户请求即使返回成功，也不应再覆盖当前界面。可以在每次Effect内定义有效标记，cleanup把它设为false，回调只在该次Effect仍有效时提交结果。",
+          "依赖数组要反映Effect使用的响应式值，遗漏userId会导致界面停留在旧用户；随意加一个每次渲染都新建的对象又可能频繁重跑。先把同步目标和读到的值说清楚，再调整代码结构，不要靠关闭依赖检查让错误“消失”。纯粹过滤已有列表通常可以在渲染中计算，无需再用Effect保存一份重复状态。"
+        ],
+        "points": [
+          "观察：先切A再切B，故意让A最后返回，检查最终仍显示B；卸载后不再提交结果。",
+          "误区：只在成功分支判断有效，错误分支不判断，旧请求仍可能覆盖新的错误提示。",
+          "迁移练习：为loadProfile加入取消信号，并保留有效性检查；解释两者分别解决什么问题。"
+        ],
+        "code": {
+          "source": "useEffect(() => {\n  let active = true;\n  setProfile(null);\n  setError(null);\n  loadProfile(userId).then(\n    value => { if (active) setProfile(value); },\n    error => { if (active) setError(error.message); }\n  );\n  return () => { active = false; };\n}, [userId, loadProfile]);",
+          "language": "javascript",
+          "explanation": "用于React组件；loadProfile约定返回Promise。每次Effect拥有自己的active，旧成功与旧错误都被忽略。"
         }
       }
     ],

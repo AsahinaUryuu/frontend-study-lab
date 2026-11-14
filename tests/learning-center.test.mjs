@@ -100,7 +100,9 @@ test('empty state suggests the first lesson and keeps untouched courses out of s
 test('full current catalog is represented without losing any course or objective question',async()=>{
  const catalog=(await Promise.all(['frameworks','platform'].map(name=>readFile(new URL('../public/data/'+name+'.json',import.meta.url),'utf8').then(JSON.parse)))).flat();
  const model=buildLearningCenter(catalog,{},[]);
- assert.equal(model.courses.length,85);assert.equal(model.questions.length,425);
- assert.equal(centerQuestions(model,options({scope:'all',status:'unanswered'})).length,425);
- assert.equal(new Set(model.questions.map(q=>q.lessonId+':'+q.question.id)).size,425);
+ const count=catalog.reduce((sum,lesson)=>sum+lesson.quiz.length,0);
+ assert.equal(model.courses.length,85);assert.equal(model.questions.length,count);
+ assert.equal(catalog.flatMap(lesson=>lesson.quiz).filter(q=>!q.introducedIn).length,425);
+ assert.equal(centerQuestions(model,options({scope:'all',status:'unanswered'})).length,count);
+ assert.equal(new Set(model.questions.map(q=>q.lessonId+':'+q.question.id)).size,count);
 });

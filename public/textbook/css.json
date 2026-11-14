@@ -48,6 +48,40 @@
           "只有一行并不意味着必须使用 Flex；同时约束行列时优先考虑 Grid。",
           "练习：让最后一张卡片跨越两列；再思考窄屏时需要怎样恢复单列跨度。"
         ]
+      },
+      {
+        "title": "Flex 的剩余空间，不是给每个孩子写百分比",
+        "paragraphs": [
+          "Flex 把主轴上的可用空间交给项目协商。工具条中图标和按钮通常保留内容宽度，标题占剩余空间；如果给每个孩子固定百分比，再加 gap 和内边距，就容易超出容器。flex:1 让标题参与伸缩，但它默认的最小宽度还可能受长单词影响。",
+          "下面给可伸缩标题 min-width:0，让它允许收缩；overflow-wrap:anywhere 则决定长字符串如何换行，两者解决的问题不同。先观察容器和项目边框，再输入没有空格的长链接，才能分辨“项目不肯变窄”和“文本不愿换行”。不要用全局 overflow:hidden 把溢出隐藏后就判定布局正确。"
+        ],
+        "points": [
+          "观察：将示例放入窄容器，删除min-width:0和overflow-wrap分别比较。",
+          "误区：flex:1 不代表无条件忽略所有最小尺寸约束。",
+          "迁移练习：把标题换成带行号的代码区，思考哪些区域应该横向滚动、哪些应该换行。"
+        ],
+        "code": {
+          "source": "<style>\n.toolbar { display:flex; gap:12px; width:100%; max-width:340px; border:1px solid; }\n.toolbar .title { flex:1; min-width:0; overflow-wrap:anywhere; }\n.toolbar button { flex:0 0 auto; }\n</style>\n<div class=\"toolbar\">\n  <span class=\"title\">https://example.com/a-very-long-filename-without-spaces</span>\n  <button type=\"button\">保存</button>\n</div>",
+          "language": "html",
+          "explanation": "在HTML预览中观察标题收缩换行，而按钮仍可点击。容器的尺寸与文本换行策略要分别检查。"
+        }
+      },
+      {
+        "title": "Grid 的轨道宽度和卡片内容一起验证",
+        "paragraphs": [
+          "Grid 先定义行列轨道，再把项目放入单元格。两个 1fr 列表达分享剩余空间，但轨道默认最小值可能受内容影响；需要确实允许轨道缩小时，可用 minmax(0,1fr)。即使轨道缩小了，内部文本、图片和代码仍各自需要合适的换行或滚动规则。",
+          "从两列切换成一列时，读者的阅读顺序仍应来自合理的HTML顺序，而不是只靠视觉排序掩盖结构。这里的媒体查询阈值是示例，可根据内容何时拥挤来调整，并非某台设备的专属尺寸。检验时至少看窄宽度、放大文字、长内容三种状态。"
+        ],
+        "points": [
+          "观察：给一张卡片加入长链接，再把容器变窄；检查页面整体是否出现不必要横向滚动。",
+          "误区：border-box 包含padding和border，却不会把gap、margin自动算进孩子的指定width。",
+          "迁移练习：为课程卡片制作两列到一列的布局，保持DOM阅读顺序并保证按钮不被挤出。"
+        ],
+        "code": {
+          "source": ".cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }\n.cards > article { min-width:0; overflow-wrap:anywhere; }\n.cards pre { max-width:100%; overflow:auto; }\n@media (max-width:36rem) { .cards { grid-template-columns:1fr; } }",
+          "language": "css",
+          "explanation": "Grid控制轨道，卡片文字换行，pre自己滚动。该样式应用到 .cards 内的 article 卡片。"
+        }
       }
     ],
     "walkthrough": {
@@ -204,6 +238,40 @@
           "display:flow-root 可以直接表达“在这里建立新的块格式化上下文”。历史代码常用 overflow:hidden 达到某些相似布局效果，但它同时会裁剪溢出的内容，可能导致下拉菜单或阴影消失。如果需求只是包含浮动，额外的裁剪并不一定是想要的效果。",
           "排查时先确认具体问题：是内部浮动没计入高度，还是父子 margin 折叠，或只是内容溢出？随后选择对应规则。改变一次布局条件后检查整个块，包括环绕文本、后续内容和可见阴影，比背诵一串触发 BFC 的属性更容易解决实际问题。"
         ]
+      },
+      {
+        "title": "用容器边框观察浮动究竟有没有被算进高度",
+        "paragraphs": [
+          "一个只有浮动子元素的普通块容器，自动高度可能不包含这个浮动的高度，所以边框看上去缩成一条线。浮动仍然可以影响邻近文本环绕，并不是从页面彻底消失。给父容器设置固定高度只是让当前示例看起来正常，子元素增高后问题又会出现。",
+          "display:flow-root 让父容器建立新的块级格式化上下文，自动高度会把内部浮动纳入计算。下例头像先用80px，再改120px；父容器应随之长高。若只想包含浮动，flow-root比顺手写overflow:hidden更能表达意图，也避免额外裁剪后代弹出内容。"
+        ],
+        "points": [
+          "步骤：先删除flow-root观察边框；恢复后改变avatar高度，检查父容器自动跟随。",
+          "误区：overflow:hidden并不会普遍裁掉元素自己的外部阴影，但可能裁剪后代越界内容；要确认究竟是谁被裁剪。",
+          "迁移练习：给头像增加一个越界的小徽标，确认包含浮动与是否允许视觉溢出是两个需求。"
+        ],
+        "code": {
+          "source": "<style>\n.profile { display:flow-root; border:2px solid #476; }\n.avatar { float:left; width:80px; height:80px; margin-right:12px; background:#cde; }\n</style>\n<div class=\"profile\"><div class=\"avatar\">头像</div></div>\n<p>这一段在容器后面。</p>",
+          "language": "html",
+          "explanation": "在HTML预览对比有无flow-root；父容器无需写死高度。只有浮动子元素的场景让差异更明显。"
+        }
+      },
+      {
+        "title": "边界阻止的是跨越边界的折叠",
+        "paragraphs": [
+          "父子垂直外边距能否折叠，和内部两个兄弟之间能否折叠不是同一个问题。flow-root 可以阻止父容器与内部子元素的margin跨边界折叠，但内部普通流相邻块的垂直margin仍可能折叠。把BFC理解成“里面所有margin都相加”会在列表间距上得到错误预测。",
+          "在下例中两个普通块分别有下边距20px和上边距12px，满足折叠条件时它们之间为20px，不是32px。若父容器改为flex列布局，这两个子项目的margin不按普通块相邻外边距规则折叠。先辨认布局模式，再决定应该用margin还是gap表达间距。"
+        ],
+        "points": [
+          "观察：先预测20px，再用开发者工具测量；将stack改为display:flex和flex-direction:column后重测。",
+          "误区：只看到父元素建立BFC，就断言内部兄弟的外边距永不折叠。",
+          "迁移练习：把段落列表改用flex列加gap，清零子项margin，比较哪一种更容易表达一致间距。"
+        ],
+        "code": {
+          "source": ".stack { display:flow-root; }\n.stack > div { height:20px; background:#cde; }\n.stack > div:first-child { margin-bottom:20px; }\n.stack > div + div { margin-top:12px; }",
+          "language": "css",
+          "explanation": "应用到 .stack 内相邻的两个普通div；没有其他干扰条件时中间间隔为20px。"
+        }
       }
     ],
     "walkthrough": {

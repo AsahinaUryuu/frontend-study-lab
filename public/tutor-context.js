@@ -48,23 +48,81 @@ function cleanAnswers(answers,lesson){
   }
   return result;
 }
+function cleanQuestions(values){
+  const seen=new Set();
+  return (Array.isArray(values)?values:[]).slice(0,100).flatMap(q=>{
+    if(!plain(q)||typeof q.id!=='string'||!q.id||q.id.length>200||['__proto__','constructor','prototype'].includes(q.id)||seen.has(q.id)||!['choice','fill'].includes(q.type))return [];
+    if(q.type==='choice'&&(!Array.isArray(q.options)||!Number.isInteger(q.answer)||q.answer<0||q.answer>=q.options.length))return [];
+    if(q.type==='fill'&&!Array.isArray(q.answer))return [];
+    seen.add(q.id);
+    const result={id:q.id,type:q.type,prompt:string(q.prompt,5000),explanation:string(q.explanation,10000),answer:q.type==='choice'?q.answer:q.answer.slice(0,30).map(a=>String(a).slice(0,500))};
+    if(q.type==='choice')result.options=q.options.slice(0,100).map(o=>String(o).slice(0,5000));
+    if(q.type==='fill'){result.caseSensitive=q.caseSensitive===true;result.caseReason=string(q.caseReason,1000);}
+    if(plain(q.code))result.code={source:string(q.code.source,10000),language:string(q.code.language,50)};
+    if(Array.isArray(q.codeOptions))result.codeOptions=q.codeOptions.filter(Number.isInteger).slice(0,100);
+    if(typeof q.introducedIn==='string')result.introducedIn=string(q.introducedIn,80);
+    if(q.unavailable===true)result.unavailable=true;
+    return [result];
+  });
+}
+function historicalQuestions(lesson,source){
+  const snapshot=cleanQuestions(source.questions);
+  if(snapshot.length||Array.isArray(source.questions)&&source.questions.length===0)return snapshot;
+  const quiz=cleanQuestions(lesson.quiz),saved=source.result||source.quizResult,items=saved?.items;
+  if(Array.isArray(items)&&items.length&&items.every(item=>typeof item?.id==='string')){
+    return items.slice(0,100).map(item=>quiz.find(q=>q.id===item.id)||{id:item.id,type:'fill',prompt:'旧版本题目（当前题库已调整）',answer:[],explanation:'旧记录未保存原题，保留当时判定；请勿使用新题解释这次成绩。',unavailable:true});
+  }
+  // Pre-snapshot releases stored positional verdicts. Newly introduced questions
+  // cannot become unanswered questions in that older submission.
+  const candidates=quiz.filter(q=>!q.introducedIn);
+  const validPositional=Array.isArray(items)&&items.length&&items.every(i=>typeof i?.correct==='boolean'&&typeof i?.unanswered==='boolean')&&saved.correct===items.filter(i=>i.correct).length&&saved.unanswered===items.filter(i=>i.unanswered).length&&saved.score===Math.round(100*saved.correct/items.length);
+  if(validPositional)return candidates.slice(0,items.length);
+  // The oldest export saved only a score and answer map. Its unanswered set
+  // cannot be recovered; keep only evidenced answers instead of inventing misses.
+  const answers=source.submittedAnswers||source.answers||{};
+  return candidates.filter(q=>Object.hasOwn(answers,q.id));
+}
+function historicalResult(value,questions,answers){
+  const items=value?.items;
+  if(Array.isArray(items)&&items.length===questions.length&&items.every(item=>plain(item)&&typeof item.correct==='boolean'&&typeof item.unanswered==='boolean'&&!(item.correct&&item.unanswered))){
+    const mapped=questions.map((q,i)=>({...items.find(item=>item.id===q.id)||items[i],id:q.id})),correct=mapped.filter(i=>i.correct).length,unanswered=mapped.filter(i=>i.unanswered).length,score=mapped.length?Math.round(correct/mapped.length*100):0;
+    if(value.correct===correct&&value.unanswered===unanswered&&value.score===score)return {score,correct,total:mapped.length,unanswered,items:mapped.map(({id,correct,unanswered})=>({id,correct,unanswered}))};
+  }
+  return quizResult({quiz:questions},answers);
+}
+/** Read-only submitted attempt. New questions never enter an older denominator. */
+export function quizAttempt(lesson,record){
+  if(!plain(record))return null;
+  const reviews=Array.isArray(record.quizReviews)?record.quizReviews:[];
+  const source=reviews.find(r=>r.id===record.quizReviewId)||reviews.at(-1)||record;
+  if(!plain(source.result)&&!plain(source.quizResult))return null;
+  const questions=historicalQuestions(lesson,source),answers=cleanAnswers(source.submittedAnswers||source.answers,{quiz:questions});
+  const saved=source.result||source.quizResult,result=historicalResult(saved,questions,answers),ids=new Set(questions.map(q=>q.id));
+  const incomplete=source.incomplete===true||saved?.incomplete===true||!Array.isArray(source.questions)&&!Array.isArray(saved?.items),originalScore=source.originalScore??saved?.originalScore??(incomplete?saved?.score:undefined);
+  return {questions,answers,result,newQuestions:(lesson.quiz||[]).filter(q=>!ids.has(q.id)),legacy:source.legacy===true||!Array.isArray(source.questions),...(incomplete?{incomplete:true,...(Number.isFinite(originalScore)&&originalScore>=0&&originalScore<=100?{originalScore}:{})}:{})};
+}
 function quizResult(lesson,answers){
   const normalized=(value,strict)=>{const text=String(value??'').normalize('NFKC').trim().replace(/\s+/g,' ').replace(/[。；;]$/,'');return strict?text:text.toLowerCase();};
-  const items=(lesson.quiz||[]).map(question=>{const answer=answers[question.id],unanswered=answer===undefined||answer===null||String(answer).trim()==='';return {correct:!unanswered&&(question.type==='choice'?answer===question.answer:question.answer.some(value=>normalized(value,question.caseSensitive)===normalized(answer,question.caseSensitive))),unanswered};});
+  const items=(lesson.quiz||[]).map(question=>{const answer=answers[question.id],unanswered=answer===undefined||answer===null||String(answer).trim()==='';return {id:question.id,correct:!unanswered&&(question.type==='choice'?answer===question.answer:question.answer.some(value=>normalized(value,question.caseSensitive)===normalized(answer,question.caseSensitive))),unanswered};});
   const correct=items.filter(item=>item.correct).length;
-  return {score:items.length?Math.round(correct/items.length*100):0,correct,unanswered:items.filter(item=>item.unanswered).length,items};
+  return {score:items.length?Math.round(correct/items.length*100):0,correct,total:items.length,unanswered:items.filter(item=>item.unanswered).length,items};
 }
 function copyQuizResult(value){
   const source=plain(value)?value:{};
-  return {score:Number.isFinite(source.score)?Math.min(100,Math.max(0,source.score)):0,correct:Number.isInteger(source.correct)&&source.correct>=0?source.correct:0,unanswered:Number.isInteger(source.unanswered)&&source.unanswered>=0?source.unanswered:0,items:Array.isArray(source.items)?source.items.slice(0,100).map(item=>({correct:item?.correct===true,unanswered:item?.unanswered===true})):[]};
+  return {score:Number.isFinite(source.score)?Math.min(100,Math.max(0,source.score)):0,correct:Number.isInteger(source.correct)&&source.correct>=0?source.correct:0,total:Array.isArray(source.items)?Math.min(100,source.items.length):0,unanswered:Number.isInteger(source.unanswered)&&source.unanswered>=0?source.unanswered:0,items:Array.isArray(source.items)?source.items.slice(0,100).map(item=>({...(typeof item?.id==='string'?{id:item.id}:{}),correct:item?.correct===true,unanswered:item?.unanswered===true})):[]};
 }
-export function makeCodeReview(lessonId,submission,result){
+export function sanitizeChallengeSnapshot(value){
+  if(!plain(value)||typeof value.title!=='string'||typeof value.description!=='string'||!Array.isArray(value.rubric))return null;
+  return {title:string(value.title,500),description:string(value.description,10000),rubric:value.rubric.slice(0,30).filter(x=>typeof x==='string').map(x=>x.slice(0,2000)),hints:(Array.isArray(value.hints)?value.hints:[]).slice(0,30).filter(x=>typeof x==='string').map(x=>x.slice(0,2000)),...(typeof value.solution==='string'?{solution:string(value.solution,30000)}:{})};
+}
+export function makeCodeReview(lessonId,submission,result,challenge){
   const clean=cleanSubmission(submission);if(!clean)throw new TypeError('代码提交快照无效。');
-  return freeze({id:newId(lessonId,'code'),createdAt:new Date().toISOString(),submission:clean,result:cleanGrade(result)});
+  const original=sanitizeChallengeSnapshot(challenge);
+  return freeze({id:newId(lessonId,'code'),createdAt:new Date().toISOString(),submission:clean,result:cleanGrade(result),...(original?{challenge:original}:{})});
 }
-export function makeQuizReview(lessonId,answers,result){
+export function makeQuizReview(lessonId,answers,result,questions){
   const clean={};for(const [key,value] of Object.entries(plain(answers)?answers:{})){if(typeof value==='string')clean[key]=value.slice(0,500);else if(Number.isInteger(value))clean[key]=value;}
-  return freeze({id:newId(lessonId,'quiz'),createdAt:new Date().toISOString(),answers:clean,result:copyQuizResult(result)});
+  return freeze({id:newId(lessonId,'quiz'),createdAt:new Date().toISOString(),answers:clean,result:copyQuizResult(result),...(Array.isArray(questions)?{questions:cleanQuestions(questions)}:{})});
 }
 export function trimTutorHistory(messages=[]){
   const clean=(Array.isArray(messages)?messages:[]).filter(item=>plain(item)&&['user','assistant'].includes(item.role)&&typeof item.content==='string'&&item.content.trim()).slice(-20).map(item=>({role:item.role,content:item.content.slice(0,item.role==='user'?4000:30000)}));
@@ -75,12 +133,13 @@ export function trimTutorHistory(messages=[]){
 function cleanCodeReview(value,lesson){
   if(!plain(value)||!validId(value.id,lesson.id,'code'))return null;
   const submission=cleanSubmission(value.submission);if(!submission)return null;
-  return freeze({id:value.id,createdAt:time(value.createdAt),submission,result:cleanGrade(value.result),...(value.legacy===true?{legacy:true}:{})});
+  const original=sanitizeChallengeSnapshot(value.challenge);
+  return freeze({id:value.id,createdAt:time(value.createdAt),submission,result:cleanGrade(value.result),...(original?{challenge:original}:{}),...(value.legacy===true?{legacy:true}:{})});
 }
 function cleanQuizReview(value,lesson){
   if(!plain(value)||!validId(value.id,lesson.id,'quiz'))return null;
-  const answers=cleanAnswers(value.answers,lesson);
-  return freeze({id:value.id,createdAt:time(value.createdAt),answers,result:quizResult(lesson,answers),...(value.legacy===true?{legacy:true}:{})});
+  const attempt=quizAttempt(lesson,value);if(!attempt)return null;
+  return freeze({id:value.id,createdAt:time(value.createdAt),answers:attempt.answers,questions:attempt.questions,result:attempt.result,...(attempt.legacy?{legacy:true}:{}),...(attempt.incomplete?{incomplete:true,...(Number.isFinite(attempt.originalScore)?{originalScore:attempt.originalScore}:{})}:{})});
 }
 function uniqueReviews(values,cleaner,lesson){
   const found=new Map();for(const value of Array.isArray(values)?values:[]){const review=cleaner(value,lesson);if(review)found.set(review.id,review);}return [...found.values()].slice(-MAX_REVIEWS);
@@ -109,8 +168,8 @@ export function ensureLegacyReviews(lesson,state){
     state.codeReviews.push(review);state.aiReviewId=review.id;
   }
   if(!state.quizReviews.length&&plain(state.quizResult)){
-    const answers=cleanAnswers(state.answers,lesson);
-    const review=freeze({id:`${lesson.id}:quiz:legacy`,createdAt:new Date(0).toISOString(),legacy:true,answers,result:quizResult(lesson,answers)});
+    const attempt=quizAttempt(lesson,state);
+    const review=freeze({id:`${lesson.id}:quiz:legacy`,createdAt:new Date(0).toISOString(),legacy:true,answers:attempt.answers,questions:attempt.questions,result:attempt.result,...(attempt.incomplete?{incomplete:true,...(Number.isFinite(attempt.originalScore)?{originalScore:attempt.originalScore}:{})}:{})});
     state.quizReviews.push(review);state.quizReviewId=review.id;
   }
   return state;
@@ -127,7 +186,7 @@ export function addCodeReview(state,review,lesson){
   ensureTutorState(state,lesson);state.codeReviews=[...state.codeReviews.filter(item=>item.id!==review.id),review].slice(-MAX_REVIEWS);state.aiReviewId=review.id;return review;
 }
 export function addQuizReview(state,review,lesson){
-  ensureTutorState(state,lesson);state.quizReviews=[...state.quizReviews.filter(item=>item.id!==review.id),review].slice(-MAX_REVIEWS);state.quizReviewId=review.id;return review;
+  ensureTutorState(state,lesson);review=cleanQuizReview({...review,questions:review.questions||lesson.quiz},lesson);state.quizReviews=[...state.quizReviews.filter(item=>item.id!==review.id),review].slice(-MAX_REVIEWS);state.quizReviewId=review.id;return review;
 }
 function cleanFocus(value){
   if(!plain(value))return null;
@@ -136,7 +195,7 @@ function cleanFocus(value){
   return id||title||text?{id:id||'selected',title,text}:null;
 }
 function reviewLabel(review,type){
-  const score=typeof review.result.score==='number'?`${review.result.score} 分`:'文字反馈';
+  const score=review.incomplete?(Number.isFinite(review.originalScore)?`旧记录 ${review.originalScore} 分 · 题集不完整`:'旧记录 · 题集不完整'):typeof review.result.score==='number'?`${review.result.score} 分`:'文字反馈';
   return `${type} · ${score}${review.legacy?' · 旧版记录':''}`;
 }
 function getThread(state,key){

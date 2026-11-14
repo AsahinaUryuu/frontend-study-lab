@@ -7,7 +7,7 @@ const lessons=(await Promise.all(['frameworks','platform'].map(name=>read(`../pu
 const original=await read('./fixtures/pdf-questions.json');
 const legacy=await read('./fixtures/progress-v1.json');
 
-test('升级后保留全部旧课程、答题记录、草稿与完成标记，新题计入当前成绩',()=>{
+test('最古老仅保存分数的记录按已有答案恢复；未保存的未答题集合不推测，新增题不扣旧成绩',()=>{
   const restored=validateProgress(legacy,lessons);
   assert.equal(Object.keys(restored).length,52);
   for(const [id,old] of Object.entries(legacy.progress)){
@@ -18,7 +18,9 @@ test('升级后保留全部旧课程、答题记录、草稿与完成标记，�
     const oldQuestions=lesson.quiz.filter(q=>Object.hasOwn(old.answers,q.id));
     assert.equal(gradeQuiz(oldQuestions,old.answers).score,100,`旧题答案含义变化: ${id}`);
     assert.equal(now.quizResult.correct,Object.keys(old.answers).length,id);
-    assert.equal(now.quizResult.unanswered,lesson.quiz.length-Object.keys(old.answers).length,id);
+    assert.equal(now.quizResult.unanswered,0,id);
+    assert.equal(now.quizResult.total,Object.keys(old.answers).length,id);
+    assert.equal(now.quizResult.score,100,id);
   }
 });
 

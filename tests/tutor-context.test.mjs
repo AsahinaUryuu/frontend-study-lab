@@ -7,6 +7,15 @@ const lesson={id:'dom-example',title:'事件委托',tutorial:{title:'学习 DOM 
 const profile={mode:'web',mainLanguage:'javascript',html:'<button id="button">点击</button>',css:'button{color:green}',javascript:'',testCode:'console.log("ready")'};
 const feedback={score:25,verdict:'事件未绑定',strengths:[],issues:[{message:'没有绑定 click 事件',suggestion:'添加事件监听器'}],nextSteps:[],referenceExplanation:'点击按钮后应更新页面。'};
 
+test('新代码评阅冻结当时的任务与评分要点；旧评阅不会虚构已保存的任务快照',()=>{
+ const challenge={title:'事件绑定',description:'点击后更新计数',rubric:['点击更新一次'],hints:['监听 click'],solution:'button.onclick=()=>++count',apiKey:'never-export'};
+ const review=makeCodeReview(lesson.id,buildSubmission(profile,{code:'old'}),feedback,challenge);
+ challenge.rubric.push('后来新增的性能要求');challenge.description='新版任务';
+ const clean=sanitizeTutorState({codeReviews:[review]},lesson).codeReviews[0];
+ assert.deepEqual(clean.challenge.rubric,['点击更新一次']);assert.equal(clean.challenge.description,'点击后更新计数');assert.equal(clean.challenge.apiKey,undefined);assert.ok(Object.isFrozen(clean.challenge));
+ const old=makeCodeReview(lesson.id,buildSubmission(profile,{code:'old'}),feedback);assert.equal(sanitizeTutorState({codeReviews:[old]},lesson).codeReviews[0].challenge,undefined);
+});
+
 test('三文件提交保留全部代码与调用示例，任何配套文件变化都会令签名变化',()=>{
   const state={code:'let count=0;',webFiles:{html:'<button id="count">加一</button>',css:'button{color:red}'},runTestCode:''};
   const before=buildSubmission(profile,state);

@@ -675,6 +675,35 @@
           "source": "function showComment(element, comment) {\n  element.textContent = comment;\n}\n// showComment(node, \"<b>这是一段原样显示的文字</b>\");",
           "explanation": "尖括号内容会作为文本显示，不会创建 b 元素。若业务确实要显示富文本，应另行采用受控解析和净化方案，不能把纯文本示例随意改成 innerHTML。"
         }
+      },
+      {
+        "title": "纯文本输入，不能经过HTML解释这条路",
+        "paragraphs": [
+          "用户输入的尖括号有时只是正常文字，有时包含攻击片段。安全显示纯文本不需要先猜它是不是“坏字符串”，而是选择不会把它解释为HTML的输出方式。textContent把完整字符串放成文本节点；innerHTML则让浏览器按HTML语法解析，这两条路径的安全含义不同。",
+          "下面特意使用看起来像标签的昵称，验证页面显示原文字且没有创建img元素。不要先拼HTML再用几次replace删掉script标签，事件属性、URL等上下文会让手写过滤遗漏。若产品确实支持富文本，应采用维护中的净化方案并限定允许的结构；本题只要求纯文本，直接绕开HTML解析即可。"
+        ],
+        "points": [
+          "步骤：显示含尖括号、引号和&的输入；检查DOM里只有规定的文本容器，没有新增img或script。",
+          "误区：把文本设进href、style或脚本字符串属于其他输出上下文，不能套用“已处理纯文本”就安全的结论。",
+          "迁移练习：把评论作者名改成链接时，另外设计URL协议白名单，不把任意用户字符串直接当跳转地址。"
+        ],
+        "code": {
+          "source": "const container = document.createElement('div');\ndocument.body.append(container);\nconst payload = '<img src=x onerror=\"alert(1)\"> & 你好';\nconst paragraph = document.createElement('p');\nparagraph.textContent = payload;\ncontainer.append(paragraph);\nconsole.log(container.querySelector('img') === null);\nconsole.log(paragraph.textContent === payload);",
+          "language": "javascript",
+          "explanation": "在HTML联动预览运行，输出true、true；只显示标签字样，不创建图片或执行事件代码。"
+        }
+      },
+      {
+        "title": "服务器要验证操作意图，浏览器禁读不等于禁发",
+        "paragraphs": [
+          "CSRF的关键是恶意页面诱导浏览器带着已有登录Cookie执行操作，而攻击者未必需要读取响应。CORS主要约束跨源脚本访问响应，并不能单独证明一项状态变更是用户主动发起的。把修改资料、删除数据设计成GET链接尤其危险：导航、图片等请求也可能被触发。",
+          "服务端应结合具体架构验证CSRF token、请求来源或Fetch Metadata等，Cookie的SameSite可提供额外保护。HttpOnly限制脚本读取Cookie，但浏览器仍可自动携带它；HTTPS保护传输，也不自动检查用户意图。XSS与CSRF防护各有职责，不能把其中一个配置当成全部安全措施。"
+        ],
+        "points": [
+          "观察：把“能否发请求”“能否读响应”“服务端是否授权此操作”画成三个不同判断。",
+          "误区：POST方法本身不是完整CSRF防护；普通跨站表单也可以发POST。",
+          "迁移练习：为“修改邮箱”列出服务端验证步骤，并说明为什么前端隐藏按钮不是权限控制。"
+        ]
       }
     ],
     "walkthrough": {
@@ -733,6 +762,35 @@
           "source": "HTTP/1.1 200 OK\nCache-Control: max-age=600\nETag: \"course-v3\"\n\n...课程内容...\n\n# 后续条件请求示意\nIf-None-Match: \"course-v3\"",
           "explanation": "这是响应与后续请求头的分开示意，不是一条完整报文。服务器用验证条件判断是否需要重新发送内容。"
         }
+      },
+      {
+        "title": "同一个URL，先问保存，再问是否仍可直接复用",
+        "paragraphs": [
+          "缓存策略可以分成三个问题：是否允许存储、谁可以存储、复用前是否需要验证。no-store要求标准HTTP缓存不要存储；private允许私有缓存但限制共享缓存；no-cache允许保存但每次复用前需要向源站验证。它们不在同一维度，不能当成简单的速度快慢排序。",
+          "ETag是服务器给某个表示的版本标识，客户端在验证请求的If-None-Match里带回它。服务器判断未改变时返回304，客户端继续使用已有响应体；改变时返回200和新正文。304本身不是一份新的JSON正文。浏览器缓存层可能把验证过程处理后再交给fetch，网络面板状态和脚本读到的响应要区分。"
+        ],
+        "points": [
+          "步骤：首次200保存v2；验证携带v2得到304复用；资源变v3后验证得到200和新正文。",
+          "误区：no-cache不是完全禁存；no-store也不会自动删除你程序自己保存在localStorage里的副本。",
+          "迁移练习：分别为带内容hash的脚本、经常变的HTML入口、个人资料接口写缓存目标。"
+        ],
+        "code": {
+          "source": "首次响应：\nHTTP/1.1 200 OK\nETag: \"v2\"\nCache-Control: private, no-cache\n\nhello\n\n后续验证请求：\nIf-None-Match: \"v2\"\n\n资源未变的响应：\nHTTP/1.1 304 Not Modified\nETag: \"v2\"\n（没有新的响应正文）",
+          "language": "http",
+          "explanation": "这是HTTP交互示意，不是在JS编辑器执行的代码。304让已有缓存复用之前的正文。"
+        }
+      },
+      {
+        "title": "缓存键要能区分真正不同的表示",
+        "paragraphs": [
+          "同一个URL可能根据Accept-Language返回中文或日文。如果缓存只按URL复用，就可能给后来的日文请求发中文页面。Vary: Accept-Language告诉缓存：这个请求头参与选择对应副本。它不是让浏览器自动翻译，也不替代正文中语言的实际生成。",
+          "对个性化内容更应谨慎区分共享与私有缓存，不能仅靠“URL相同就复用”。内容hash文件名适合发布新资源时换URL；HTML入口若长期不验证，则可能一直引用旧资源。缓存故障排查先写出URL、参与变化的请求头、版本标识和新鲜期，再决定清哪一层。"
+        ],
+        "points": [
+          "观察：相同URL配不同Accept-Language，检查响应语言和Vary；不要把返回语言错误归咎于浏览器字体。",
+          "误区：Vary增加缓存区分维度，不等于开启身份鉴别；用户隐私数据仍要正确限制共享缓存。",
+          "迁移练习：设计“HTML验证、带hash脚本长期缓存”的发布流程，解释为什么不需要每次把所有资源设no-store。"
+        ]
       }
     ],
     "walkthrough": {
@@ -864,6 +922,35 @@
         "points": [
           "阻止默认行为和停止事件传播解决不同问题，不要为了委托一律调用二者。",
           "若把回调改成 async，应在 await 之前保存需要的 currentTarget 引用；不要假设异步恢复后事件对象仍处于处理过程。"
+        ]
+      },
+      {
+        "title": "捕获、目标、冒泡是一条路径上的不同位置",
+        "paragraphs": [
+          "点击按钮内的 span 时，event.target 通常是 span，祖先上的监听器却会依次获得同一次事件。捕获监听器从外向内遇到目标，随后可冒泡事件再向外传播；event.currentTarget 在每个监听器执行期间指向该监听器所在元素。不能拿 target 永远当按钮，也不能拿 currentTarget 当最初点击位置。",
+          "下面把同一父容器的捕获监听器、按钮监听器和父容器冒泡监听器分开打印。先点击文字，再点击按钮留白，比较 target 与 currentTarget 的变化。示例使用脚本主动 click 来便于运行，真实指针点击也应亲自观察；影子DOM等更复杂场景还有重定向规则，本例只讨论普通DOM树。"
+        ],
+        "points": [
+          "步骤：预期顺序 capture、button、bubble；点span时三个监听器的target都指向span。",
+          "误区：stopPropagation 阻止后续传播，不等于阻止同元素其他监听器，也不等于取消默认行为。",
+          "迁移练习：改为在列表根节点委托点击，按钮里加入图标，仍准确定位所属按钮。"
+        ],
+        "code": {
+          "source": "const outer = document.createElement('div');\nconst button = document.createElement('button');\nconst label = document.createElement('span');\nlabel.textContent = '观察事件';\nbutton.append(label); outer.append(button); document.body.append(outer);\nouter.addEventListener('click', event => console.log('capture', event.target.tagName), true);\nbutton.addEventListener('click', event => console.log('button', event.currentTarget.tagName));\nouter.addEventListener('click', event => console.log('bubble', event.currentTarget.tagName));\nlabel.click();",
+          "language": "javascript",
+          "explanation": "在HTML联动预览运行。输出 capture SPAN、button BUTTON、bubble DIV。"
+        }
+      },
+      {
+        "title": "取消默认行为和清理监听器都需要明确条件",
+        "paragraphs": [
+          "preventDefault 只对可取消的事件生效；passive 监听器承诺不会取消默认行为，在其中调用也不会达到阻止滚动等目的。默认行为与传播是两套开关：取消链接跳转后，祖先的统计监听器仍可能运行。不要为了一个按钮动作，随意切断页面其他功能依赖的传播链。",
+          "removeEventListener 需要相同的事件类型、函数引用和捕获标志。两次写外观相同的箭头表达式会得到两个函数，并不能互相解绑。对可能被重复挂载的组件，让注册函数返回 dispose，比到处重新拼写监听器更容易验证“卸载后不再响应”。"
+        ],
+        "points": [
+          "观察：挂载列表、添加新li、删除其内部图标所属条目，再执行dispose，确认点击不再删除。",
+          "误区：addEventListener(\"click\", () => work()) 和 removeEventListener(\"click\", () => work()) 不是同一回调。",
+          "迁移练习：给 attachDelete 的测试增加空白处点击、嵌套图标点击和解绑后点击三组行为。"
         ]
       }
     ],
@@ -1525,6 +1612,40 @@
           "不要仅靠颜色表示已收藏；提供能读取的状态和文字反馈。",
           "练习：把按钮放进 form，观察删掉 type=\"button\" 后为什么可能触发表单提交。"
         ]
+      },
+      {
+        "title": "一个输入框需要名字，也需要填写说明",
+        "paragraphs": [
+          "label给输入框一个可见且可被辅助技术识别的名称，for应指向该输入的唯一id；name则决定表单提交字段名。id、name和placeholder承担不同职责，不能因为页面看起来有提示文字就互相替代。placeholder在输入后消失，不适合承担持续可见的字段说明。",
+          "额外的格式提示或错误解释，可以通过aria-describedby关联到同页的说明元素，而不是塞进很长的label。下例保留清楚的“工作邮箱”名称，把用途说明单独放在旁边。HTML的type=email和required帮助常见格式与必填检查，但服务器仍须校验收到的值，浏览器表单校验不能充当安全边界。"
+        ],
+        "points": [
+          "步骤：点label确认焦点进入输入；只用Tab导航；清空后提交观察原生必填提示。",
+          "误区：复制表单组件时重复id会破坏关联；name相同可表达提交字段，但id需在页面唯一。",
+          "迁移练习：增加一个可见错误说明，并将其id加入aria-describedby；更正后恢复清楚的状态提示。"
+        ],
+        "code": {
+          "source": "<form>\n  <label for=\"work-email\">工作邮箱</label>\n  <input id=\"work-email\" name=\"email\" type=\"email\" required\n         autocomplete=\"email\" aria-describedby=\"email-help\">\n  <p id=\"email-help\">用于接收课程通知，不会公开展示。</p>\n  <button type=\"submit\">订阅</button>\n  <button type=\"button\">查看说明</button>\n</form>",
+          "language": "html",
+          "explanation": "在HTML预览中用鼠标和键盘验证。label负责名称，说明段负责补充信息，两个按钮类型明确。"
+        }
+      },
+      {
+        "title": "可见焦点和合理顺序，让键盘用户知道自己在哪里",
+        "paragraphs": [
+          "原生按钮和链接自带键盘交互，但若CSS无条件outline:none，键盘用户可能不知道当前焦点在哪。应提供清楚的:focus-visible样式，并在浅色、深色背景上检查对比与边缘是否被裁切。焦点状态不是装饰，它是下一次按Enter会触发哪个控件的重要提示。",
+          "Tab顺序通常随文档中的可聚焦元素排列。为了视觉布局随意加正tabindex，会把导航顺序与内容结构拆开，维护更困难。优先写合理DOM顺序，再用布局实现视觉关系；长表单还要检查错误提示是否清楚关联到对应输入，而不是只靠红色标记。"
+        ],
+        "points": [
+          "观察：不用鼠标从页面开头走到订阅按钮，确认每一步都能看到焦点且没有隐藏控件截走焦点。",
+          "误区：role=\"button\"只描述角色，不会自动补齐Tab、Space、Enter和禁用行为。",
+          "迁移练习：把只显示图标的帮助按钮加入表单，给它明确可访问名称并检查键盘激活。"
+        ],
+        "code": {
+          "source": "button:focus-visible,\ninput:focus-visible,\na:focus-visible {\n  outline: 3px solid #1857b6;\n  outline-offset: 3px;\n}",
+          "language": "css",
+          "explanation": "CSS仅示范清晰焦点；应结合真实背景验证对比度，并保持DOM顺序与阅读顺序一致。"
+        }
       }
     ],
     "walkthrough": {

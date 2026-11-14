@@ -12,8 +12,8 @@ const byId = Object.fromEntries(questions.map(q=>[q.id,q]));
 const baseline = await read('./fixtures/quiz-answers-v1.2.json');
 
 test('题干代码拆分保留全部425题的ID、类型、选项顺序及答案，已有答案仍能得分',()=>{
-  assert.equal(questions.length,425);
-  assert.equal(new Set(questions.map(q=>q.id)).size,425);
+  assert.equal(questions.filter(q=>!q.introducedIn).length,425);
+  assert.equal(new Set(questions.map(q=>q.id)).size,questions.length);
   assert.equal(baseline.length,425);
   for(const old of baseline){
     const now=byId[old.id];assert.ok(now,old.id);
@@ -35,7 +35,7 @@ test('题干代码拆分保留全部425题的ID、类型、选项顺序及答案
 
 test('明确标记的代码题均有独立正文与语言，JS片段语法有效且不执行',()=>{
   const codeQuestions=questions.filter(q=>q.code);
-  assert.equal(codeQuestions.length,31);
+  assert.equal(codeQuestions.filter(q=>!q.introducedIn).length,31);
   for(const q of codeQuestions){
     assert.ok(q.prompt.trim(),q.id);
     assert.ok(q.code.source.trim(),q.id);

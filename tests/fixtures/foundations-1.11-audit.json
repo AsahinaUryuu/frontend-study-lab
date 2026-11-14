@@ -1,0 +1,2148 @@
+{
+  "version": "1.11.0",
+  "verifiedAt": "2026-11-14",
+  "baseline": {
+    "js-types": {
+      "sections": 13,
+      "paragraphs": 26,
+      "paragraphCharacters": 3832,
+      "sectionExamples": 12,
+      "questions": 5,
+      "questionHashes": {
+        "js-types-q1": "2a5adc5e8b3de07bf1512a852993eeaa9e5d22b2daf49688077386ddba2b0612",
+        "js-types-q2": "13a166e9d345cfe8a4a866b228b636bd508749c79cadf2e242d19c575ea67506",
+        "js-types-q3": "909cbe6c93b182cada4439be25a74c9be3a2920c0c625003c6f1b566f159480d",
+        "js-types-q4": "c1e22fc332c3f0927cf563dfb6fcc85a22d457d6325fc27c9746d60ff03360f4",
+        "js-types-q5": "b182fea40f748676bcd37d503a064c8ed8ecd43a2ddd102cee0846b450abbb3c"
+      },
+      "sectionHashes": [
+        "d543c97c1f71731806615f64a93889e687470550d78959be8b02e9d495d5c4fb",
+        "07f8139217e284c95c73dcc60e05955346088088fb5270d97c7c863a777dca34",
+        "3b53a7c5a61502de711c6d9bf603761a31ccd29215dbc90fed3c20747cee432e",
+        "c0e0f5cba4010d07a36dcb2b759a3062d2365d9eabe847fea5649a2aa9843653",
+        "75d5ac7b74894c36319fe22a09780b839fbd0d6a13ad16d5f3b685776e3ebb8d",
+        "ab43a2fe315db22eeb90f38087a0dbcc40bfe7e6bb95f9a078aa09db069ff723",
+        "bad084ab5370acb929a40f740cb597b5ea385ec92b8a6ba100b1dc2d3f0e9fa8",
+        "22bcae1eeb0a01d512f3da05810698ff239486c9a24ab0d3ee29b8cbd56ec578",
+        "1c08b875da84ca5d174e4c46921772d6758d77adb43a1394a92fe0aacbcd2fff",
+        "a313eff19f5ea68b9e4b569d10b69c45a41199b49102535013e7e7f27dae38de",
+        "a7c34cbc2eca97847d4f276594c59a8cc12317155dd3a75cead721e07cc8a537",
+        "3c3618086b65944b2cbe8a8215fcac53b23ddd1adbc2f09dca9a649526ec88c2",
+        "ba15d779c96f11a2d923940efac36df5d2d3230509d6058ed0e6337d298d6ff9"
+      ],
+      "challengeContractHash": "d6268c6420b96f566f034b63354c7b10ce7090bb6677907102d00efb91acf545"
+    },
+    "js-equality": {
+      "sections": 4,
+      "paragraphs": 8,
+      "paragraphCharacters": 932,
+      "sectionExamples": 4,
+      "questions": 5,
+      "questionHashes": {
+        "js-equality-q1": "0b756a40825efc5819e6cb87c5c608291f08ae2f976b27ea31d6a1c04980234c",
+        "js-equality-q2": "da59856a6ccb3294d8cf780848947320b037e9ade24f43550a3d82f78f88cb4f",
+        "js-equality-q3": "88474db510050db03cd50a7156f40755201cee9d470cede88cb038cf7f99b7f8",
+        "js-equality-q4": "1ace054cb6909503c589226df6e2b2623f2b481b79b0b27c212d1bd7bd31e435",
+        "js-equality-q5": "c28de99df91e56d16978eca616ca58cbb70c3e1ec5906c842fac644b470d14f8"
+      },
+      "sectionHashes": [
+        "ac6d24c62a4dce772c1461d6b34cc05cdf62c650c7cb06ef552c13f9e231c8be",
+        "8e3a586ddb3d0ee12ac14b0d1d9f6f891a60b27cb20a610ef933a6cea2ea95bb",
+        "c9327cf6de9b72c44a6dd1fb7cfb8eccaf5c5aff0a0578da07bdc04c37b95d7c",
+        "a3515c2b6174505309faa236dde6c2b7149d5b6a4436a97848c95f22ba94895f"
+      ],
+      "challengeContractHash": "a5996b5223c66832b3b1f1747a2c9f1006846069ca9d302ab3c6eac9804c480e"
+    },
+    "js-prototype": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 590,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-prototype-q1": "a061a538c8671301fa1fb6b2961c5e9d22e2e8cf66465762e1f9c593e3c88ff6",
+        "js-prototype-q2": "35160a6785e2017abd960493e6169c89b9a5aefd36e4b103b3a3b6e3dc002c7d",
+        "js-prototype-q3": "a8e73865ebb58011ffb7e342ad85f08c2cd57b3f5f1901c9c4adf6612e5a7a23",
+        "js-prototype-q4": "993a417bc2589d6202aea49a9d82480aa1b8e9ab6a50361ec23ed078024cf55f",
+        "js-prototype-q5": "48861042cf7cd86ec25f1bc3aa8713825eae0e97f91e1c1ba96f98ae23b9852e"
+      },
+      "sectionHashes": [
+        "c702fea5dfff7d210c7224e27dc02f90b2b01272d0a41ea8ca06f01bc9eeaa56",
+        "b2d857de8af2a21d88fc52c6ec3ce8ffd7d411ad9058d9ff5e0570f38a768b41",
+        "56f561e774e27683a14201773fcefd27e79c151cf1d8692174b6924d559d6247"
+      ],
+      "challengeContractHash": "9a2d02a9df6b9d320cf7167c812c30a90dfd5fc98d9dd8f30f3a87b06f6b3fcd"
+    },
+    "js-copy": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 584,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-copy-q1": "fc77e8353975b89b2ff800ac051478fdc4fff0022580e1afc76ca22989d2710a",
+        "js-copy-q2": "3cb002d15c90bdbcd5fd7d0497ebd53f93621a92b175fc3e9d8559db1f43b5d0",
+        "js-copy-q3": "2d86ca9d6cd928b12a4ae8bbeea26bb0586e15ced13875f7b59b5c007c60ed8b",
+        "js-copy-q4": "ecf9b68b4d9492a075bb06943590deaa04d0e19e613afcfc9bffa0d720eda6b1",
+        "js-copy-q5": "b651d943c5b9c0f67cbb51e62806942840285440c64ce92ac9cfa1a6071c737b"
+      },
+      "sectionHashes": [
+        "23eb337ed97e29b53f0280d2c85af37160e7623de6e13b4aa0e7c8e359fa4dd2",
+        "c88bbd6c9770df0fd2294c418eaac2ad0cec2f4a929af3249d7831cd3317b06c",
+        "866b3d99d8f97e2d809472206fc84bed917d280a74478641271e025f06081f3c"
+      ],
+      "challengeContractHash": "43bdcc8dbb3335e8f5741fa537564ab7d5d31c8e9db65f37966341aee2e3fd23"
+    },
+    "js-objects": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 608,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-objects-q1": "b1e7d51bb19b67f3acf4b8909fe86adb60710bc7658dd2fe173504dfaf8182ad",
+        "js-objects-q2": "8acca6195873e7edfc7176ec184fcf99b4cba47c1e1a94e2c5cae6caa8323f10",
+        "js-objects-q3": "51d6ba198c27a1b4ac8e4e32e6a6915821d455347379a269c8d09583d96d0d40",
+        "js-objects-q4": "5f379a6c44eaf4c10892c37cfec134fab5a053a8b161eda30e78f63dc0e58918",
+        "js-objects-q5": "d1ad4fbd3a5516eca50f43a3fcefd73c8544bc0e7b3add8f01d4a6a6b1695035"
+      },
+      "sectionHashes": [
+        "3d9ecb82d070923e248426f46819d8db953872e235e285c75eb282241e387534",
+        "4c03ba3cfe60f3f15e5440cc5d97f315216bc581f3ff56cb48f11d7797238720",
+        "787980c239e4722407204ddda70642b009136eadbcd7c29741951a8baf801c05"
+      ],
+      "challengeContractHash": "51241224dfaa9c88964e12fa1d16b82f9d8dac6fba673a1692f3537c93ee6e1d"
+    },
+    "js-this": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 610,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-this-q1": "d04d67115539fa01d8f4d165987300ce75f9a9fa6914213b4c2055c11466cb5c",
+        "js-this-q2": "1f7132c1dd49b72202ea9d6682c76ff84bf1dabd7e729a7085bd62d778a0b767",
+        "js-this-q3": "0e20228ea099e4bf0428fe5fb06277f8c516fe9ee78bfdb86061937ca596264b",
+        "js-this-q4": "aa13c17b462645f0b269a874c4a195732e7117fb12d6ce83e44b0c9985f83fcd",
+        "js-this-q5": "ac8671d0edfa2825d0d0f8f03f920ef661f9f653164cca0d6c308384d4c37a52"
+      },
+      "sectionHashes": [
+        "7442f993c404ddd786221b22a088d8a6a23fde1785dc450b3ab0aed54dc7494c",
+        "97aec631af8e3cf8f8e89e5fd4e32fc65e12cc585d185b0a85c2e68867bdab73",
+        "8c12f7d085f2b94d9dbd26bfb7d9b5c692636aa235ba0235c64c494307fef9c5"
+      ],
+      "challengeContractHash": "edbdd84c5b5561dc8e2f433719654b60e7315dd00a80e274cdb986c3ebb58dff"
+    },
+    "js-proxy": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 648,
+      "sectionExamples": 2,
+      "questions": 5,
+      "questionHashes": {
+        "js-proxy-q1": "673b9560bb3447d87b724d7fe04117226834bd83a4747814a7f147a88a68d106",
+        "js-proxy-q2": "34c2b5e27c94fd94487e1fc2cda7b6d8eb618ef752c7f5b024a451a1d7ed07bd",
+        "js-proxy-q3": "47f052f215f37e8da29a6e7dbe479d030b79c8a7874cab1aa5c687b3de72b868",
+        "js-proxy-q4": "edc317c304a84837bf6bcb50bc8020dc3b3b0392699a2dc5c3121ab569582744",
+        "js-proxy-q5": "cd9ddf1c621a7aea206c01c1c1fed9a647fdae464db0126fb72d91ab7a0100d4"
+      },
+      "sectionHashes": [
+        "b01acf70ab67f9dee15d79520e71d10d318a4f88cb4996f3cab9dc8c263c03bf",
+        "91e7477a6d636cf496b0b405d54c02f11bb991969314d54cec01c34d234e0960",
+        "8eb13f490375f0db795738960185452681c3d247366ce117bd548816f93177c9"
+      ],
+      "challengeContractHash": "86fee1a82b9bbab0b105a6e3b81acfce8012bada2a57361048bd6a19f62e6081"
+    },
+    "js-json": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 639,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-json-q1": "25cb8ab5ae305ebe5a112362bdff690928c38f07410d9cdf28632e9951cd5e54",
+        "js-json-q2": "6f725fc451d743f87a2be919480d364ce5078489e971570c5556b12876b49cf8",
+        "js-json-q3": "dca676f937ed18363eecbd199317cc4d2492f81da5bf8defc7ff700175df009a",
+        "js-json-q4": "4a89f7f1fca350c84fbc0d11504036c0bc8c2e7f7afee23424dfa8b74a42c895",
+        "js-json-q5": "31d51ddfea8127edbf75acdb69b7467ffe90add4b57bbb828b82223bb1378bd5"
+      },
+      "sectionHashes": [
+        "374859d989118f9a853e704c99b9901a45256f0f136a44c8da47b27f318decc8",
+        "4c8f701aa6d8635006f0c58ecf1ebb098d8406eb50d7cd0d3a640f2c2ada271e",
+        "dfb0a7af3981170dd76e125b076eba5acf709ff91f139abd0e873c0016111128"
+      ],
+      "challengeContractHash": "f4e6ced95bc77f5095ec04a1d09523e5022c6f6a021a0c8f7f834e190df6a45b"
+    },
+    "js-regexp": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 624,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-regexp-q1": "3611240688aa6dca423057f2e04fcff8561698fa0cdaccd9c20ca7ce86ffd932",
+        "js-regexp-q2": "f525828b79afa605bca2de287108e78ca29c6692ea6a14e82eed920fbbcda3fb",
+        "js-regexp-q3": "f086327406e1840e05f0a9e8734af9cb4a336f04cacc24c2b8611b5248da12a2",
+        "js-regexp-q4": "24ac478d5a5a896d153d4ecc8eda11853532924bd81d8f31b0113a10bc48d2be",
+        "js-regexp-q5": "717d0e52528683984e509eda594465d9c437968ddb66e9d985006c8bf64f3bc3"
+      },
+      "sectionHashes": [
+        "db9cd4e48724d21c9bd058a188eefe97fc4c13f963a84d99cf5b25a7ace0869c",
+        "24f94f8049b813f53b86246132632b20490fba31e9a22a3cf51ab1f398cb5f0a",
+        "6c240c2528d7a73e23ce684c769ce914a856ac5e842f22269aa82d1e36c9786d"
+      ],
+      "challengeContractHash": "afd0864eb6d848337bf8a81adb42dd708f6c2d216c55bcde26d2ba07187c844b"
+    },
+    "js-loading": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 633,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-loading-q1": "7b6268c467266d9c454acaf4e5c0adf40640e17fbc9a72727537e79257236738",
+        "js-loading-q2": "c548e39b7f1b41b77c9bc5ac246dfc763ab7857e74ae758cfde3d51cf7f3fd63",
+        "js-loading-q3": "e4419b70db00dd2505e418bb070c1a23eaf1c62206c0230fd90868dd7a372d29",
+        "js-loading-q4": "15afa8c368bb9d333f206627c5415a7d9b4eb141129558706a001869851e9949",
+        "js-loading-q5": "fc3b617ab06ea4bbced06a53588c436aaf6056484c601ebbb5ec443b2ee6e0d6"
+      },
+      "sectionHashes": [
+        "851a34b409620df0740cad3e61bb88fa5ffb1d760d4e020095dabd98c6df9ea2",
+        "9bcc5d30d8a4ce0e0b332ca89c8466b56f66c1690727d39e1a844168b2687ce8",
+        "22864b278894b9c5c58a97fb02cfd7163593a81a5dd8f5acd7e20c77fdcbba2d"
+      ],
+      "challengeContractHash": "0cc260fb995bc4be509967c317e5f49224ca0378818581b2b14a438716da543e"
+    },
+    "js-dom-bom": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 660,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-dom-bom-q1": "6b7c584f4875bb41e0a35aa9c82482ce441ee493531c934ae4c872396d4ae7f0",
+        "js-dom-bom-q2": "5f36cb4b9731d29d20c1e85654a869ab6f379b9bf919982e47f80f3cdf701bc7",
+        "js-dom-bom-q3": "acc636cb1ce2058a75d2111ec0bac92b5705b33aa6eef0565881d6549b9880d1",
+        "js-dom-bom-q4": "74e362b07e1c50438ec30dcab1e86608fadf9d22cd0cc21fbb5d3282156b58ef",
+        "js-dom-bom-q5": "0f68bcb77686fae87099f04cd7cd121b7fe76b3fd577c950479213c0e06fa214"
+      },
+      "sectionHashes": [
+        "d28e889ef531087879fe1b992d9f1f56d095627026987623350f7251083f306a",
+        "ba93da948b745dfcf63f0f4d0359c12bb577ee8dbe29602b4b936c4e46d235b6",
+        "d2f65fe397aecd66b61dfcd9b39853e9ec2752e9c61e9d43d1184bcb40afe40a"
+      ],
+      "challengeContractHash": "a54a0f68f50253920e6ef6c4312e4625f81d40e0e465ff6198155fb7910f9dcf"
+    },
+    "js-fetch": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 664,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-fetch-q1": "d3fc59863e68c4b85e33988958fe23ba8adc5895e427067bb309fd02c9398a7e",
+        "js-fetch-q2": "81cb5c560cf3920129ffb8218eef6d68bea67c89ca647825b3cdc83a82223eb0",
+        "js-fetch-q3": "c656a206064c069fe8bd491ed057e3420db5c16361b5ed94444498d20fb5660e",
+        "js-fetch-q4": "6769cddda6c33429808e5dbe8b6c435bee4dab4abdb1bad0cb7b8724a0713f9f",
+        "js-fetch-q5": "60d67e013c0f06d29e4ab21511ce025de15bbda8eec693973848c50762fda380"
+      },
+      "sectionHashes": [
+        "45d76eaa62e9133f4f884bd5b5cc093b7f65383fe271331bd80fb0b1db510f08",
+        "65ddafa65d9c8ddb32554e08de69ecd4f1743321b2b2fe1fa3461b44032fbfc1",
+        "576640917e82e45186845e52a8fad1f42b4467972d9d1ecc441b2bfeac034680"
+      ],
+      "challengeContractHash": "794a8dddea03f1b4bb3cee833f71f8f7bfceca3f6be2cb3579e5641cf24f3c30"
+    },
+    "js-url": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 692,
+      "sectionExamples": 2,
+      "questions": 5,
+      "questionHashes": {
+        "js-url-q1": "b3a4981d6b3b0c68e6d513397d5d540976cf03b3882e95d2af42af93ae27375a",
+        "js-url-q2": "3167240724845d5efda2d7725fdb66fa7f23b69593e6a47a4855533668a6670c",
+        "js-url-q3": "56f64e8a2695f6326f379d7aab68b892992870623847f5dc72559f534e667ad8",
+        "js-url-q4": "f516c27dcc3a6ce936f568544fff3f58dfc83c0206ad5b823cde2f891e7a691d",
+        "js-url-q5": "cfd169255b61a89fef5668ef8d6efb02df7fb2f9a2febb38f60db0fa4dcb838b"
+      },
+      "sectionHashes": [
+        "182da1d4a321ce84dd617404a9ddbc982dfb42fcb73dd34a88d05f9a232d4500",
+        "b5a2e43bbc228280ceb82dff04fa65678d4eac0ba57686d14e7bbffeea46f116",
+        "905378dd44804a81e7e749a7272c92a8bda44da25a1a50f403cad89030234f38"
+      ],
+      "challengeContractHash": "683697480c01f2d51e6cf5aa86ef9fd16783dbdc3a1775d40debfd5224200e7a"
+    },
+    "js-iteration": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 603,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-iteration-q1": "ed145521cb25fc15a55a0d9de1e89c32cfb94bdb1bda608abebe8b1f624f616d",
+        "js-iteration-q2": "6d61458010e1246ef5934eca33785c3126de18bcce6d60c26688fb180b25bdfb",
+        "js-iteration-q3": "ca35f8baacf9b798bbc545648ebd35c0b6316711df2232b9f102d53c4c5ec685",
+        "js-iteration-q4": "082ed5d5dac363930df9dc3b04f9abd5460bf0a014df67e6e0dc1ae9565c0949",
+        "js-iteration-q5": "00e54b49b291931744c10ed868d8dcdc5c6cec71aa8a0fee39f9a290d1c11234"
+      },
+      "sectionHashes": [
+        "c24a5a64835580b3bbdf5ea9878ca3cc8baaad3f0a274ecdb95efde677e753ee",
+        "ab28ccadcd1835e4494c8606b4f5ef6bf0bdecfe8f22d1aad913f8168512989d",
+        "9ef2d3a40676f7cb9ea3aa32d60357359775f9d1498cc79781375cd088eb70d1"
+      ],
+      "challengeContractHash": "6017fd095d58a07014204bf7a2cf20867630450aed5cfbf6dc87d80e810e487d"
+    },
+    "js-modules": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 654,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-modules-q1": "2b598a9aa71dac0b530f4702181df395393518fec51be8b697628cf44fc61742",
+        "js-modules-q2": "7609c7f30ab1660a85d44a9085cf4428e90f2f0266688a55e0f7d1f23c995458",
+        "js-modules-q3": "d8e625d5858a7144d08da49029a90232908bf812dee963f51cd58e3c2a584604",
+        "js-modules-q4": "19ecf63f6756533e98a6b40734d22883672d3d41ce634b782777b8568fb4d60d",
+        "js-modules-q5": "77cf04086fef1bf557e1a134fa5d7567dd8f733fe384f9ab85bd6d6629f7928b"
+      },
+      "sectionHashes": [
+        "9f40f0e48470ad5fc9a0354911343753929c1b5cb26e17f6b7e5d1a7158c9858",
+        "29351320717271f98b2f703c83cb699ee46aeb3043ffcbdcefcd3d5ab8faea92",
+        "af2fc8a54ec4be176438e3d8816404cc361295285c8395c7a3cc34b4e03728ca"
+      ],
+      "challengeContractHash": "f6f49d184469df02659ad2a110a1659f5553da34d30a24ec10479aa3134e1404"
+    },
+    "js-closure": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 519,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-closure-q1": "758febff440fd36b6b0366e00a79734e73d1ee42476dbdbbadcfb9aab91cc966",
+        "js-closure-q2": "57fb2f98e9c268884da7976e66cb57f233493911362a16d81aa6fa257639e3b0",
+        "js-closure-q3": "37269e0bb188d3c172de4292854439acb1c2a809d3ce1340daaea09a413fa77d",
+        "js-closure-q4": "77391287e65f80aaedc89e982b3e028663956ff102df672f1d0b72db2b47604e",
+        "js-closure-q5": "911f574a9b367a875d2321f9eaaca758d8626610ad54cedbffa58ab32b1cb9d3"
+      },
+      "sectionHashes": [
+        "9a733707e388d4040c8004c77f0b5ddefae158e738fd42ae3df0ddcf18f86df3",
+        "7e3882664a42a02e87d08efc62b0ae009f708f4d3e92f56ca75d235882a7b4dc",
+        "bb0cd6a8dcada8859795471872882f61829eb15ca8e6d74ffc758031235b166a"
+      ],
+      "challengeContractHash": "9997915581ba292b4dce259b4d29d5127ff18b324fcabce63b155a1937b4e4c1"
+    },
+    "js-event-loop": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 615,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-event-loop-q1": "19f14a40c030bc0626b83af3f06d8e2e6324f4cd783ca4f299c80c5eb09073a1",
+        "js-event-loop-q2": "97af816c7fa35a6da7f45bb0edb9969c22e9033c46b360ef7dbe94ca5214b0a6",
+        "js-event-loop-q3": "bd4d69f711787bd60942bb74cf2afb3135c9efc23c76ae7fdb37c27809396980",
+        "js-event-loop-q4": "7c54f19b05443863174a4e2b1e5fb2168cdf79e6dc46f1f121f4471554d62f6e",
+        "js-event-loop-q5": "039ba10180233fb4e1fad2a75fe08bb4989b50f94f2c601d9fbf506b6c80a08c"
+      },
+      "sectionHashes": [
+        "77766fe6c8776a09f2f0e1e1dc3c293cc9b2e8dab7420cfe42b8d85e7ae4591f",
+        "984f57895532c4bfdd955425dee59456581d3246e2b0553e26560f02d55a78e4",
+        "b0d2c669b50feb4ff7528676b4bcf6ecf7544118fa55211f8e0ec60060eb52f4"
+      ],
+      "challengeContractHash": "65885273ddde0c1231bd0f00a336556b964d86275d3c1b8dc13afb784ed42652"
+    },
+    "js-promise": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 682,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-promise-q1": "e50efd32270d898493c9e8b48fba8b62e4a20109ef84d15fa77f2fbb3d584d6e",
+        "js-promise-q2": "913547fc7def42cf159dc9d554d99a42dcf5c3fbbdec0519cc1d6c33f8255b45",
+        "js-promise-q3": "43ec6007a9754b761505c7cf767d82ba4c28ee278eed2cb45053c186e7757fcc",
+        "js-promise-q4": "c871f7dbd01b39f0d670cae53d4807f7dcccb21aa5ce2fca2ab094e1990870c5",
+        "js-promise-q5": "8c009411c26f84239703cb8c444e374c0fed8814b30231a047f4c3c3911c310d"
+      },
+      "sectionHashes": [
+        "58a8e6e501c70f2e99ee0b1647b9556eb2aebb782e8d9f93f480265e8594506d",
+        "de1820170a971c74e2ae16ba6343b27bba228d0ccc96623c104655992aae0459",
+        "41e4124edd3cf90e554fb9f14468b8facc0a58c9e402de174f8e5f1d0ace218c"
+      ],
+      "challengeContractHash": "345860cb8c2bb344c71ab314ac533002c6cc81ca4718ca16ba95f4feb019f0c5"
+    },
+    "js-async": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 612,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-async-q1": "e827bdeeae95e219992848d1a20f8b17568181051e602ac67ee03414fdc57112",
+        "js-async-q2": "55fee6058be36b7ee63aab4e39892c798d73b39d74101d91d5a9ca652ca8c3bf",
+        "js-async-q3": "3b8170bf44bbcaa1ed8d612af12e81043ce543dc3f1e8df6758acb217e77c587",
+        "js-async-q4": "5ddf694a5f9ca39e7d6f3889d94a9dddc36efb997f9c3ca0a964fac74dca0141",
+        "js-async-q5": "297809b8c49b504d9e65daeec09ac96a15ec3c522be9d3c10d7f9c2132781c9e"
+      },
+      "sectionHashes": [
+        "19af632b93c5baacb640dd5e68509538d2c2533c287c1c2f5f649d6e810a5ddf",
+        "3f61fb7b6dea092b32dfd86292c49b08ddf493e3070322bfdbfef23d82bcc27a",
+        "7559d4ba6e3f523fd1561eba00a0d8675cf7639ba4145026ab6bd44466476437"
+      ],
+      "challengeContractHash": "8aed56b1d6ff483d83d4b4c3e71d4cfa6e5b040893e35dc790682a81af88194b"
+    },
+    "js-memory": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 545,
+      "sectionExamples": 3,
+      "questions": 5,
+      "questionHashes": {
+        "js-memory-q1": "de9bac5d47b04dd32ad24e2482aec6c7ee7bd94d2125218ac2c69ddddf2c24aa",
+        "js-memory-q2": "e8b6e0542787634da8f5dfab2c228da5fdbd0649f19e11b691008ff6dbd5418f",
+        "js-memory-q3": "15b45416e6ea5cbcbe4babe92c787c1c3a1bf9be785db17e95d294463516074c",
+        "js-memory-q4": "0ab3547e7a7f516df3f94dae7ffd3d1569fcc699ab62f09ff44525913e1600e8",
+        "js-memory-q5": "233792f40fc18556110cdf3a4cbe723d2aec7a53a980fb535ec64837014cf1a5"
+      },
+      "sectionHashes": [
+        "acf00e04a8326a7f054b4638d92301e086e5097cf3b12445fa16fa9c93efcf56",
+        "2b590c0903e48f6d39d798672aedd946195b4b520e5786eff980cc7556d5d02d",
+        "0f52c664508cfe1269a235130a60ea03e4cfaf5705f42d0d2e5d3e341187e1dc"
+      ],
+      "challengeContractHash": "503a9f4db86033f717d6744a26b5f5e63d08edbdd58f98b4292291ce5d044249"
+    },
+    "vue-reactivity": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 656,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-reactivity-q1": "f2c2fdcb438438484f42987e4f06a4a30c03bb5bdc4b3b0191627334e5d54160",
+        "vue-reactivity-q2": "d583b7fcf18950645577becfe9754ea8da5c97c0177eaf958aef2fad087542ab",
+        "vue-reactivity-q3": "f0e961652da18c92ad75796b6a135936365c41b5824ba013242ed04bce164cf6",
+        "vue-reactivity-q4": "ac54e5e7cf745e2cc1130cac57da45cf710bc4ef5af017a8ed4d241a8626acba",
+        "vue-reactivity-q5": "d3ea4915a7ed58a72b519923a41d90968b3c790f54c594b80776b36e7222d0c4"
+      },
+      "sectionHashes": [
+        "c522f78c5834755f3bb8629f8f05e575009619c66340646efae6154dce982e83",
+        "396c76f73d9bcf552b6100f92435d20e058584da509a8c8534a386c07c39dfa1",
+        "68646af7eb6646cac3a2961c83a3550e24af3acb61a8a42403ae4fe1479226eb"
+      ],
+      "challengeContractHash": "e5706d3656dcd3c9ac9e7bea40133aa89484ae57c8d9cfd447801471d07e70b2"
+    },
+    "vue-props": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 585,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-props-q1": "2c7d1b9c90af8c8b57b0a0d069bd7c13f6e875ee34113614369542f2f02962c6",
+        "vue-props-q2": "d3d4ec654a3a7a2253cfc59ca4804caa6291f575ae94dac7d7003cdc9fa27c2e",
+        "vue-props-q3": "380b47cbcd01781982ec2ace18b3400de554501fdea16245dfafe4ae07f507e5",
+        "vue-props-q4": "0120893518163e1b11a416d1251c85b841133d1a91a0f80288d9b5141ddb2e0f",
+        "vue-props-q5": "fbcadab79833233a088dfbea206e33ab89a49194ea9bc351f243774669314907"
+      },
+      "sectionHashes": [
+        "2b32af85ae6f641ea2bfa5b11cd4c896540a3c49f2c942a10f558cdeb66d9c43",
+        "012cde26d4338d1df31186e903d933d13a1b69f7b5b06c5973a5d11b8de8fe8e",
+        "80cecb65c520849fe520a461197c6f315c6b0adc64ea22917d819d55ed76306c"
+      ],
+      "challengeContractHash": "9579eab6adb36baee79feee57ec1f8ae8f7cef2460d0f8394e829a59190e008a"
+    },
+    "vue-architecture": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 550,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-architecture-q1": "2ed371a3d59cca505ba815a5354a71d77612374ff4837d5f77105967726d4a08",
+        "vue-architecture-q2": "8926d7cc0442ee012d9f3979c4e5f83e21572a58fe32bab42876416db94414d8",
+        "vue-architecture-q3": "2c82d1f6526ab12b985d8e288dab3f8023bb53ccc2a11eb204078a2d97e59f10",
+        "vue-architecture-q4": "1a6d8a16f7a1104362d73f6a934575af45b09dfd767c7664a270a82d7e48fc76",
+        "vue-architecture-q5": "27f83461ebbc6fbb9ee2578da123281f7505f4d864074fe648979ef63113ab5b"
+      },
+      "sectionHashes": [
+        "82e262ea853f36661db2b757a91a251edf9f5c7b19a6c520fc218097f4b03995",
+        "75ebabe3d10b8394f4a0d54b1d6bb65578afa588fb2057983c7573ac89f87fb7",
+        "4581651634b9b46e2558a7877384145c1fb905d26aefc4f12d84b6a41af73cce"
+      ],
+      "challengeContractHash": "cea4d00b27cb568a4597792faaef0740a81589817e2496e8df3ffcce8cc216d5"
+    },
+    "vue-slots": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 572,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-slots-q1": "0475517904e6bafd108cc9317330e0845639899a0da24c39c49ac56e668742f7",
+        "vue-slots-q2": "9dd9244b790908d759ff557e77ce188001eb78a7b0370abfea56c3da161c0c1e",
+        "vue-slots-q3": "c8b235ee1151a4fe1cfaa8838f0566fdf611c0312ca95de940d132e62fd1f20c",
+        "vue-slots-q4": "39922fdf530eba821901f47308b6559adbc0f4c860d83d8f84d873596d7046ce",
+        "vue-slots-q5": "78324abb3a77893ff4176c4df32c7c4a9a003fdaf90293eef591c66f674eec79"
+      },
+      "sectionHashes": [
+        "e66d8c829dcedf96229154f2b4061b75e2ecc5032d0e2fbe1733e9c3a10f895a",
+        "245edf20877b6a907ee9279fe76d9bc4bc321e4efb68d3021ab629a63b8dca13",
+        "43fab21e1625ae67408757e7a9d2d57e435480bbee00220fc72706f4d19ebbd3"
+      ],
+      "challengeContractHash": "ee6ae8dff22594d5db836639f38243d3ca7bd41b435b94ce9ec8699768c48e9b"
+    },
+    "vue-nexttick": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 553,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-nexttick-q1": "35b9b21538673823fdbba751a91ba08e4dcd01932c890c49e69d9e737a31dfd7",
+        "vue-nexttick-q2": "1c9cdf3d71a905ad39dd04d64104d3b9747b3abb3840c2f7b76260988763e632",
+        "vue-nexttick-q3": "4e6e37a7c16e935a343ec3598123d2c1d298129592a81328293a6e7244a9f893",
+        "vue-nexttick-q4": "c23e71299618e57c64acde8392b8e14fc326d5ff99fa8395a99e157014568b56",
+        "vue-nexttick-q5": "1bb1ded048ae829721f2c26022438566bf96dce5d69057e550c2574ceed57ba3"
+      },
+      "sectionHashes": [
+        "a4c46de0d62f341183b2d112799f4c39a418c1f1d13fc25811e83299e8845c81",
+        "a2d5646c2f5eacdcd6d62dc918b8b2489a0328ffe43fda6efc886fc0ae5bca30",
+        "f08a49b489bf523f8643523590170b050e099ad86cbd149742fa3ac5cc18bae1"
+      ],
+      "challengeContractHash": "22529bc679bc8e6df8fd1c7a757a8b02ceac52ccbb91ed903bdb8b608fb40bb2"
+    },
+    "vue-router": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 578,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-router-q1": "6728a393b55ab7d6fa2e7ffda3ed6f7016eaf4bc8fac8f85a383ea8cdb16ada1",
+        "vue-router-q2": "740b18a4a14090d9974cb52beba4c004cf01878799f52ac8b02f882536ceb35b",
+        "vue-router-q3": "2dd0643938448db722605fb2f63c75a2b686cf84aa157b001a3563f30fe3b524",
+        "vue-router-q4": "4d8d28041fc3d67340e0fdd8bda0065befb34cf38131499179809b88f82b6b91",
+        "vue-router-q5": "a0f8f0a675f801b5234b46229e8a99c70ea42e536035ea1e84059d9cedaf26ed"
+      },
+      "sectionHashes": [
+        "ce6a9c2f16c9d94771076065cfaddadee9d7a469401c97141077c685c09dd57e",
+        "b655ba925915bed934c0af582416d890d5f7bdd7e016043a16259809d5509de7",
+        "1eebb86dfcef4ad11eec18489fdc4cc7bc73cf74fc9f6138b9e7aec4cbd9866c"
+      ],
+      "challengeContractHash": "6185872b1c2c1aa09f500d814bc67fd63df52fba9a115a23e792684ae4346f41"
+    },
+    "vue-composition": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 580,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-composition-q1": "dc2492b962fef55d7e2d65243e8886c1519fa6a1c7d392056a19ac4d961fa586",
+        "vue-composition-q2": "26e6363414f83bde2ec4079ec3aea3eda05bf48e838a90db97475d827e761167",
+        "vue-composition-q3": "a00f0315d5c027355c731c51acd1b33c94feb54f16296c59ddaa110876bf7bbf",
+        "vue-composition-q4": "91995b2c87c8614f062d00749f112566118c61259d2cc3a53b082618b4ba501c",
+        "vue-composition-q5": "67bb95a7bd3aa32e390cfc32d66cb3b648e94acf0ac5ec3141c3b35dfdd24f5f"
+      },
+      "sectionHashes": [
+        "908c46399a56773419eac6c656620c37fd9fcde2ee9f0d6931bc129ba1284860",
+        "0f36f2e43f0f4482de23d27e03321ae311330fa792b1a1e713e30843df375645",
+        "b9bb563be01f1b1cca1c90a896cc304f73a391422ed5264a6cbde33fa9c0751b"
+      ],
+      "challengeContractHash": "0b6753b963d0bc610665388fd9fee8fa3fe83d53ca48667951f0089a01401977"
+    },
+    "vue-assets": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 585,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-assets-q1": "483bb9a596058bf4d5b68fe11ba2f57f3e646b203494021497d406e3719818dc",
+        "vue-assets-q2": "fb0b54a7416fb4478f16e9ed3152f9667e5c92a256f56df16c73474c624cd787",
+        "vue-assets-q3": "2d4c4d6b88ecee143a3422a55c32a4544bbface11b38b56e6e2fcfb16a9aaf28",
+        "vue-assets-q4": "c3aed09063c56a899981a8737a0e407c40ab0bea14b3bf378df711efd274871b",
+        "vue-assets-q5": "49b16627e372afaf00c9cecef322cb7a3b9dca0065ba47a459651921b58faf5e"
+      },
+      "sectionHashes": [
+        "5abf8a24675a515514267a9a0566a846aeff373d89eed3a0130eb8ac69cccf47",
+        "f9cc9471b9b395c6a8884eddccbebb0f2065ba0d2d1d266d6a34fec87b07b3f9",
+        "5ae322d1112ee46ca18bd6b72ae40068120049c7e5ec0b7d9a87b3b2e1a1e801"
+      ],
+      "challengeContractHash": "1fc7253cd7e0679c88c2600699d9ca5e3e4448538eaa8ba5694fbd802f02f092"
+    },
+    "vue-render": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 562,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-render-q1": "5617ab9e7502ffb75e4cb71b053bbac96600edee487a9ecc9a1b7ab9eaf2d6bb",
+        "vue-render-q2": "37b5e4e5459a5e36c9dbe851a791844ec58fe134c313e185c64a165a68d271b8",
+        "vue-render-q3": "5adfa868a751e45e2a61ff8cf46be683262552db3f1195fec4a88857283b191a",
+        "vue-render-q4": "dbf659a1d707a49082ed24316ca267835817c2f24ff81e8948892719a229073b",
+        "vue-render-q5": "eb402986d4ba5a3f63e37531a20bf6c9e2c53c55d734b9c141a503cc13a49b30"
+      },
+      "sectionHashes": [
+        "21707225d8aadb5cf01a0076709268eb74dc99a0e4112a0d1849c531deb4fa6c",
+        "ae00e5b57cdd5cadbaa16beca1c56377bd7a4d217fda5f5b03b56481bff66c47",
+        "8b544ac07b7064d73e2443e1adc28f6bde9e3c0c537d08a72c3ce6288a6214f7"
+      ],
+      "challengeContractHash": "88a478d6c76e3444db58a3d9fadc8e5bfb7e472dc13ea7a6ca114b410f5432b8"
+    },
+    "vue-list": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 566,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-list-q1": "010add5a26f94825c2a6f42b2f67e715c1a665c5cba1553c440c668ef768e1f6",
+        "vue-list-q2": "e5cbf01b7baa2034d76e97a2692db6f22626f2fafd85a081eaef83e6e0a58a0a",
+        "vue-list-q3": "ff647bac0ec11ffabbd42b6e591e9944d6e8f08e33d019db3fa63646c60178ac",
+        "vue-list-q4": "869626214437595808083879c50bdee385828662b24c8e73e84c4faba22dab55",
+        "vue-list-q5": "2351dad0b9819c8a7706cf568b0d7c009b2291d3149978308167b27824eb8e1e"
+      },
+      "sectionHashes": [
+        "e22dc70a9d3314953f58c1466bdf905df077f600bb1037116144d30bbb45f0e2",
+        "08697e675ed34c6422080b90372428af8fe80dd8a35768617781f1c85cf088c0",
+        "50d61349c673e7a7601c25207fcb4b9114abeb77dc1c2287589b527e49629e6b"
+      ],
+      "challengeContractHash": "7f180494251308b96a0abad57a2e7e4db1630d25d4d27ab781d7e1affca2be32"
+    },
+    "vue-lifecycle": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 569,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-lifecycle-q1": "01042ec5f73b7c8477f0f77cf478fc3484ae55a55949d9f29fda69dc43f877ba",
+        "vue-lifecycle-q2": "793808d1ca23f57153dbc7475bab8300da6291f4a2eb0b226151ab041550ebe9",
+        "vue-lifecycle-q3": "6b080c85826e70c70150b6b502d77e53a499f8906979e6041900ceb4ed0deadd",
+        "vue-lifecycle-q4": "c42052306fde33586442bed0caee42af0d9fc7860663d6ecade0eda4455ddcdc",
+        "vue-lifecycle-q5": "06455289ec44fbbf08434f91d591d785127ab7b76f2652ac88a493364aad5d40"
+      },
+      "sectionHashes": [
+        "6737428543990f9550557248ed44abd55e32c64cd9631f61857a739df8a85149",
+        "44d8283d4c935d26c2b2f60340d784d284b5c50e5145891898335ca912ba5289",
+        "bdd8cbd086683e8bdf00d4815c9ec3adb12b12d28a51c9236b4c66970d2d2abf"
+      ],
+      "challengeContractHash": "dbbb80317147ad12b236a44c63e66acbb7e87fb2d4b8f4ded19ba88b4c95ddd8"
+    },
+    "vue-async-data": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 609,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-async-data-q1": "cc36a519b28b3570e4dddc6d5f3052be1e1c89fa9b7463e96d0bec6b308a9c19",
+        "vue-async-data-q2": "bb391ddbfba055cb7eb8ea3e8a34067d8b0c403f1cbf3b83b3b2519f07d7e3b3",
+        "vue-async-data-q3": "1ab1387ad3a6a366f5563880b9653329f704aa92d14b9549fb38fdb7e31394f4",
+        "vue-async-data-q4": "eeb9e756659d849f31e4e27c50ec7ea76289e96b2b164be0655a51d2e531db19",
+        "vue-async-data-q5": "5d1dac779afba2857dd903ad0948365762d27a7c2353e506edf42e0e4aaccd17"
+      },
+      "sectionHashes": [
+        "4aa1709ceac7d1baaaf03a27184ddff6fc4581bb2dcc013f91a67ddba0eafcbb",
+        "86cce2f246d2f79dc87b9a61ee5e48e29ddadde1e9f1fa5e3b4478c2b0c2a69b",
+        "19bce23db1037c085d3e3fbe394afa06ddce13e0788e69a77e12ded953de0b2d"
+      ],
+      "challengeContractHash": "22d051a1af63bd47307e006e35a787aa880ae353de2217441560f4daab50a72f"
+    },
+    "vue-keepalive": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 618,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-keepalive-q1": "4233cdd8a3e6e97d111785e8b6ef2378a957034b26cfdf0764340841fd8ac8c5",
+        "vue-keepalive-q2": "8782d303128d6f36a9a721f980c8c547a1801bb1c2ad1d6585a68c9845135e95",
+        "vue-keepalive-q3": "24c0b005a97e9e26938d749cd45bf4e05bd01864075d7c0f68f2870c0a6491f9",
+        "vue-keepalive-q4": "f65367ce2c35cd23bb6e099b452e537427055b06a42d8441d82e662760094e1c",
+        "vue-keepalive-q5": "10802b866c26ac45606a7c5f9cb481bc9a2236eb39a6b800ce1b0f909c264901"
+      },
+      "sectionHashes": [
+        "b47868356e7a65155327345d607db72b71e502a553757fc86766d089121c7ad4",
+        "c087370980e4c9533ec243468e1d27fd2ab8edb42c53dcddb1431c28afa879d3",
+        "855a6ff5ad2b287b4ab99bf2a9af737df7cdfa425700b46b9346d78d832dd899"
+      ],
+      "challengeContractHash": "284ea475936c0345da7b7c88cb2c584c2e4246beb1c86013e6b0fe6a9e5822d3"
+    },
+    "vue-store": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 561,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "vue-store-q1": "42e6091ecc725bf88c296a0b39c48fb9cd7ced72eb077961432661d81c7eade2",
+        "vue-store-q2": "fbdd769fa96ae6b99065f4ce2a7c9e4779f766b8b79a574fb50ead6918cec85a",
+        "vue-store-q3": "727d9de4f69835b029dc680def12ede2e88a4e106753dc951b76ade0d9ccb21a",
+        "vue-store-q4": "22ce8b93eabdcd2dd430d47c63fd1f13729b8674bfffe81dfe7ae66d00a730e6",
+        "vue-store-q5": "51c9074540297f67ae68964ea62fbe425bdb8bbb059eb2922feb72669af1ba64"
+      },
+      "sectionHashes": [
+        "e0feebb72099606539cc5f4e8a5bb55c70813aaef52d318db61e4d1d87e28906",
+        "2d76c748055f93f1fb9e5e071c6aff618bb7f48e4c81a2ae0befe74b488fbf40",
+        "6a74e69a2a066d6f6453fdfd3da7a168a5169942031391d7391a5ca490d2d35a"
+      ],
+      "challengeContractHash": "24ddfa670d53a0318026d99a1640e809f3a2bdd4de5a76cfbb2d3727744eb851"
+    },
+    "react-events": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 607,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-events-q1": "72e6187a23427255b2016fd4cc9a84d7d32297aca8b3fdc300d8ac1f73396064",
+        "react-events-q2": "0fdfae99167c6ac39b27f55f3957052e6b3caf4f025f54ee2ce850ff087e746a",
+        "react-events-q3": "74fe85b4f6b7d6fed421e43043d54ddb43c8795426342d6d26489bd88c2d3c5b",
+        "react-events-q4": "c5c28d63f690100373d63215046a48e5add03a8b01bff2753b7db858c71350d2",
+        "react-events-q5": "9d689009cd8f58378499a7bd476a41d5999ebd53b2f75db9e083cfd05e38500f"
+      },
+      "sectionHashes": [
+        "147787529223a69d1de4ca1da99432336653505b9c3515f262fab825bd3f322f",
+        "e8371030b518e04d13fe607f3be338a34fbf0da52e13e52b6daa6d2beaeaafb8",
+        "d7cd349120ca41b05a1cbec56ed1d2afcef8eaf5cdb39f61e685d8eab9aea4fc"
+      ],
+      "challengeContractHash": "5350229f2c2470fe60ca5659d1283cc05b7e55a9bc8934e85b9b8680ce692d33"
+    },
+    "react-hooks": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 587,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-hooks-q1": "68bfd3f879d4711fa8c9cd76fdef19e5f03e37d602a94cab1c4c919e7391a7d0",
+        "react-hooks-q2": "50dffc00caa00e36df1ad445ffc8be4eeb164b3a7e19bbc2c7ff69ab0af6ac0a",
+        "react-hooks-q3": "ae5a93d4bb747b506f5c847a41d8d2f1538a2778ae3c0d85ecad2d3215a3a1d7",
+        "react-hooks-q4": "001cfbced79c6454ccf0783489e4d3b9002eb3d57b4aeb1a21a71fb91377505a",
+        "react-hooks-q5": "1d667363a7e1cf2f07dc703946a72cc4c71017cdf919e0730495c4ad174f7463"
+      },
+      "sectionHashes": [
+        "d1b6a2ef1b5788de796cabbe6fc4964dbc46e71550d68dcc793ae030816e1e88",
+        "2082a123b0f164613949b01bcc466a0d1991f4e4935cf07ada0b58f9d98c3994",
+        "3f31eb1557d27ce21d514c7afb987ab77178c356e9fa658a371c207ff10bd3c0"
+      ],
+      "challengeContractHash": "70de6cff1a899b938eabfa19c1152a13c20e09a545540b96e8c67fef667e24b5"
+    },
+    "react-render": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 620,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-render-q1": "844529d57af7bf9643b67668ab011ac9b47e526fc82bd65d396e1da4329916dd",
+        "react-render-q2": "bead5997c8b9a10d55ee623de676cc6980979964f44066c1bab708db270599ae",
+        "react-render-q3": "463f392c7309276a672533b38cff201048998f015ea464476a2f0ddeb3d93382",
+        "react-render-q4": "32be76bbc86953f4b16fe24cdc6a9f43308ccff73ffb21ffd4b640178c94979d",
+        "react-render-q5": "ba0cb8897f80b520824ae4eb047abc44833408bcf71d62f274691b5a45a1f6ab"
+      },
+      "sectionHashes": [
+        "ae3c663a85a7358d39e6bd4b316b484af06f0fca6bbae2cb9c60852e4f64acb0",
+        "85ec2ea11d28997479195adc2bd977a2eb4ce1196f75070c86ea8e2986109ede",
+        "4c3c0ae390b0cba6da9310b4524a4f66f187b574d5b6820f9887ce35d3f5fe9a"
+      ],
+      "challengeContractHash": "1d5ae893a32d442f96d5e51473529612304c8be59a6b2f00544f5361b01fbb6f"
+    },
+    "react-refs": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 614,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-refs-q1": "c34b679b7f8a5ee801b94c3251e8165dce91d7fe9f8b9bb14001037f0f934026",
+        "react-refs-q2": "c411f47389a563198d60de16884614a048872097023d492a967aecae206bb426",
+        "react-refs-q3": "6a531925d2f70f56a41644634e7765289b28c0121e8c5f56288df900efd8c53b",
+        "react-refs-q4": "612ed3bbe9e5530d7c627335c7ac64456df9812494b079fb0117667e711e878a",
+        "react-refs-q5": "54ff244e8bad631dc909abbe178650cc94d2a5e9fc09b9b8852c2405584b115e"
+      },
+      "sectionHashes": [
+        "da2dc2cef69e90946647167a9522acf702f3218de33bb19055ab92eb6b8a9f87",
+        "1b4e404ea5d29818d5f6efde53b6e7713f6a92ff2a4b6416445169b2484c9299",
+        "03306b6f877479bef667e00759a84cece29a827826aaedeb65688402d3d64d99"
+      ],
+      "challengeContractHash": "646bdce3e590dc6b57e61e0ab8279a177538f5ba75ca6d807908763ef85ca729"
+    },
+    "react-state": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 601,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-state-q1": "7d6f3ebf8c7471b67361892fddc309b7fc468df6c40a4cc68080b4f4fa7a4fdc",
+        "react-state-q2": "6b28164e00b7185a1b0fe0f0cdb411eb8ddca856cf02f85072bd22b52b1264fd",
+        "react-state-q3": "6a202270176a41e61bdcdc6e4fe6ffe7f02bb0ad89b131c1676a88bcaa7ea817",
+        "react-state-q4": "73e979f210c28c736496fd762ead47f10ac3a85e7492c13d7d4a35ae356a2631",
+        "react-state-q5": "7fb479b0aa1461d001c1ed7b43aba086ba6f5c910b4e9d90c1d58874a28e75aa"
+      },
+      "sectionHashes": [
+        "fd39a0c82e6defd1089633b54d191433813678e973fe6c0bf90c0db6f4636beb",
+        "ed66978fedaa10df93ae4f66b80425340fc1884adbe173aed9ba29c5be053106",
+        "e9139f52d30747308c2ca5c8773632a003cf363047836213306aae4ba8b5fba4"
+      ],
+      "challengeContractHash": "559a166ed82a9516107a2e225e62bf1b3930d0180e1073c94017122ab752d0f1"
+    },
+    "react-props": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 561,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-props-q1": "db4baa848a9a4656631f3f86403e5ec4a5cb747b1a4f4c3ec7644ba0874f2302",
+        "react-props-q2": "f6811e2455f26dbcf5b25178ea3ed3a98a5bd8632ef3a72b2dbe27d1cd4e613e",
+        "react-props-q3": "18f8488fca78b175787975ed0d25f1a56761729dc32321bd4eba301c6d3f353a",
+        "react-props-q4": "b1bf4ac335f341c4b9c05103fa88d6eba43504f43be2470e586aceaf2b0ce237",
+        "react-props-q5": "7d77de00e26e87dbb5b23526474a0f83215ed9da8d437ee541809016f7731856"
+      },
+      "sectionHashes": [
+        "a769d7191bfec776a7cbdec0033df6a715b27cc0df6a9086a60e517f7cce0fae",
+        "e8375110f7f5be4c420381f8705661f1db383f05682e87a86fcee4c5a90ea2b9",
+        "9c15a39f65fcbd43269af6e0e99e413672733749e2f81829b416541b6560ef11"
+      ],
+      "challengeContractHash": "14e9757ac3738885fd847ea627d82e14d73dc3612af15de11fa6ac4234f013a6"
+    },
+    "react-types": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 577,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-types-q1": "7569ad9faf99b31bbc1c9cafd5c2fa581eb5bba26f3b07fb283f9b4c016d500c",
+        "react-types-q2": "de6a2c68bcad3b69629371a200e93ed9f5b2b453c92e63a05b634fbc4a376248",
+        "react-types-q3": "f4ea43c0fe9095764c0ca31a5dd559c81f0b87904fd44d91372ddd9a758be28c",
+        "react-types-q4": "10d7336318afae71ff9f0bc71039f90f845bfef310c56f903a7c08e0f6bc01d9",
+        "react-types-q5": "95330ec4e2608650340e8f9e33d5c13ebfee3bde055ac516a0efa090ff845a38"
+      },
+      "sectionHashes": [
+        "90d10bc9b79b11b08f2fe58b39f916f18bb09cc313f8444b7eb2ee6f68f29bd3",
+        "e9a2a8ea7a6907bed5cf7da82d6da36df2c9fc9a5cb8194f6afb2f6576374d51",
+        "c2524c2be662a4160e7b4ebde63d9678a07122e944488765caa17c290505822a"
+      ],
+      "challengeContractHash": "37afd617ac16821a52f6f74e1e28b6a66dae8d0dd066646ce06be3263905ff1f"
+    },
+    "react-effects": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 589,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-effects-q1": "bd6400ce1741a910367cb8f6988d8620057b41b8a20007824ed465bdd4b0fd26",
+        "react-effects-q2": "01687c63d7aa6190e04b03e2b8148e762e790e1daa11dcd2963ee71a553b9ca7",
+        "react-effects-q3": "44e536032c0f8b18a020ad97e4c8698e9bb3880ae00e2786d9a2bb42abb3a60b",
+        "react-effects-q4": "9fc90df5107cf8131567c6dad0194ee2e2f74a6189bc3c74ed00f61d1ecd98de",
+        "react-effects-q5": "8f046ca9f405f4f3c26c28ef27e285fc5d2004f04291dfb6f9e58fa36bd8b7ee"
+      },
+      "sectionHashes": [
+        "8559b3fc94a72f39b2b95de1ceef8a0bd28cf017da113868389ac15ba1b4e897",
+        "a2e5ed66d3e6fc9c8678173a9f6a9377643b244f43e90863be434664e737fdc3",
+        "ce5c086b4717a32cafe795123eae29c0d9c7959cabf86da0ad300e4620dd34af"
+      ],
+      "challengeContractHash": "f1e792ae380db5d41c2bbbd08bfbc4d4339ca170aa2af769be78bd33325f454c"
+    },
+    "react-lifecycle": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 621,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-lifecycle-q1": "81822cf33b9a3ca178623ae637f901d4b5cec7d4d0b8044952f4cd3eae6c0935",
+        "react-lifecycle-q2": "03846c9274d25c8a6b0348d1b282e90c72decfd74b4611dfe5f60795809653d1",
+        "react-lifecycle-q3": "b3f6842b2333491a73c1c27f6594cc2bc68a05e60f4268a62ddc4cdc727d9e6e",
+        "react-lifecycle-q4": "3d7b99a4b6b7f4e3e14f4d30b82ccbd21f8f3fd4d2b94cdb9ae5e45dcaeb80c0",
+        "react-lifecycle-q5": "f64804ec96033f66b4525747b0b8f7b47ffdfc89525e099ad22d33652dee8b10"
+      },
+      "sectionHashes": [
+        "c36f189f2788a4fbb4f7359159a84fd39f676295f2876480fbc28d16eb493229",
+        "f013877c52e32746520577b543d874f96b60684871219b4114af2d60f9449b43",
+        "6a2059ff6bf6dfe45637ebd0867182febd758e08e0776d827cafd9facf9f8d00"
+      ],
+      "challengeContractHash": "7b32a33f05a53df33f2f08b643c4ca619eb81585f520e0ce0b0296ea783f41fb"
+    },
+    "react-router": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 644,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-router-q1": "9dcf17342e43f6fc68b099d582c538e04228f345eb03dfb660d9a6197b73c671",
+        "react-router-q2": "d9dd08bd6b80cffba27ddc1764338e46dabaea22657c5643dd480bc689f8d419",
+        "react-router-q3": "0a6288bf47183d982b3bf5d951a41819235bd59cc873eafc4127210b706d6dc5",
+        "react-router-q4": "6660aec681e7e76e00767c598fbeead89ee0692631b34334469590f448a8f0bf",
+        "react-router-q5": "09d302935a00eab99ae1a86b96755b8297e97bca2894a94f5684d502fbe30266"
+      },
+      "sectionHashes": [
+        "56894f0cf418f87862a31263b05ad8f9167f69dbba547091dcd2b79ac32ed8a1",
+        "3046dc3823ee5fcbc5c144f9e6ec1d4468aecd76946a0f54baa5489e9f9c2f0f",
+        "f2efd4668431b3c118edb0025b66c2c59f492f74ac0653e5f80535267de171b8"
+      ],
+      "challengeContractHash": "975c2e5b0c07599f8b8e3f9542c09be222e480e12979adb6740a9bc9d9415aca"
+    },
+    "react-redux": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 654,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-redux-q1": "5fc23007fda002a1f3f40a685224c7e7f139d5f21c9a52acce0321cabf6de165",
+        "react-redux-q2": "0b2954f8dfee6552fc658c5a015fe6d092a966c989b6a9107238888b4710dd4f",
+        "react-redux-q3": "7f2bf0160b22b0a9d8bbd737188839a5ce4d5800ca9c122d558847328487b6da",
+        "react-redux-q4": "e93f2bf68363f7cbd4dc517ef11405cc000195d1083eb5fe16fd5d7dd128f9fd",
+        "react-redux-q5": "b784fa3f469b246055687d641a7535719f9fd42faf8a0299c63e7d2ba7693968"
+      },
+      "sectionHashes": [
+        "9754936cf03543748fe705d44110bd3628505eb60577a37485cf6c20599d5680",
+        "81afbe8274011c72a4483c4b7afc4aaa12732186f86c3ae43789515ca047683a",
+        "e050466d03ae923ff758e9f86c1b1dd0bf1aa81cb69752e4f2181003eab896d6"
+      ],
+      "challengeContractHash": "57d77bbe9f9a3fd49957184c4d8e82f9e8d9a2be5bbd461bdf2825eabca00254"
+    },
+    "react-key": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 560,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-key-q1": "9d14f632d2069c6c6b5e2af7d5e04077dd5cee91c4128bc177170b12ce3b8fae",
+        "react-key-q2": "fd86c3aa7866b4a8347210095c17b21c9b0972b62ac3ee35f79752f9e06df3ce",
+        "react-key-q3": "be4761f90548ae97e4b16c8538af9e837c589e2308b2dcc0749773a7269c8161",
+        "react-key-q4": "647e374d66e8776e2a5bb5b2a2b1c45af21eab15eef3271f95c151a90b18814a",
+        "react-key-q5": "39f14c1bfaf95d168a611f661cc52d93ab4669e1ebc798128b59a029e5aa61c5"
+      },
+      "sectionHashes": [
+        "6ed9c5ce45f0d3aa714dde483b06dee6d4cc0d11bd0e89878d6f34cac933787c",
+        "ba7f56b82b7460d98890a5cd852189eff49036421ca016076e65b9ae4456c9a6",
+        "e2cb579f127a40670086d43141284bdc08c5ce27a108d6c9ce400889703a96ec"
+      ],
+      "challengeContractHash": "6abdc1d1662a6f3ddc0137e066b62c6510a40ae9eb4661afd70045b95e3bf682"
+    },
+    "react-persistence": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 578,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "react-persistence-q1": "9fe77bd7be8cd93f6f304d1c9ee70a36512969e5e6440dd914fde4ee14dbf0bb",
+        "react-persistence-q2": "20e04226eac66e93e605bf4fd004bdeb563d55127b5d91a3762dfc42de7a3543",
+        "react-persistence-q3": "35412e5ac899183026cb61a662d318ea615c1000731b58c9960b0b9300d4849f",
+        "react-persistence-q4": "bd435141f773418c03510c23c3599d073b52f7553169570a2c005fb30e79edac",
+        "react-persistence-q5": "619fa2317be27715ac29a51f98f58f106e345662866a801a4fe72507f69bd686"
+      },
+      "sectionHashes": [
+        "6cea764b3be09cdac198ddcf5e08c099ca7d1cc0ff23a98de699db0bea437437",
+        "a2f1ac9888ce5b05cabfcd9cccba4992dacc93587202b74c7b94e86b43fc68c2",
+        "d38b2b81cb3ce27ad7a1d9d617bcc5b7de740dc014d641bb9bb1b553dbc0546b"
+      ],
+      "challengeContractHash": "a75cb64071b65befc563aecda031fade3f13012133dc68eca501d729438f583a"
+    },
+    "performance-lazy": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 512,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "performance-lazy-q1": "dca12c12bf3445546dc6ba514963763ad3d7518e101c52f5f8194a9e516901ac",
+        "performance-lazy-q2": "a28a15218bdf91d41156477e2c17474c5da41e1c9f593e671924b673d89e61ba",
+        "performance-lazy-q3": "9612d60f4808d2456c37193fd907f29b41bce9ed5d553e5664d10acc8969cad0",
+        "performance-lazy-q4": "2835a8fcbf9c6964b188b11c5e3ee560be9c8f8ad747cb719df8d3a9c0714456",
+        "performance-lazy-q5": "b966acdb8671b7c8d2a0c83357e3b80ebfb58811046e9a73005698a55ceda734"
+      },
+      "sectionHashes": [
+        "72181bc5be2684aaa6130a2c881354250a417d6fac7679410e27ee1451176b55",
+        "3f6798a05819b8420237174cd093c8f22a3ea8c12dc58e4c4f28538488f9f4fa",
+        "1d4f195b7739b8b7bf72d324ba14ddb4261d9534953739428d28da1abb12c6d6"
+      ],
+      "challengeContractHash": "9032e7cf62413aa8ace556d611ffea58425943f828456d36d577016f16e59742"
+    },
+    "performance-layout": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 481,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "performance-layout-q1": "0c3320cd3c4aba1a14da93574d965c46b30955fcd01e6e32a26f6242b9a4d125",
+        "performance-layout-q2": "ae09b0e74d70d91b1a19b91423604b51e834f47422b8d9eaf1c2a290f157f2fb",
+        "performance-layout-q3": "97f52de0ded76047a301779362ef53fd31933870b195dcc3a93ad17a2cce5854",
+        "performance-layout-q4": "98b7ba41003c9b902c1f4214689e5599ea9fec23d0105979bf236e90f6efc259",
+        "performance-layout-q5": "b2e101ed4fb9b091454127c764a8a1212610737dd9d7419a37ccaf5d8abb02c7"
+      },
+      "sectionHashes": [
+        "1d67d710ed1d08fdd7a22589f9143fbfd1ad4fcf2a998ee8fa95ac8115002a89",
+        "ed6f2ed757a39c8b0c3ade0ae85fecfe2397d7b6b1cc2ec91ec4ca40aa494e20",
+        "5ab265325be2d7e092c0119a484fbf211543a3620e90a62f7db9f2753653cba1"
+      ],
+      "challengeContractHash": "59d7d090edbdf1ad1a712c675b3a98e1f14c63a2a0c4117e1fd10989af215a85"
+    },
+    "performance-rate-limit": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 435,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "performance-rate-limit-q1": "e5ff9f68b7d4bead8fbe82f3e6fe83ad08ba78f02005ab1e7f1b4485374ca9d5",
+        "performance-rate-limit-q2": "d49e15acdb63b96582233af2ad24c343ca5d89b48730cd14a02b8006b18921fc",
+        "performance-rate-limit-q3": "3af7c63884866a29e0f98dfe1234fbe1f26ca6ddad03f5f4e8853b49c4d51ec1",
+        "performance-rate-limit-q4": "a05d47ef7a11370b3473b5d4312919e871bbaa217b6ba1ecdfded5c1bd4e175b",
+        "performance-rate-limit-q5": "33fd584e091599d80ecaa821fa37a375eee392e863acfe278ca2071efb9be184"
+      },
+      "sectionHashes": [
+        "495463419783f9838126f784b192363979471507f9eda6890c31b67f5de47cd6",
+        "b185f0cb58f336430ed5f3933e31c44d48e3bdc53025cd90d095c9dc54c146a3",
+        "9acdc64c681076960ea86b01864808529a9beb23f8c9bb0b332b6cab5e335f0e"
+      ],
+      "challengeContractHash": "b59db07dc40834d804e5a1e786ebda1070c04586cf7d892fc7c7dde5f471f470"
+    },
+    "performance-resources": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 468,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "performance-resources-q1": "13587363539a65beba791d0e6e3eba32a660c474d89a85de367ca397f39fab0c",
+        "performance-resources-q2": "d56e9ef2bf1da7bc9e0bb3611df1ba3a0d6a2fdd572600372d5b776b90ce37e8",
+        "performance-resources-q3": "7ebe5a30fe311493790813d8ae761e3cf824997f4620cd9ea9e68bf7977484f3",
+        "performance-resources-q4": "ac4e53382b715066c914046515c345c9a31d24f0d868f62c4eb992c5599e4ee4",
+        "performance-resources-q5": "3c7d09929044b4d4792c3bc57f7ab9e55f43c96830860e4e23b8f3f84f93e21e"
+      },
+      "sectionHashes": [
+        "9afdc1db05d464f34bb26a9c5b84de983eb30f66a12f6f4426fd8ebe39ab08aa",
+        "a61abf31c182224d856363f42f0b2e1b5bb7f86f50b6b4106652daa9f4a5a5e6",
+        "14cc810b75884919d778c279c7f907c465d0df87d75e7c4b85996465d7c0be01"
+      ],
+      "challengeContractHash": "1105a2c02ccafd9385bd903a3ef4b16acf34beb5605d7506635bda0693209d63"
+    },
+    "engineering-modules": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 482,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "engineering-modules-q1": "52ce60b8e649aecdb42491c5445cfc5200ba5a3283ff500542ef4796661ba60c",
+        "engineering-modules-q2": "9d5de7281c0408357ff26c81ed70c1519f36a4e05c8fee9b3ba7645776853329",
+        "engineering-modules-q3": "11a11c62a67ebbdff0fdfd4e8db6fbe551746e00f5d08edea789632f88f4bac9",
+        "engineering-modules-q4": "e7547c28c887405e78bf7af93d9471c8b3bfeea784f731133eced7f3ec124cd4",
+        "engineering-modules-q5": "507c41fd5029cc8e20280b5a952245bed9e6080d7f5f24ca6d967e4efa7c68dc"
+      },
+      "sectionHashes": [
+        "1f6886e9054ab1d33c864be97e498ff3e74ffc35987b333d4c7e8d1d4f75a964",
+        "5122b36010669b18742f450d6c76dea6561c53602c71fdd28addd7da9df55fc2",
+        "5407a1524fa4e8d89c0aa049a17fe18c5d2d9a1548207db5b1d97d48a2228665"
+      ],
+      "challengeContractHash": "eb457de9a2a3182d9544c0a3ba9ed5ff8f0865040b4ccc8e68e297837a1a5471"
+    },
+    "engineering-loaders": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 506,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "engineering-loaders-q1": "f29c4411d655bf3d7373e633cdd852de2d8253e46bdf034ed039741fe6673bc3",
+        "engineering-loaders-q2": "7c0bea1680e7921d76c2c7e8d19f34e3e62b89b074003a857b16dfe1494bcc98",
+        "engineering-loaders-q3": "8f47cdbcd32ac1eedb08da337cd297be63c7d1176372903d576ac65a6bbfe802",
+        "engineering-loaders-q4": "b569f0cdcf9a7551f4d78a13f8af4bf829013f5fa9eceb954357a4a35f673e44",
+        "engineering-loaders-q5": "a0472f92c1a03aaac9edb2497d9adbe3673a3a20723b06722268c0eca2b031b8"
+      },
+      "sectionHashes": [
+        "49ca7c8c901d58b88522079435a2dc54745495ace1a2fc294905ab931807d1ed",
+        "e5352beee149577d7c28133a5f69ecfd803d91ac0f55372340a19ae9d659a9f7",
+        "fc51bf23e6ccf7f0caae0ae10ec51b0973fd9750a52d69564f2c313bc92b7f08"
+      ],
+      "challengeContractHash": "aa6674e80fe24242048e62e7319316fe80735bd17ef3fcde108833ee3d40c792"
+    },
+    "engineering-babel-hmr": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 515,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "engineering-babel-hmr-q1": "8adfb535604401ca86f83a2670562767f7de0149fb37e5c91203a60e2998c028",
+        "engineering-babel-hmr-q2": "0ffab2324249047319216329655b3a1c9894829bf60edee0d64a0da148b71a97",
+        "engineering-babel-hmr-q3": "af9f9220300e69139823a424890eb03109a04f132a66735f1603c791b9a48c0e",
+        "engineering-babel-hmr-q4": "de8265dc1b7a60b5e7c729f9138908b532147d445c10b2e9d5e5690f6ab7dff1",
+        "engineering-babel-hmr-q5": "bdaa81f9eb18b470a57cd3b69926f77b01bb65eaaea529a44116fc20fdd914eb"
+      },
+      "sectionHashes": [
+        "04cc0f022ecb665f0d61a93676f9f718d6bf30ddc38bc9e55236aff63e41dbb0",
+        "3d0df4f73c64f462d600c89dbdcd391b11edc7a2b085a17d96f670eece7c4ff9",
+        "5730e76f8d3e86b6115238cf083fb3c316c9a49a58a63340b8b6dc01b2204d25"
+      ],
+      "challengeContractHash": "6803323d7f0e1820bace5c786901fdf06b42ee4ffb05b6b7ebbc13d9d27b774e"
+    },
+    "engineering-git": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 521,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "engineering-git-q1": "787975ee75a78ce04866b8495dbedb74724a17df939530b0465719bd7d90e647",
+        "engineering-git-q2": "4b82afefd0050d2893fa0c1d881bb80fd00443de76a2300e5f20199524f99f7f",
+        "engineering-git-q3": "139f3c4bb63cd92f6c5e96fdc8346df24f1d8dc5b6fed18d06aaef90e031b161",
+        "engineering-git-q4": "b7c5bb3d2ad86aceeed702ded50e00871f1732077ed94cf7d0cad6455a665d04",
+        "engineering-git-q5": "f703c726097bd5a53bfd2c993cf0c155df57138e348cfe9c1df437d5f4f3572a"
+      },
+      "sectionHashes": [
+        "67be81d1d20fd78685b8e9833db0f7e5d9d5c25ac2c19f8644e085ee94c17059",
+        "655280771b85357cdfae3b9bb52347a8fba9609987006c60826ecb1724840a87",
+        "5973a48f537cafad934197ebc32d03ce3a765d19778a0f636e82d1b2265b5ac6"
+      ],
+      "challengeContractHash": "f2d11caccd1a1ab3a6c398d784eacc536f428a91b3dfdf2c00df9175b1a3e12f"
+    },
+    "browser-security": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 534,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "browser-security-q1": "c3a76d004e41661ee37e7aca10b800cb47645c1b848efb6d36ed5007589a63f6",
+        "browser-security-q2": "cd9567cc70e637c15899935dd3f3855ba5e83568ae56a0d5a697efea155e0114",
+        "browser-security-q3": "e691ab0addd629d92af225a535739b02cc8772028a3e7a5f2ce9ec1d3c84e3e0",
+        "browser-security-q4": "f50ed7441b225721b4883765d63a32c002df4bc08124a6f842f830a8c2898f23",
+        "browser-security-q5": "751ede067c75ad67d528b98136d8e4281b4da37c54920ae6e29381cf778e39a3"
+      },
+      "sectionHashes": [
+        "1bb12039cac54285b606b1cc0b7d4c5d3538b1f17cd3aee64b5d32222a584631",
+        "616a9ce1e1d0e5cac04e86aaff1868b50b88cc75e792aef9d526f83b47300a60",
+        "3d3f23fe660cfc5548cb0190ab7cd82f2bda6da4dd6534f0069cbf283e240bb6"
+      ],
+      "challengeContractHash": "b4d4fabe579145f9b4d1a9d31dfbc9b6152a3ff71183b78002232a2c8b4b3fc4"
+    },
+    "browser-cache": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 489,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "browser-cache-q1": "a48ecd18f219eb4aebd6d2b644935bee44986be1e05c09ccdc09b7131abb0981",
+        "browser-cache-q2": "7139b2b5b8279620a397b748c4fceda8c5f3433055102fd9656e5e13620c8ea0",
+        "browser-cache-q3": "42f0172a71ec8c60eced649165eab63fc2b1168607b8549689c34996ea5f08e0",
+        "browser-cache-q4": "ec73bfc54951b34fe4d5c102a86e40eb227270ca609e258a7b7e3272659a3a2e",
+        "browser-cache-q5": "5b63522cc5f6065ae23bf9700a7b4b7ea4c298400139f676bee89cb56d5c7c44"
+      },
+      "sectionHashes": [
+        "d9d842d82515ea268e69fd5af678d0a948e1273a52b74a97434b8f67e361af35",
+        "40493f5a2b8fe1167c2aab734851e1b8a765668806c591a166cfbf13d4037c06",
+        "4fac27d61895edf3ad5c563f64d8a5754430e75fca646848dbefb3e31b3d380f"
+      ],
+      "challengeContractHash": "f9f90e674789f8afcda1ca9c0e815563970425c4463af039f33638fe35f74041"
+    },
+    "browser-rendering": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 465,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "browser-rendering-q1": "8f916cd64908a5bf5e51ced06842c1b187fa2b5d4c190d9e6a1ab375a8340a4f",
+        "browser-rendering-q2": "9ffa7f6e8fe1afe647b3f3ee5642d6b0560bb3dc87d7003c04bbaa100db7b547",
+        "browser-rendering-q3": "b5876675349f2fa1c48c7486b0d34d77dc3f824a3e20ec0945eccbfab7f0eae4",
+        "browser-rendering-q4": "eeda656671ffd474f37645079040869c0aa857bceac7570613d35048b41fc1f4",
+        "browser-rendering-q5": "3b7c42a94d6aa43bda4e9c1d0f0980e541a50c3e8e73b322ed11f5eaf84ba2c8"
+      },
+      "sectionHashes": [
+        "be5d70c598a6ed21563ab65664633defa8ca5b6e795e7cc283d3c280cbbe7fe9",
+        "79db7e88fd3b048987286cb70be95ee49e2ebd724b3b52f668505c965db9f61a",
+        "1af1ddba50e5476e901bd7c7a3e618ab66c52b68a63d278846bb8b8c3a3b43f6"
+      ],
+      "challengeContractHash": "f886669d8a0a8bb3b20348176ed9543594906441869b69efcd551781cd36e02a"
+    },
+    "browser-events": {
+      "sections": 4,
+      "paragraphs": 8,
+      "paragraphCharacters": 832,
+      "sectionExamples": 2,
+      "questions": 5,
+      "questionHashes": {
+        "browser-events-q1": "550b648b5d8b2f4fc68bac26e3eb3cf89b6e16cc32b4b13b85dc5b5765782e1f",
+        "browser-events-q2": "89bb4f34f295427fef844ec744690b50f99b181e3d005f27cccd35280773fc2b",
+        "browser-events-q3": "66108d0a9e218cbd2b444744df89e1f712438f5f36fbee4b7b873254afee2cbf",
+        "browser-events-q4": "4ad99e46585de1fe6a6660589d27795e6e7ecc2f8dad7fc1e94ff192c59abe96",
+        "browser-events-q5": "72cc0a047558276547aa312513f99af8b1851fe87c0f988f20515f3e4125eb26"
+      },
+      "sectionHashes": [
+        "a4463f554dec06ffbb137daff88819ddba3b209d440cce483e64c41e03c8a377",
+        "ba41a312e665a225853614b73de694c3e14c20cd0c7258b9ecdbfb92e0694e00",
+        "251aea903bda1c440b3fc8320d64644a6369c336e2fb0421679f3d699b8fda85",
+        "f8d174ca24eec4c51b979db8943f28770135c294df776052efaa81f0d8ef4141"
+      ],
+      "challengeContractHash": "c3a4113982bfd24fec000ca44557f6432344b4fc3032abb14f65becbfae3c8ee"
+    },
+    "network-methods": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 467,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "network-methods-q1": "2f16054784bff08171f789fdabfd0b11d084575ad88f1f3ea482a93a06e5c865",
+        "network-methods-q2": "f8ec00842aedce443bb67311f19ca7743a8a663adfba7c02c6c2aafaf0d716ca",
+        "network-methods-q3": "2db91031157ab11998427dd02cdaff44dac736bc4e2a7c69bdaa42ef630ea644",
+        "network-methods-q4": "e2af7e472714b20536e6c06a81cab2d154be6acbf16c50dd444f88993f031b45",
+        "network-methods-q5": "865d78a366e627219253802e9b6234b347b7b2393cf9f1d19f37549d429a5b68"
+      },
+      "sectionHashes": [
+        "27fe794e3b9960094fab6ee4f0f484cd3c87bae4176105a9dc9d27519f53819e",
+        "6b013ebb6e715acd35714137981b4cb555c47cbb4479d883610a022e43590039",
+        "332517e4ab2a8ae02cfd685f47e76da1f1f1f3248df42f04ba8138a454c02596"
+      ],
+      "challengeContractHash": "f7d2637b7b0cf50e977b53837fdad4adf604f45a3a4036dbadee181a8a2d316b"
+    },
+    "network-http-versions": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 477,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "network-http-versions-q1": "8a9083e52960032010554c97c272c59c49f1c5ccf90bc9577901487b3d11a898",
+        "network-http-versions-q2": "c50a52af28bc1a164219b00e72d03593b7729f937bde7c39771f7cdc67b74983",
+        "network-http-versions-q3": "a3e4bdd0e835e451316fee2cf804c907adce57dacb46684ed2e822d65c00362e",
+        "network-http-versions-q4": "23bc63667803cd819c23ca857e7a04ee45e4a2c60c2536c1e66ea61f34cb0cac",
+        "network-http-versions-q5": "b270699b015357ff10f9761253bd8ed86f56904fd6ff4504c5a2473c428990d9"
+      },
+      "sectionHashes": [
+        "b3a5053dc306b9dfa4fedf0a69ed0d86fb38c52e743f63410aa028af8086abf1",
+        "35e8b6aa3aa57739dc5d5b02983cd81617c876f72a591cb9f3c1cc3db2e16110",
+        "08da03b2a425f01ea50446a73b3082f9815d7b8998c2da786731fb6230074b6b"
+      ],
+      "challengeContractHash": "01439c1ee31c410b62322938e58a03d89a81caef4dce966e75921027adad61a2"
+    },
+    "network-https": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 487,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "network-https-q1": "1f4c4280b9094ee7d8ecd064d4910450d75919ef417301ce040ffb77a226cbda",
+        "network-https-q2": "a505aade51288f49270f4490f4629ce5c894aed3ea21642cc1f9173db31639d8",
+        "network-https-q3": "f3cdc3fa387455d1dcbf1498941395983565ab49aa381b86a931078a3e504727",
+        "network-https-q4": "6c8d8fb39b548f267118c16c6100d70226f782ac84b5276f3b720640ce3be435",
+        "network-https-q5": "a2625e8bb3515ca3ee99215009fd153c48c776b7f7fe33ab6f54e999feebf8e4"
+      },
+      "sectionHashes": [
+        "627a197973ee05a01c53cf4fb281318e51d330a560feae169494905fced6660d",
+        "b948b7d2509a8fd375a3d97833266543e4415dde6f58354d4f14855a1788fa8f",
+        "f078d6592bee84bb1cb9e1f02e9e312efbc16940b97a6ef883d72e42a935236c"
+      ],
+      "challengeContractHash": "b3d52fef68e6c3125edcd382b4bc56df4f873843d88ae34fd384da1581bbb3aa"
+    },
+    "network-dns-tcp": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 480,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "network-dns-tcp-q1": "2d94147210d0801c66c65dbcd757d9c2c9cea46f1d0dee340d482ec8a27e9376",
+        "network-dns-tcp-q2": "e18d3ad109b457bcb1197e9e5cac4ce277fa8b5b7501259c953226196c5e57d8",
+        "network-dns-tcp-q3": "b834223b01eb4f4826d44f433d5902608d1247278b6252b65db011b0ff94b83b",
+        "network-dns-tcp-q4": "123c3b2a32e78e4823b136e72d29825173597e05243951b29ac58e6ac505e912",
+        "network-dns-tcp-q5": "2e6a16827c58292ca25198cef494bb7d3272adbf5dee25c933ab6cfdd4ec8069"
+      },
+      "sectionHashes": [
+        "f149d1690ed51e4dbfc44552c883b6ab853d1edbeec8d19f0d116d361529a2fd",
+        "78ea6533e763e4a493969c6ddf52355e337c247d99c962049f53bc5a3f489012",
+        "d923894e372446978b3dd9c760567b121d3d05a0f7228d537375a06b0c15c758"
+      ],
+      "challengeContractHash": "6c2e2d0e923f581d4b65e3e43607ff2fa990921f14a2546d5c36a2e338aa62ed"
+    },
+    "html-semantics": {
+      "sections": 4,
+      "paragraphs": 8,
+      "paragraphCharacters": 825,
+      "sectionExamples": 2,
+      "questions": 5,
+      "questionHashes": {
+        "html-semantics-q1": "9db0c5e0fd0481f4c955a5745cd72a3518337b0176351045d668abb81b72f9cf",
+        "html-semantics-q2": "573bf101c155a03a4a3f70abe8c5703773ebb2f8229ddd85039904cb0194920d",
+        "html-semantics-q3": "d32e1619363d36e3e0cf05b5b59222d89220cbcbb6dff15838474bb151ab236a",
+        "html-semantics-q4": "4d8a1359e8aa206278b8fc1032a6ca89c85bae3c9e3c9599691054dd23acd122",
+        "html-semantics-q5": "fc9fd88f1fae0ecd130f6160ae3343883e7f659777849441017f87790eb48749"
+      },
+      "sectionHashes": [
+        "14ac6e449b880a1e0e0cbfd5387c6c959e549ae60ffeb15be2b4a536ab3b1b2c",
+        "7ba396925268b62b1b307711643f1a8603fa2507cca23673c51f5245407d0e74",
+        "e2050e9299e9f1a8171e84371851d3e173b0274f672462079eda7dec847db5f5",
+        "b2cee5a0499decaa7f23bf48a3897155c1d9c268e3ee3de5b2d99a692729a7b3"
+      ],
+      "challengeContractHash": "a78c00fc7d9cdb34f18418056274ae6d3566e5c06b16d1c16793cb308941eb0d"
+    },
+    "html-document": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 573,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "html-document-q1": "5adc6b04c40e80d1a595cdce27ffef4c94c7a1dff651fdbb68829115e8ecc339",
+        "html-document-q2": "6e52ae32bc551a21e65bc75d84b69040d6ecf13008fddb6d410d07257632e2d9",
+        "html-document-q3": "fddac1fbe5c759fe30aab4707d3971102cdca7579de57ca404c8b1d834bbd4f7",
+        "html-document-q4": "27b9aeae900a5cbb6946cd83a00dba28d3d109ed4922f9b7437ebf02f47798e4",
+        "html-document-q5": "11a74985ff81b56176b05a3785c9eacb7cf37106f2babdde58f21c235b5e379a"
+      },
+      "sectionHashes": [
+        "bd62495be19aec34c22e663564ecd1baa8de306ebb1b5c99e3d0fc0e84fe3960",
+        "c190b8ea8245286634b912445f39bd883b5cae629886cc2d327e971483458d07",
+        "562d9ff5ffaa0b06780e8898fdd651adafceacc06bc0613b68259d46d2380c39"
+      ],
+      "challengeContractHash": "e0fa1c2d9b377d3070adbd902193b5df07c4524c5f733a4399da0885c12a736a"
+    },
+    "html-scripts": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 535,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "html-scripts-q1": "2b6c9874ad1100d381e9b6a4f4e543b85f82ff50f5b32169bfda03e5c08c170b",
+        "html-scripts-q2": "5581c044c9c2d1c3719cd7193bac4d67e5ab21ea311b693d8adb407b3af0c972",
+        "html-scripts-q3": "04308bb7c0f187ee106e8ee0591e04d0197e95043e657d87343e918489288f57",
+        "html-scripts-q4": "36a0bb98fdf945f9e40da65f8c0c8c8a9027923f271242e2eed5346f0adfb4dd",
+        "html-scripts-q5": "83682c808ca07a21dd7395df39e69f0ab2d463bf8575c758212ca2fda1df2104"
+      },
+      "sectionHashes": [
+        "cbf999113761daa69d053e301caec0d144116396068d33f5c6348082c64409f5",
+        "8392511c815eabddee3653e4b91fcde320004d329bcfc894142334dbec587fb8",
+        "18c980f3bda9241d939f7be7c335107e0342df11f6c20e2df636177ce5a60df9"
+      ],
+      "challengeContractHash": "5277f2f74a9fac8dee4a3c7eebc14d030c2aa48c06cc31142408a98ca2df1a26"
+    },
+    "html-graphics": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 501,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "html-graphics-q1": "d011107bb1038c9d1333fe5d8ede34437fd2e1c2a934cc98d033f93eae1f6409",
+        "html-graphics-q2": "52943ea7eede462cf85e3b65cef57620cf193ddaa5c2f94506a5a0a3e8878552",
+        "html-graphics-q3": "d7a5de6333acf3b2a6673ba7863b3eec0905e366cc3ae5b1bb81d1e9c4ac6053",
+        "html-graphics-q4": "ceb8e37923b0f57dce5329535622aac9f04b38fb98454006f0f3f237b1144d66",
+        "html-graphics-q5": "f71bc8769bccc2fa20bd9e6b4e5252af679e075ca02b4f0a971b2f3bb42694e8"
+      },
+      "sectionHashes": [
+        "2c9587cfa8e5f5ae26017448661f6b783e204c2ca24209cd152171926fd7061f",
+        "2fd09f4a53ac6a05cbd6dea9db54c27cfbb58b5820d9f9a1c873a1077fedd291",
+        "0eb1859d7f489013f038dd04a546cd764dc42114be59d0ad58f9a382ce2c31bc"
+      ],
+      "challengeContractHash": "e99d5c809f4956c27552a8c840d507dc9e15a62f6dba14b69c9a7efc7788fbfe"
+    },
+    "html-offline": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 555,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "html-offline-q1": "edabb3c4aec7099cdf4d6e3ad1229d3ce0a3fa0ceaf7faa6d549b095f5946561",
+        "html-offline-q2": "5bd14416f547eed02d54de16afacb3ec8d9065fa47296422185e6b3eef00a953",
+        "html-offline-q3": "c6a95d8610eac2d590a629631e6787de03dce93f87e9e071a89aa824578b56e9",
+        "html-offline-q4": "00991b6cda09878a9bed3e25b1228f8365b0ddff9790ac96273346d6c48a6eb4",
+        "html-offline-q5": "0985204b037f38fc0487c4f30773f2bb17fb3b96cfc4e2bd49bf8185ddf7c72e"
+      },
+      "sectionHashes": [
+        "11d5ebeb32829e8cf08dd71e9b4748e184ed90824b667f6bbeed4b0d0427fffb",
+        "90c80a6c6f206c12d6bdc61147815c8f9aa4e4f3ccae1ad36a96019a85201722",
+        "bde0fea8d9bef8a087cd99d2a69f2257ba482b260138c4a189a195b70ae54f02"
+      ],
+      "challengeContractHash": "30dd4568cdf7177ee449e6bac60d709faf3e4a2fa2a573578afe0a75448616f2"
+    },
+    "css-display": {
+      "sections": 4,
+      "paragraphs": 8,
+      "paragraphCharacters": 1123,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "css-display-q1": "b50e2ea486eeeb061b4f781556b5c04dce5ba2fd59f2b40a4d3935c51678efb0",
+        "css-display-q2": "62ebaadae307aa6a2b18eafd9018765c3980285384b051233b23a6b07be49f95",
+        "css-display-q3": "6e273a3a20871121f549a44533b453a97a9346dd34e9e37325961de6e6697129",
+        "css-display-q4": "8d70ac2459f1ccd855bdefa1327e87af118f50e3706957371ce00d65df2f76a6",
+        "css-display-q5": "02d479b96c5359e2e663bc4d08bc3f6054dcc11617f697986a6509f0236225c8"
+      },
+      "sectionHashes": [
+        "eb09158862d8a737d222d942eb63a81aee03a49c11e6689b3c6b6595b33d6d08",
+        "54fd9c68a7b7fc87e28f3c88bf3ae2cb8201bfc2b90a8159f16f5a70bd34f1fa",
+        "50431db40227130daa89305cf1c4682eea388d18a6012880da110a16d846b553",
+        "4fd0fae0635ea0bcb374902dd4d4009e2a6258d3f076a0098e09e09d7d4b30a6"
+      ],
+      "challengeContractHash": "2a9a1153e011b9cab3459ef258c8808a2baf73f1121bd5b3a72d07f95621d928"
+    },
+    "css-units-center": {
+      "sections": 4,
+      "paragraphs": 8,
+      "paragraphCharacters": 1132,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "css-units-center-q1": "23e862af4865d3b806ad5956e55b7f700c1d4c14a34f58d40fb0f54b0b257290",
+        "css-units-center-q2": "9bf7e23aa84e0fdf87389fcb6f84a41b1c323bdc8c1821baef2a4df5416a708b",
+        "css-units-center-q3": "9fe7d0db1f99e5b629c802e0c071c081ee39548eb6ffacacb73a279f215bbc15",
+        "css-units-center-q4": "44a45f35b46c1d4bbbe8286be2ed0894bafcfec266090b986cf1116f957bb1c8",
+        "css-units-center-q5": "4bf600892310f598fc5878d990541244024b3bdd0ac93cb0b799c022d283028b"
+      },
+      "sectionHashes": [
+        "b09fb86b034e826e444f754d2959adfedbecda69cfc1608d0de0a20f4e956588",
+        "8a5534bd1d02968f17663f97337abe1050045b8c997b49a5674802d9afeb7829",
+        "39998a658e01edd69efbe3ec70d0af24a75fa301abd7dc2c4c063db2988bdc23",
+        "7eb2e582d42574287d2f9d49eef81b8bf699490072b36222e6269a3ad292a2f2"
+      ],
+      "challengeContractHash": "3280e378dc9c7f9844dc25674e93c0c62344b0ca3636b97e62e46e34cb4cd3a5"
+    },
+    "css-bfc": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 748,
+      "sectionExamples": 0,
+      "questions": 5,
+      "questionHashes": {
+        "css-bfc-q1": "fddebe6bb2e8395108d063644ee45cee431a517aac9b29882db984c0678f2869",
+        "css-bfc-q2": "3a2b2cee5dc1b1c7d43b3d73b8d447f23d2caba96921bedab5b5aa3c3129d9d7",
+        "css-bfc-q3": "f37428f424f27f65a71fbfdc7a7f07a105ec5b6c2dbe9610fcca41db84323b77",
+        "css-bfc-q4": "8cff45b31c06bc28d4cc95878b4165cd7848157367c14ceee38eb5473df325cb",
+        "css-bfc-q5": "c6f9f14adf2409a0a2ef61d124c6b9a40ae2e448271c5a27e5dc4c3d08585221"
+      },
+      "sectionHashes": [
+        "12b1aa74e87e4c3b83aec9db350be4f1e98b596988dbc5ea205c8cf93754ae87",
+        "7380890833b2f724df5b61b6f468aa682434c1efc5650632887538c86212bfea",
+        "d9bb887f4f4505d10c1bfb4d05241be9f59f8d6182196561bb73e305a83b9719"
+      ],
+      "challengeContractHash": "da9e2cbbd10a7612290d54f90ac3087655bb5a246fdc597a5447f6483606998d"
+    },
+    "css-stacking": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 712,
+      "sectionExamples": 0,
+      "questions": 5,
+      "questionHashes": {
+        "css-stacking-q1": "2f66fb7b69faeca1495b9abf275e5a24307e2d4ebf6d817e6797b26bbff6127a",
+        "css-stacking-q2": "dc4e6feba16d6a1b53b4a421ad48c95631fdac826df2f8aa9c98f0e98b3e6e64",
+        "css-stacking-q3": "0d5d6588b33aa6a2eba271e0f57ca82e86f33d1cbd391c0eb523c7388de5dc69",
+        "css-stacking-q4": "5f70b5a032cf107c4159820b03e229165ff417688af929ed9d7e34d83bbd926e",
+        "css-stacking-q5": "b8d6302037ce5eca7526a6a3f7e65b8e961a7dd2b7285bdde3644f5a132d89ea"
+      },
+      "sectionHashes": [
+        "1d6562a746525c523510f0da4ea9de846c03ac1dc9179f9a88c09c6b2755754c",
+        "7021b193cac614cf6c680f6a88abe4d8e7e4937db4f9f569d7dcbba5c87f1a08",
+        "10cf4b725083b4202f251856e8294e0ac0757dcc07f2296b089b7f39eb50bbac"
+      ],
+      "challengeContractHash": "ad81b4519ee8b241d707e1583fbafbc5fd741d07a8beee929f3e746926cd83aa"
+    },
+    "performance-animation": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 470,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "performance-animation-q1": "ff29f63671c156666ad4b03781c7e5c064d7c4968af434adb4edd2d5755b76e5",
+        "performance-animation-q2": "e271365a64b37084013398a5416abb1ffaa3b20f1b3b36b67423e7658d5399be",
+        "performance-animation-q3": "646fa975274da2462e3f431d3bbc73c67d40e70143d6a379367f8adb27ec0429",
+        "performance-animation-q4": "801d7f1bd8125a574303d6d536eec70637b31dba08de0e7766bb2b4bc3df0ce1",
+        "performance-animation-q5": "402c0008753c696a7e721de60df922cf8d038be1a6b07c69bee5be88e502dc9a"
+      },
+      "sectionHashes": [
+        "736731135e72b659359fc5c687be544b0d5eaa581105ebb63abe2f96d4cb6ab4",
+        "e980819b8feddc9ef1becc62b547f2521647af1d774c34170ee64f671454ea18",
+        "8b78922ba86a7e07effab88d5481de433a747f8cbe42784e6b695d63ca4a7796"
+      ],
+      "challengeContractHash": "c2c08b13820b285c1864b6ddcc4df4475a45c4b0fc873aa8212fbe21ac2d1155"
+    },
+    "performance-fragment": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 482,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "performance-fragment-q1": "6fa5aa25a9a71c0062b14482e2d073a5ede4591dac8d6f75c806677bb838afeb",
+        "performance-fragment-q2": "1e77a9de347b2caa561d71661aa282f0581badaa72f201b76a66e5e47586a016",
+        "performance-fragment-q3": "837ef2e3e61413e93d25a0c1ec6b03741752a042e9527a39e250f6f8b51e5298",
+        "performance-fragment-q4": "d5cfb53b108e948562cd161c55c1826760e65c806bef22790097b39c61b514c3",
+        "performance-fragment-q5": "08dd2a989d718a5c658521e342fbd3ba890183ec073758dd159e13932be5c6c3"
+      },
+      "sectionHashes": [
+        "5d6153a7ae14b16baeb8039125be28a1a297b37ec8210c5c99bc7a8c36de701c",
+        "f2bf6b62583f80534143f837b919f5415da4008b5201d212fd73249ea7eecb79",
+        "c9de2a42ad19de5bd0af787ef2a093b58e173d5f769ff0a83455d54f126934d8"
+      ],
+      "challengeContractHash": "adedbb58a179b88b4a10d937a277579442c4b614922f8537190bc55bf4740b10"
+    },
+    "engineering-build-speed": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 461,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "engineering-build-speed-q1": "ad2c2d9f37cfb5103c8c1a3d356f54de2438452e153b19e3b41c2a1e1f852afe",
+        "engineering-build-speed-q2": "6c841287aea68433f0894c4a49bc83b2b0c7e48cf2f71c94355d31f7d9f3f480",
+        "engineering-build-speed-q3": "11eb49dda49639d42bb93a96f7aad26e0e50f678df3811d8c4a1e2805f267818",
+        "engineering-build-speed-q4": "f325a0e043989ab0214f3786817743c2a180343ac6ef54d5ca255b67ed5e91b3",
+        "engineering-build-speed-q5": "7bc60a36a843a0e7b81d4721525340e9f1fe8290a113fc1fb6adb6c311c2115a"
+      },
+      "sectionHashes": [
+        "7217dd0519fa27bef85b300ec7f07baa5c2c8970b6abd57ab5f0bc7ba6f6c8a8",
+        "3f3f15088b94abe303f4231f4de6d7ca51ac2e1aa984c0fd18db9b4d8a949521",
+        "72e3c3e5ab45a0ff16e6cce6a531e75ad91177763f21d9ba34b88448bb328496"
+      ],
+      "challengeContractHash": "86dc6859f5068836e1593a6c480f906f78efa7cd1ad288bdbe0f487320a42d28"
+    },
+    "browser-storage": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 519,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "browser-storage-q1": "f4e30296ee287cc6118b9dc2588eef72afba9b8f987462390ccfd1e135554360",
+        "browser-storage-q2": "d74c0196796210fb3d48c0702d1c431f061d6459c885906610401e1445cddfef",
+        "browser-storage-q3": "33931c79077799f7be1df8d7bc44442df656aaad2ecfa49f17b697a55a3471c7",
+        "browser-storage-q4": "723a1083cf88c2b2ff7ab3f4e4637cb79add691ca586073af1885871de91e224",
+        "browser-storage-q5": "020b8faa1b59c9192a8a4f086833bafd20ceb35c63e31f9c7d468ded52a7e021"
+      },
+      "sectionHashes": [
+        "f351841e3c9794086d40629be1bbfb6bef9d23cab603223d7e389c2b339ffe55",
+        "96baa5354f1484309d9202a7d904650da441c06ef173231bffe4a1218913de29",
+        "373fef0495734defa225ba5d4b267d9d43b1e3db788973fae0228590744ad5d7"
+      ],
+      "challengeContractHash": "87d5deb46f6779c3b19af7df3696f61c4eef85b22c7f21bc60e4d072b29ebcfc"
+    },
+    "browser-tabs": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 518,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "browser-tabs-q1": "6785721df909a43ee74c0fa28fc6e4c1d936955cc32116920a0eeed2b2b2a2a3",
+        "browser-tabs-q2": "f0c45b0cad1d7b9768f9af2a4a49af8a129c92a3cf8052ed1de996c29a6e6be0",
+        "browser-tabs-q3": "2461c0231314114099541c889690528ef41dee1b6e852f9cc2cb1667254d1263",
+        "browser-tabs-q4": "33fa1f5b392d63eccfecf93f399d87e7d2225dfc4723c39c96eff5a56d30da6a",
+        "browser-tabs-q5": "1ebde23228bd80fa058d3ae8c22aee989db04cc9df4c83c58d1ffa51b52fa9ad"
+      },
+      "sectionHashes": [
+        "358c324bd7c0924e8df0f40bd1418723230a4a53c3b12adc2905fafaa6dd75a2",
+        "06110d2127bea85c54823261a38d6c55234ad79639965e1bd794c42d57d91669",
+        "192107cbb31931462007e340220423801d554db94b676a3b0d0735252286f3ba"
+      ],
+      "challengeContractHash": "3818f28d8f57cc41d44395d7fcbcd09e87cd0aeccc2ffffbea9c7190d3037cec"
+    },
+    "browser-processes": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 479,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "browser-processes-q1": "04ad9448e31b4160f326eb7ce3b865c3dcd3c8dfdcb98c278132b593466d0d05",
+        "browser-processes-q2": "05df637d1bad19fee70b8781751f268db683f764d7257da823c226ef6363b0e9",
+        "browser-processes-q3": "d475b4f3864fc058e24e7a1d6763d2914a5fc1b15656969a2025a24727258a41",
+        "browser-processes-q4": "3fba628fd2ef6d4b6f27ee8c30d8d5f91c0b4b8b1df23ab1b38c8e921fa68ac3",
+        "browser-processes-q5": "d30236ac1e4035dc37e4bb8988ccbccb8985a7967f183d5f0cb30ddf75bdb713"
+      },
+      "sectionHashes": [
+        "49b2ff9572d972c66d9f517263b41627b87447b379ead52200cc26bf2de23407",
+        "74fddb8181513489c0742b9ba99a9032be12fc640e0fa19bfb5cb43d3e9b6efb",
+        "bbcba842aa3ea418cdba2dd4d982ec2fcb229c2068bf16425670a6e388d3175a"
+      ],
+      "challengeContractHash": "083b2ea8ecad4d908c111b44d08a7f6fdc66c65a61675de2954faf0875097d11"
+    },
+    "browser-threats": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 503,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "browser-threats-q1": "fde8557cbb7832c8e39eae6e06ab1d2a9839eb3c10302c60df5d64583563e664",
+        "browser-threats-q2": "b8b44b4d19a653a73b9a02f3241b7fd2ab65eb43c3d7b1edd62139da84107039",
+        "browser-threats-q3": "ed0cfbcccbf1610e086f8814334867c9a305d0245044c513f9db024adf4f3b13",
+        "browser-threats-q4": "257e2210650b004b90c3205d2713bdf410fc3a9afc054349164d2fcda03d7e21",
+        "browser-threats-q5": "b042f85a85645ed0da05fcd382262c137c71b51ab0e233a487de4f37a4fc719f"
+      },
+      "sectionHashes": [
+        "f014942c6cc65632b98a6f4597fd0b62b556542f06a2aa2f49c6d92697976a65",
+        "22d5637ef25ef0c7fad5c54b3917f694364dd698a9b11643632727e1f74ed793",
+        "4d00ba1ab40d639b5c9f70713bf38aeda7a54b45f11b4dfd26dd75b2e90d1dca"
+      ],
+      "challengeContractHash": "21051ce21cdfe268ddff6de9f88b9c2c84812bfc04959f8c64a18db97c5dd12a"
+    },
+    "network-headers": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 553,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "network-headers-q1": "a6316d00e2e417f9af87b5ac4b554aeece73a97247de6edc0c366bed591c5cb3",
+        "network-headers-q2": "3a91cb19c00232509a4fd967bbd62541c02861e06f6343e681aaeb0d930b6373",
+        "network-headers-q3": "7a32a72915eff17b68e8b2440d7450261d7ff1ce7b60c4f23e05db057a2872a7",
+        "network-headers-q4": "1af8f75546b21f083c11978cc5edf7a34db6c83e6cc7cf6413d24aa128f5a9bd",
+        "network-headers-q5": "9c83be453c2af468f1f7e63a62ce0c70d1b16061dafb53c26711f256472628b0"
+      },
+      "sectionHashes": [
+        "1589291194ed35cf682348907ebedc12a2dcec3540a6348d12a27b23a289c475",
+        "23edd815301e214e9071521884545656876f21adcd195261dd9e54bb8ad7b70d",
+        "c828d15e08ae1a31fe2cebf657cfe7036ada32623878948f5b8ff9a28eaea254"
+      ],
+      "challengeContractHash": "64c4cca9352428b399c47d94fc81624d83127642d97e83cb3d7095929e32ea20"
+    },
+    "network-layers": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 484,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "network-layers-q1": "cd7b2719af75d2506c133432fb187e1074518df8a2ae6a929084b0cf34761342",
+        "network-layers-q2": "50ad1806322c4f666947ac038dc935951fea49596e5f16fc0f96e736b08083c1",
+        "network-layers-q3": "c8f91c184260f4a4051bdd3e81a5e0b715ed46493748b9fe1508fe9a9ffb0fa7",
+        "network-layers-q4": "fa5e1b3a1553bb31727e28db2e425b8148b6c90527ef2b045b44680eee314dcf",
+        "network-layers-q5": "36979bbc2bd3345eec6aed5098c8b8f859d3bbd25fbf573d353ea5028786be84"
+      },
+      "sectionHashes": [
+        "4ca886c39d03428055b1aa946927fe8b310612305decbc0d461496a0c4c89829",
+        "4ea4990f4a919a94d922f031cd53f52f8f693325a1dc6ac5e884d80d8b31ec4f",
+        "9341819cc18712342ed9ef3fb48910eab49df068a54f563df4a5c9743a8c0ef2"
+      ],
+      "challengeContractHash": "5aa8fc883ef7660504dbe33cfec6c8a2bbdb775b8ec680449a1cb54726297d53"
+    },
+    "html-drag": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 539,
+      "sectionExamples": 1,
+      "questions": 5,
+      "questionHashes": {
+        "html-drag-q1": "8116a6961515bdd3b00c7f1762d1718aee513b34fab0f415a0919c4bb3f2040c",
+        "html-drag-q2": "0d07a8d15a86d41c6a03e7a3e97d410df08dd2c6166bc91403f05cbe9ed95815",
+        "html-drag-q3": "4f3de795c19a2c04851631cde6e8485f0189704d0901dfabad7fcfd135636364",
+        "html-drag-q4": "360ffcf782126802591cfb552792ae9bf51df4abae311367884ce7ddfc0ccb39",
+        "html-drag-q5": "8e66cfc2428dbeb98c6a033e4632ce0ef1160e4fc27992aed33b71bd39a1f6c9"
+      },
+      "sectionHashes": [
+        "0abbc60188af124499b6b656e20228cf6f4c81edb997efe5b9ac9844ac1b560f",
+        "39a1b384e48e17d77e164bdfb04e47765dbb313da8a481a5a191b6d3bb9df3c9",
+        "89351c11f8aa965b068c5f3fcaee54aed011998b1565e821a8a15a1f90fb2acc"
+      ],
+      "challengeContractHash": "a2618363612599b91a899d3650f5f7d58c44f3f50d0010dbd79359aba834bd53"
+    },
+    "css-loading": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 763,
+      "sectionExamples": 0,
+      "questions": 5,
+      "questionHashes": {
+        "css-loading-q1": "25bff912ee757a6478ab924fb1c8e47ed884a254b4211de248d889cb29770af2",
+        "css-loading-q2": "f54effeee617233bf36c7b20c1d7177a4ee3e10a1d6a30a7348a2f3cbc54b9f7",
+        "css-loading-q3": "f9b7e0f016ca8eba9cfad765fcb5e9c08752ddf3cd30c9034668c573543348f4",
+        "css-loading-q4": "f13c75a7b22b0d01a0b3b6cf2af223ec4543bf0c6958b5dfee62da08f541b3f6",
+        "css-loading-q5": "2cab98b8b26e2073b47496e94a11bc6822db9d4e021ad0e2924b62230106855e"
+      },
+      "sectionHashes": [
+        "85a00313adc99241f338ecdd425460106fb491d069e2b27a1353fd07128fec98",
+        "daf9dafca4614c4b3af11a2ec3dd69a865548ef37a1ce148f5344799231e799c",
+        "3604655244364acb33385ed9ecd17ba02e31ba42f2e9cae822f757cabbf5d1c9"
+      ],
+      "challengeContractHash": "e28dbe5b2f92e7362835f735665051e81730f6e1b89d1280c711d3f8de8d2808"
+    },
+    "css-features-sprites": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 760,
+      "sectionExamples": 0,
+      "questions": 5,
+      "questionHashes": {
+        "css-features-sprites-q1": "d1e92fee8be405b2e085978d6ee4765f3c806c776bf2802485fcd59989be7a33",
+        "css-features-sprites-q2": "ddaf9d808ae9feceb0e1cbb7d8bbc5a7ffc73ed55b39e5067cfeeac666f527b8",
+        "css-features-sprites-q3": "ea5115a594c3361565d2cdfac5ac7f123dde0274df9e408e11f0ab7bd1ee2633",
+        "css-features-sprites-q4": "e51ef30346a486fea1c9eddfc1028106ce7a854fb36fd31f148d8abf4a953d4f",
+        "css-features-sprites-q5": "8e69a33c8be4b60d33f37d3c1d2da2a0ad89185e9358fe82ca590e94e6a903f3"
+      },
+      "sectionHashes": [
+        "903d52ce095e6c9fc9cf428e8218134847e2ccc3d0122087c689b0b821d5b659",
+        "64a3b5f76380bf76ff5f626f4364d63bbdeaa48fd7d320d8aa856e123556e853",
+        "e154d45ae07bd950fe00176994bd9a591ffb6c182a77dc989052cac23ca505ce"
+      ],
+      "challengeContractHash": "34e418c22cbd5933f7f2065095b14b2e03da5d296835ff7ff3bf75fca3b502a7"
+    },
+    "css-hairline": {
+      "sections": 3,
+      "paragraphs": 6,
+      "paragraphCharacters": 768,
+      "sectionExamples": 0,
+      "questions": 5,
+      "questionHashes": {
+        "css-hairline-q1": "5def5a0b1731328c336dacd3051a65f25f80bc532b470d8f18c37d9ca5f5f8f8",
+        "css-hairline-q2": "7efc02d4aedacebcec7344e61f1c81e9d9330517e14d8b2705cc90a7ffd9de21",
+        "css-hairline-q3": "7477b1e380bd577d6bf68885eef81e30ad40a1b87aaaa2ae15e72b34b9746d52",
+        "css-hairline-q4": "949a4ef2959eaaa73161e65b9c30127b9e080509e5021e0e596443d1ebf1abd6",
+        "css-hairline-q5": "b99471e116098b087d49616b6c171f3c5a6c2ed3ded030f9682865c1632992f4"
+      },
+      "sectionHashes": [
+        "373c92dc722a60ddfb837e9f48a8260b3d066bdceeb95c1dd0d8db79ef7064f2",
+        "8a64632e66f6551864734a5b933840ae04ddf1e22d4cdbcac7fdbd92c548856b",
+        "1b04a085eb57a9a2062621af8614477d453472ea7ed8818ad986be7e08f9e9af"
+      ],
+      "challengeContractHash": "aaee1870caa09fa97b6a4fc7344681457488f824998a8d53b39a51db694f763d"
+    }
+  },
+  "lessons": {
+    "js-closure": {
+      "addedSectionTitles": [
+        "读到的是变量，还是当时算出的文字？",
+        "把状态的所有者和释放时机一起设计"
+      ],
+      "addedQuestionIds": [
+        "js-closure-v111-q1",
+        "js-closure-v111-q2"
+      ],
+      "addedHints": [
+        "先列出 start=-2 的 next/reset/next 结果：-1、-2、-1，再检查实现。",
+        "解构取出 next 再调用也应可用；本题的状态归闭包所有，不依赖 this。"
+      ],
+      "addedRubric": [
+        "边界自检：默认 start、负数 start、连续两次 reset 与两个实例交错调用均满足原约定。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：闭包与共享词法环境",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Closures",
+          "checked": "核对闭包访问词法环境、同次工厂调用的方法共享绑定，不同调用环境独立；快照对照例为原创。"
+        }
+      ]
+    },
+    "js-this": {
+      "addedSectionTitles": [
+        "把方法交出去之前，检查接收者还在不在",
+        "箭头回调借用外层，而不是从属性名推断 this"
+      ],
+      "addedQuestionIds": [
+        "js-this-v111-q1",
+        "js-this-v111-q2"
+      ],
+      "addedHints": [
+        "用两个参数和返回对象的方法测试，避免只对零参数示例碰巧正确。",
+        "把返回函数放进另一个对象调用，检查是否仍使用原 obj。"
+      ],
+      "addedRubric": [
+        "原方法的返回值与抛出的错误原样向调用者传递，不转换为 undefined。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：bind 的接收者与返回函数",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind",
+          "checked": "核对绑定函数普通调用的 this 与后续 call/bind 不覆盖已绑定接收者；不推广到 new。"
+        },
+        {
+          "title": "MDN：this 与箭头函数",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this",
+          "checked": "核对严格模式普通调用及箭头函数词法 this，例子明确执行上下文。"
+        }
+      ]
+    },
+    "js-event-loop": {
+      "addedSectionTitles": [
+        "把微任务画成队列，而不是背固定口令",
+        "await 已完成的 Promise，不等于给绘制让路"
+      ],
+      "addedQuestionIds": [
+        "js-event-loop-v111-q1",
+        "js-event-loop-v111-q2"
+      ],
+      "addedHints": [
+        "用 []、普通值任务、异步任务、第二项抛错四组输入检查。",
+        "失败用一个额外数组记录已启动任务，确认失败后第三项工厂从未被调用。"
+      ],
+      "addedRubric": [
+        "同步抛错和异步拒绝都应停止后续工厂；验证启动次数，不能仅看最终返回值。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：微任务检查点",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide",
+          "checked": "核对微任务会继续清空新入队的微任务、递归微任务可能延迟其他任务；不保证具体绘制时刻。"
+        }
+      ]
+    },
+    "js-promise": {
+      "addedSectionTitles": [
+        "链条是否连上，取决于有没有 return",
+        "错误恢复、错误上抛和最终清理是三种选择"
+      ],
+      "addedQuestionIds": [
+        "js-promise-v111-q1",
+        "js-promise-v111-q2"
+      ],
+      "addedHints": [
+        "分别让 fetchUser 同步抛错、返回拒绝 Promise、成功返回姓名，核对三个路径。",
+        "成功用小写姓名验证转换；异常用同一个 Error 实例验证没有被吞掉。"
+      ],
+      "addedRubric": [
+        "失败不得转换成空字符串或 undefined；调用方必须能通过 catch 捕获同步抛错及异步拒绝。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：Promise.then 返回值规则",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then",
+          "checked": "核对回调普通值、Promise、抛错及缺少返回值的传播语义。"
+        },
+        {
+          "title": "MDN：Promise.finally",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/finally",
+          "checked": "核对 finally 普通返回值不替换原结果、抛错或返回拒绝 Promise 可改变结果。"
+        }
+      ]
+    },
+    "js-async": {
+      "addedSectionTitles": [
+        "启动时间、完成时间和结果位置分别记录",
+        "forEach 不负责等待异步回调的作业"
+      ],
+      "addedQuestionIds": [
+        "js-async-v111-q1",
+        "js-async-v111-q2"
+      ],
+      "addedHints": [
+        "用可手动 resolve 的两个 Promise 检查：两次调用都发生后，再完成 B、A，结果仍为 {a,b}。",
+        "构造一个拒绝的异步任务，检查调用方能捕获；不要声称另一个任务已自动取消。"
+      ],
+      "addedRubric": [
+        "结果映射按参数身份而非完成先后；失败路径不返回伪造的成功对象。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：Promise.all 的顺序与拒绝",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all",
+          "checked": "核对输入顺序保留、聚合拒绝不自动取消其他操作，原创手动完成实验。"
+        },
+        {
+          "title": "MDN：forEach 不等待 Promise",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach",
+          "checked": "核对 forEach 期望同步回调且不等待 Promise；对照 for...of 与 map/all。"
+        }
+      ]
+    },
+    "js-fetch": {
+      "addedSectionTitles": [
+        "给网络请求画出三个可能失败的关口",
+        "搜索框的旧响应为什么会覆盖新结果"
+      ],
+      "addedQuestionIds": [
+        "js-fetch-v111-q1",
+        "js-fetch-v111-q2"
+      ],
+      "addedHints": [
+        "用 fetch 替身分别提供404、合法JSON、非法JSON、拒绝Promise，检查错误不会被空对象掩盖。",
+        "记录替身收到的 options.signal，确认透传的是调用方传入的同一个信号。"
+      ],
+      "addedRubric": [
+        "非JSON正文的解析异常与网络/取消异常均继续传出；HTTP失败错误包含原状态码。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：fetch 状态、正文与取消",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch",
+          "checked": "核对 HTTP 错误不自动拒绝、读取正文是第二异步阶段、正文不可重复消费与 AbortController。"
+        },
+        {
+          "title": "React：忽略过期网络结果",
+          "url": "https://react.dev/learn/synchronizing-with-effects",
+          "checked": "核对异步结果竞态需要取消或忽略过期结果；迁移为不依赖框架的搜索序号思考题。"
+        }
+      ]
+    },
+    "browser-events": {
+      "addedSectionTitles": [
+        "捕获、目标、冒泡是一条路径上的不同位置",
+        "取消默认行为和清理监听器都需要明确条件"
+      ],
+      "addedQuestionIds": [
+        "browser-events-v111-q1",
+        "browser-events-v111-q2"
+      ],
+      "addedHints": [
+        "在注册后动态追加li再删除，证明不是给原有按钮逐个绑定。",
+        "调用返回的解绑函数后再次点击，检查没有继续删除；重复解绑应无额外副作用。"
+      ],
+      "addedRubric": [
+        "新增条目、按钮内嵌元素、非删除区域与解绑后的行为均按约定处理。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：preventDefault 与事件传播",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault",
+          "checked": "核对取消默认行为不停止传播、不可取消事件与passive限制。"
+        },
+        {
+          "title": "MDN：移除监听器的匹配条件",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener",
+          "checked": "核对类型、同一函数引用和capture标志；不要求整个options对象相同。"
+        }
+      ]
+    },
+    "css-display": {
+      "addedSectionTitles": [
+        "Flex 的剩余空间，不是给每个孩子写百分比",
+        "Grid 的轨道宽度和卡片内容一起验证"
+      ],
+      "addedQuestionIds": [
+        "css-display-v111-q1",
+        "css-display-v111-q2"
+      ],
+      "addedHints": [
+        "给card放很长的文字，并用开发者工具测边框盒，区分内容溢出与盒子本身的240px。",
+        "同时检查水平margin总占16px，但不要把它加进边框盒width。"
+      ],
+      "addedRubric": [
+        "计算检查：边框盒240px、内容204px；左右margin另占16px，不通过裁剪来伪造尺寸正确。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：min-width 的自动最小尺寸",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/min-width",
+          "checked": "核对flex/grid项目自动最小宽度受内容等条件影响，以及显式最小宽度的作用。"
+        },
+        {
+          "title": "MDN：Grid 的 minmax",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/minmax",
+          "checked": "核对minmax定义轨道下限与上限；示例分别控制轨道、文本与代码溢出。"
+        }
+      ]
+    },
+    "css-bfc": {
+      "addedSectionTitles": [
+        "用容器边框观察浮动究竟有没有被算进高度",
+        "边界阻止的是跨越边界的折叠"
+      ],
+      "addedQuestionIds": [
+        "css-bfc-v111-q1",
+        "css-bfc-v111-q2"
+      ],
+      "addedHints": [
+        "把头像临时改高再恢复80px，确认父容器靠布局规则包含浮动，而非固定高度。",
+        "检查没有为了解决浮动高度而添加隐藏越界内容的裁剪。"
+      ],
+      "addedRubric": [
+        "父容器采用自动高度；不通过写死80px绕过浮动包含规则。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：BFC包含浮动与折叠边界",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Display/Block_formatting_context",
+          "checked": "核对flow-root包含内部浮动与父子边界折叠；明确内部相邻普通块仍按margin折叠条件分析。"
+        },
+        {
+          "title": "MDN：外边距折叠条件",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Box_model/Margin_collapsing",
+          "checked": "核对正外边距折叠取大值、flex/grid项目不按普通块margin折叠。"
+        }
+      ]
+    },
+    "react-state": {
+      "addedSectionTitles": [
+        "逐项处理更新队列，而不是修改当前变量",
+        "新数组不等于里面的对象都已经复制"
+      ],
+      "addedQuestionIds": [
+        "react-state-v111-q1",
+        "react-state-v111-q2"
+      ],
+      "addedHints": [
+        "点击一次显示5，两次显示10；不要只测试初始0的一次点击。",
+        "更新函数内只返回c+1；请求、日志统计等副作用放在适当的事件处理流程。"
+      ],
+      "addedRubric": [
+        "更新函数保持纯净；连续多次点击仍每次增加5，不能依赖首次渲染的旧count。"
+      ],
+      "sources": [
+        {
+          "title": "React：状态更新队列",
+          "url": "https://react.dev/learn/queueing-a-series-of-state-updates",
+          "checked": "核对替换值和更新函数的队列处理、纯更新函数与本次快照不被set改写。"
+        },
+        {
+          "title": "React：不可变更新数组",
+          "url": "https://react.dev/learn/updating-arrays-in-state",
+          "checked": "核对数组展开为浅复制，更新嵌套对象需复制变化路径；原创收藏/完成状态练习。"
+        }
+      ]
+    },
+    "react-effects": {
+      "addedSectionTitles": [
+        "每次 setup 的资源，由那次 cleanup 收回",
+        "清理异步任务时，同时决定是否接受旧结果"
+      ],
+      "addedQuestionIds": [
+        "react-effects-v111-q1",
+        "react-effects-v111-q2"
+      ],
+      "addedHints": [
+        "用subscribe替身记录每次id与unsubscribe调用；切换频道、替换subscribe、卸载各测一次。",
+        "旧订阅解除后不应继续推送；若真实订阅可能有在途消息，拓展时为回调增加有效标记。"
+      ],
+      "addedRubric": [
+        "每个setup返回的unsubscribe在对应清理时调用，不误清理新频道，不遗留重复订阅。"
+      ],
+      "sources": [
+        {
+          "title": "React：Effect的同步、清理与竞态",
+          "url": "https://react.dev/learn/synchronizing-with-effects",
+          "checked": "核对依赖变化清理、开发StrictMode额外setup/cleanup、忽略过期请求结果与纯派生值不必使用Effect。"
+        }
+      ]
+    },
+    "vue-reactivity": {
+      "addedSectionTitles": [
+        "解构的是普通数值，还是到属性的连接",
+        "数据已经变了，DOM更新还需要等一个时机"
+      ],
+      "addedQuestionIds": [
+        "vue-reactivity-v111-q1",
+        "vue-reactivity-v111-q2"
+      ],
+      "addedHints": [
+        "连续点击、通过state.count赋值、通过count.value赋值三种路径都应反映到同一状态。",
+        "脚本里修改count.value，模板中使用顶层count；不要在模板里误把ref对象当普通数值参与脚本计算。"
+      ],
+      "addedRubric": [
+        "保留state.count与解构ref的双向连接，不能只复制初始数值后维护两份独立计数。"
+      ],
+      "sources": [
+        {
+          "title": "Vue：响应性基础与DOM更新时机",
+          "url": "https://vuejs.org/guide/essentials/reactivity-fundamentals.html",
+          "checked": "核对reactive基本类型解构限制、nextTick、ref在数组与模板中的解包范围。"
+        },
+        {
+          "title": "Vue：toRefs属性连接",
+          "url": "https://vuejs.org/api/reactivity-utilities.html#torefs",
+          "checked": "核对toRefs连接原对象属性且仅转换调用时可枚举已有属性。"
+        }
+      ]
+    },
+    "browser-security": {
+      "addedSectionTitles": [
+        "纯文本输入，不能经过HTML解释这条路",
+        "服务器要验证操作意图，浏览器禁读不等于禁发"
+      ],
+      "addedQuestionIds": [
+        "browser-security-v111-q1",
+        "browser-security-v111-q2"
+      ],
+      "addedHints": [
+        "测试作者和正文分别为标签字符串、空字符串、缺失字段，观察结构与字面内容。",
+        "渲染后检查article内没有用户输入生成的img、script或事件属性。"
+      ],
+      "addedRubric": [
+        "恶意样式的输入仍保留为文字；不能用删除危险字样代替正确的文本节点输出。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：XSS与输出上下文",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/XSS",
+          "checked": "核对不可信输入解释为代码的风险、输出上下文与净化/编码责任。"
+        },
+        {
+          "title": "MDN：textContent与innerHTML区别",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent",
+          "checked": "核对textContent不进行HTML解析，纯文本输出示例为原创。"
+        },
+        {
+          "title": "MDN：CSRF的多层防护",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/CSRF",
+          "checked": "核对状态变更、SameSite非完整防护、token需服务端验证及跨站请求和读响应的区分。"
+        }
+      ]
+    },
+    "browser-cache": {
+      "addedSectionTitles": [
+        "同一个URL，先问保存，再问是否仍可直接复用",
+        "缓存键要能区分真正不同的表示"
+      ],
+      "addedQuestionIds": [
+        "browser-cache-v111-q1",
+        "browser-cache-v111-q2"
+      ],
+      "addedHints": [
+        "检查缺失If-None-Match、精确\"v2\"、不同版本三种输入；注意双引号是标签字符串的一部分。",
+        "304返回对象应没有body字段，200必须有hello；不要对304拼造空JSON。"
+      ],
+      "addedRubric": [
+        "严格保留本题简化边界，不把未要求支持的标签列表或弱标签误判为匹配。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：HTTP缓存、验证与Vary",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching",
+          "checked": "核对private/no-cache/no-store、ETag与304复用流程、Accept-Language参与Vary缓存键。"
+        }
+      ]
+    },
+    "html-semantics": {
+      "addedSectionTitles": [
+        "一个输入框需要名字，也需要填写说明",
+        "可见焦点和合理顺序，让键盘用户知道自己在哪里"
+      ],
+      "addedQuestionIds": [
+        "html-semantics-v111-q1",
+        "html-semantics-v111-q2"
+      ],
+      "addedHints": [
+        "用鼠标点label、用Tab定位输入、空值提交和无效邮箱提交分别检查原生行为。",
+        "增加“查看说明”操作时写type=button，避免误提交；保留提交按钮type=submit。"
+      ],
+      "addedRubric": [
+        "页面内id唯一、label关联正确，键盘焦点可辨识；不可仅靠placeholder或颜色解释输入要求。"
+      ],
+      "sources": [
+        {
+          "title": "MDN：label的关联与唯一id",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/label",
+          "checked": "核对for/id显式关联、id文档唯一与label的交互用途。"
+        },
+        {
+          "title": "MDN：aria-describedby说明关联",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-describedby",
+          "checked": "核对描述与名称区别、同文档id引用，不以说明替代label。"
+        },
+        {
+          "title": "MDN：键盘可访问性",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility/Guides/Understanding_WCAG/Keyboard",
+          "checked": "核对可见焦点、避免正tabindex重排与原生交互控件。"
+        }
+      ]
+    }
+  }
+}
