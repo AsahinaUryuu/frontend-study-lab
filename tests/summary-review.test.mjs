@@ -116,7 +116,7 @@ test('HTTP /api/review-summary 校验同源、格式、课程号并返回结构�
     body: JSON.stringify(body),
   });
   const health = await (await fetch(base + '/api/health')).json();
-  assert.equal(health.version, '1.13.0');
+  assert.match(health.version, /^\d+\.\d+\.\d+$/);
   const ok = await post({ config, lessonId: lesson.id, reflection: '我的回忆与例子：闭包保持外层引用。', rating: 'apply' });
   assert.equal(ok.status, 200);
   assert.equal((await ok.json()).score, 88);

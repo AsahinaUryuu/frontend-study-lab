@@ -21,8 +21,8 @@
   },
   {
     "path": "README.md",
-    "sha256": "4a127171206ef051c94c323909de2dc9ffe448856af90a234de5664c4cc7a9d3",
-    "bytes": 5709
+    "sha256": "ac635313704ca5d1d0f9039cefe3cd94ee860164698eaf214ffabd8af4c7e6fe",
+    "bytes": 6050
   },
   {
     "path": "lib/config.mjs",
@@ -91,13 +91,13 @@
   },
   {
     "path": "package.json",
-    "sha256": "f3aa94e7a2d2483da51757f4b73010779002a74f1018b529955ab43f0d84c4fd",
+    "sha256": "13b60cc0a5ea6658bfe80256ba518d555a70f076158af2c7e3251e69c6a94cb8",
     "bytes": 304
   },
   {
     "path": "public/app.js",
-    "sha256": "50685773dd7c1c789ec849ee10cee57d169a4846055ce2f55851451f2b37815d",
-    "bytes": 84374
+    "sha256": "f83600cb914a6dcbb77c1e44cb1a331165c0b2f54b040a8e3150db3185dc9407",
+    "bytes": 84928
   },
   {
     "path": "public/backup-manager.css",
@@ -108,6 +108,16 @@
     "path": "public/backup-manager.js",
     "sha256": "d0669569be1d10a9723179716ecd87ca966d0a9d917c3f9fddbec4e0e9f32170",
     "bytes": 9305
+  },
+  {
+    "path": "public/challenge-guide.js",
+    "sha256": "81ef7d0ab1b2653727e8989520fa08de6fdfbfa514907ef74614e928102c2b67",
+    "bytes": 4812
+  },
+  {
+    "path": "public/challenge-guides.json",
+    "sha256": "0af9072f404994ea9e027d4b20c68aff1eb3c0a460b3655b377f6d516ceef2c5",
+    "bytes": 218975
   },
   {
     "path": "public/cloud-progress.js",
@@ -141,7 +151,7 @@
   },
   {
     "path": "public/index.html",
-    "sha256": "a95f04eaa872f326b07929571a6bc8206a92aa0098671c9d71222a191124dc02",
+    "sha256": "22468fd42290cccadcf15c69c6e83ec762eb4113bbb329c4ec3f0bcf66ccccde",
     "bytes": 5211
   },
   {
@@ -205,6 +215,11 @@
     "bytes": 1389
   },
   {
+    "path": "public/releases/1.14.0.md",
+    "sha256": "49e1629695f20e910125df12f66720e60abec1054cf50cb08e98a75a1af69119",
+    "bytes": 1852
+  },
+  {
     "path": "public/review-snapshot.js",
     "sha256": "7d19326727a61e4b6ca6f3e7645eedbf774ff04443bd264590fff6b588863832",
     "bytes": 1442
@@ -236,8 +251,8 @@
   },
   {
     "path": "public/style.css",
-    "sha256": "f0064de820220ca86daba825055b0ebbdee92046ab738f39b7f5c0af71a6767c",
-    "bytes": 46325
+    "sha256": "9cdbf1e909c3baa56234d1e0f292325e72672c80aebc64d9e5337a49f353413b",
+    "bytes": 50767
   },
   {
     "path": "public/tablet-ux.js",
@@ -341,8 +356,8 @@
   },
   {
     "path": "public/updates.html",
-    "sha256": "a9ea3320ba23947d04fa58206374e10b4bf38fce6ee6db8d2531dfc8f59d3935",
-    "bytes": 13637
+    "sha256": "f377c597f3fce384438146642d4b6df63f1d771e400169bd91a8e4a4fc364ef6",
+    "bytes": 15272
   },
   {
     "path": "public/vendor/LICENSES.txt",
@@ -396,7 +411,7 @@
   },
   {
     "path": "server.mjs",
-    "sha256": "cc43e817734cdb78ce5cd01ea8369b91428d4a595b3adbfb57c9f7d0c585298e",
+    "sha256": "774b637bf2cf2a05859bba30dd3a05feb86cb8f154322e87f272a12968778f91",
     "bytes": 9288
   },
   {
@@ -408,6 +423,11 @@
     "path": "tests/backup-manager-ui.test.mjs",
     "sha256": "94e04633f4c7fd5f4c3d73b95958646ea58c2ea7cb8adb512865b2915bdb0507",
     "bytes": 3774
+  },
+  {
+    "path": "tests/challenge-guide.test.mjs",
+    "sha256": "0fd729381e62d6463ee68d02592568e0891873d4239f7470f889421b3e320d8b",
+    "bytes": 5593
   },
   {
     "path": "tests/cloud-progress.test.mjs",
@@ -556,8 +576,8 @@
   },
   {
     "path": "tests/summary-review.test.mjs",
-    "sha256": "9314fb88c6a1bc78e8bc16e6a981a413b6251aa7a608d0070915b193559c434f",
-    "bytes": 7125
+    "sha256": "844cac38f7d05c33ad1aa34efb1d646698dbadfb9b68a82df0ad24b28ad77791",
+    "bytes": 7134
   },
   {
     "path": "tests/teaching-integration.test.mjs",

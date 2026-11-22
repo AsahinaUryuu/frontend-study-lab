@@ -1,0 +1,3303 @@
+{
+  "js-types": {
+    "plainGoal": "写一个类型判断函数 kindOf(value)，补上 typeof 的两个著名短板：把 null 和数组准确标成 \"null\" 和 \"array\"，其余值直接沿用 typeof 的结果。",
+    "scenario": "写通用表单校验、日志打印或接口数据清洗工具时，经常要先分清拿到的值到底是空值、数组还是普通对象，不能让它们全混成 \"object\"。",
+    "examples": [
+      {
+        "input": "kindOf(null)",
+        "expected": "\"null\"",
+        "why": "typeof null 在 JS 里会历史遗留地返回 \"object\"，所以要先单独拦截并修正为 \"null\"。"
+      },
+      {
+        "input": "kindOf([])",
+        "expected": "\"array\"",
+        "why": "数组用 typeof 也会得到 \"object\"，必须先专门识别出数组并返回 \"array\"，同时不能误伤普通对象 {}。"
+      },
+      {
+        "input": "kindOf(1n)",
+        "expected": "\"bigint\"",
+        "why": "BigInt 不属于 null 或数组，走兜底的 typeof 就会直接返回 \"bigint\"（普通对象 {} 返回 \"object\"，函数返回 \"function\"）。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先单独判断传入的值是不是 null，如果是就直接返回字符串 \"null\"，避开 typeof null 得到 \"object\" 的经典坑。",
+      "第 2 步：再专门判断传入的值是不是数组，是的话返回 \"array\"，注意不要把普通对象 {} 误判成数组。",
+      "第 3 步：排除上面两种特殊情况后，其余数字、字符串、undefined、普通对象、函数和 BigInt 都直接交给 typeof 返回结果。"
+    ],
+    "jargon": [
+      {
+        "term": "typeof",
+        "plain": "JS 自带的类型探测运算符，能分辨大多数基础类型和函数，但会把 null 和数组都笼统报成 \"object\"。"
+      },
+      {
+        "term": "1n（BigInt）",
+        "plain": "数字末尾加 n 表示任意精度大整数类型，用来存放超出普通数字安全范围的超大整数，它的 typeof 结果是 \"bigint\"。"
+      }
+    ]
+  },
+  "js-equality": {
+    "plainGoal": "不借助 Object.is，自己写出 sameValue(a, b) 来判断两个值是否真正相同：让两个 NaN 算相等、+0 和 -0 算不等，其余情况和 === 完全一致。",
+    "scenario": "自己实现类似 React 状态变更检测或缓存键比对时，如果某个状态一直保持 NaN，直接用 === 会误判成“值每次都变了”从而触发无效重算。",
+    "examples": [
+      {
+        "input": "sameValue(NaN, NaN)",
+        "expected": "true",
+        "why": "用 === 比较两个 NaN 会得到 false，而 SameValue 规则把两个 NaN 视为同一个值。"
+      },
+      {
+        "input": "sameValue(0, -0)",
+        "expected": "false",
+        "why": "虽然 0 === -0 是 true，但它们的倒数分别是正无穷和负无穷，SameValue 会把正负零严格区分开。"
+      },
+      {
+        "input": "sameValue(3, 3)",
+        "expected": "true",
+        "why": "除 NaN 和正负零外，普通值与对象引用都完全沿用 === 的严格相等行为（两个不同对象 {} 仍返回 false）。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先用 === 判断 a 和 b 是否相等；如果已经相等，唯一还要提防的特例就是 +0 和 -0 被混为一谈。",
+      "第 2 步：在 === 成立的分支里，只要不是零就直接判定相等；如果值为零，就利用“正零和负零取倒数后正负无穷不同”的特点做区分。",
+      "第 3 步：如果 === 不成立，唯一还应返回 true 的情况是“两边都是 NaN”，利用 JS 里只有 NaN 自己不等于自己这一特点就能准确筛出。"
+    ],
+    "jargon": [
+      {
+        "term": "SameValue",
+        "plain": "JS 规范定义的“同值相等”规则（也是 Object.is 背后的算法），相比 === 只改了 NaN 和正负零这两个边界。"
+      },
+      {
+        "term": "Object.is",
+        "plain": "JS 内置的精确比较方法，专门用来弥补 === 在 NaN 和正负零上的两个特例，本题要求不调用它而是手写同等逻辑。"
+      },
+      {
+        "term": "+0 / -0",
+        "plain": "浮点数里带正负号的两个零，日常比较用 === 会认为它们相等，但拿 1 除以它们时会分别变成 +Infinity 和 -Infinity。"
+      }
+    ]
+  },
+  "js-prototype": {
+    "plainGoal": "手写简化版 instanceof 函数 isInstance(value, Ctor)，顺着 value 的原型链一层层往上找，看看能否碰到构造函数的 prototype 原型对象。",
+    "scenario": "封装自定义业务错误类或排查组件继承关系时，经常需要准确判断某个对象实例到底是不是某条继承链上的后代。",
+    "examples": [
+      {
+        "input": "isInstance([], Array)",
+        "expected": "true",
+        "why": "空数组 [] 的直接上级原型就是 Array.prototype，往上查第一层就能命中。"
+      },
+      {
+        "input": "isInstance([], Object)",
+        "expected": "true",
+        "why": "从 [] 往上先到 Array.prototype，再往上一层就是 Object.prototype，顺着链条依然能找到。"
+      },
+      {
+        "input": "isInstance(null, Object)",
+        "expected": "false",
+        "why": "null 以及数字、字符串、布尔值等原始值没有对象原型链查找资格，直接返回 false。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先做入口过滤：如果 value 是 null，或者 typeof 既不是对象也不是函数（也就是原始值），直接返回 false。",
+      "第 2 步：获取 value 的上一级原型作为查找起点（注意比较的是上级原型，不是 value 本身）。",
+      "第 3 步：用循环沿着原型链不断向上取父级原型，只要某一层严格等于 Ctor.prototype 就立即返回 true。",
+      "第 4 步：如果一直爬到原型链尽头 null 还没匹配到，说明不在继承链上，返回 false。"
+    ],
+    "jargon": [
+      {
+        "term": "原型链",
+        "plain": "对象找不到属性时会一层层向上求助的“上级对象链条”，链条的最顶端是 null。"
+      },
+      {
+        "term": "Ctor.prototype",
+        "plain": "构造函数自带的共享模板对象，所有通过该函数构造出的实例，其上级原型都会指向这里。"
+      },
+      {
+        "term": "Symbol.hasInstance",
+        "plain": "允许类自定义 instanceof 判定逻辑的特殊钩子，本题为了专注原型链遍历，特意说明无需处理它。"
+      }
+    ]
+  },
+  "js-copy": {
+    "plainGoal": "写一个 moveCity(user, city) 函数，把用户的城市改成新值并返回全新用户对象，同时把原 user 和它内部的 address 保持原样不被改动。",
+    "scenario": "在 React、Redux 或 Zustand 中更新嵌套的用户资料（如修改收货地址里的城市）时，若直接改属性或只复制最外层，会导致视图不刷新或污染旧状态快照。",
+    "examples": [
+      {
+        "input": "moveCity({ name: \"小林\", address: { city: \"上海\", zip: \"200000\" } }, \"杭州\")",
+        "expected": "{ name: \"小林\", address: { city: \"杭州\", zip: \"200000\" } }",
+        "why": "只有 address.city 被更新为 \"杭州\"，外层的 name 和内层的 zip 都完整保留下来。"
+      },
+      {
+        "input": "const u = { name: \"小林\", address: { city: \"上海\" } }; const next = moveCity(u, \"杭州\"); [u.address.city, next !== u, next.address !== u.address]",
+        "expected": "[\"上海\", true, true]",
+        "why": "原用户的城市没有被篡改，而且新旧对象的外层和 address 都是彼此独立的新对象。"
+      }
+    ],
+    "steps": [
+      "第 1 步：避免直接给 user.address.city 赋值，否则会顺着引用把传入的原对象一起改坏。",
+      "第 2 步：先基于原 user.address 复制出一个全新的地址对象，保留 zip 等原有字段，只把 city 覆盖为新城市。",
+      "第 3 步：再基于原 user 复制出一个全新的外层用户对象，保留 name 等其他字段，并把 address 指向第 2 步创建的新地址对象后返回。"
+    ],
+    "jargon": [
+      {
+        "term": "不可变更新",
+        "plain": "修改嵌套数据时不动原对象，而是沿着被改动的路径逐层复制出新对象返回，让旧快照保持干净。"
+      },
+      {
+        "term": "展开浅复制",
+        "plain": "用对象展开只复制最外一层属性，如果里面嵌套了子对象且不单独再复制一层，新旧对象还是会共用同一个子对象。"
+      }
+    ]
+  },
+  "js-objects": {
+    "plainGoal": "实现 cloneWithDescriptors(obj)，把普通对象的原型和全部自有属性（含不可枚举属性、Symbol、只读标志和 getter）完整拓印到新对象上，且复制时不触发 getter。",
+    "scenario": "封装配置对象、写工具库或插件系统时，普通展开运算符会丢掉原型链、隐藏属性和只读保护，还会顺手把 getter 提前算成固定值，此时就需要按完整描述符浅克隆。",
+    "examples": [
+      {
+        "input": "const proto = { group: \"student\" }; const orig = Object.create(proto); Object.defineProperty(orig, \"score\", { value: 90, enumerable: false, writable: false }); const copy = cloneWithDescriptors(orig)",
+        "expected": "copy.score === 90，Object.getPrototypeOf(copy) === proto，且 copy 上 score 的描述符仍为 enumerable: false、writable: false",
+        "why": "完整复刻了原型链与属性描述符，隐藏属性和只读约束都不会在复制后失效。"
+      },
+      {
+        "input": "let hits = 0; const orig = { get tag() { hits++; return \"v1\"; } }; const copy = cloneWithDescriptors(orig)",
+        "expected": "hits === 0，且 copy 的 tag 仍是 getter 而非静态值 \"v1\"",
+        "why": "复制过程直接搬运描述符定义而不去读取属性值，因此 getter 不会在克隆时被意外执行。"
+      },
+      {
+        "input": "cloneWithDescriptors(null)",
+        "expected": "抛出 TypeError",
+        "why": "null 或数字、字符串等非对象无法克隆，入口需要拒绝并抛出类型错误。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先校验参数 obj，只要它是 null 或 typeof 不是 \"object\"，就直接抛出 TypeError。",
+      "第 2 步：分别读取原对象的两份结构信息：一是它的原型对象，二是它全部自有属性的完整描述符集合（这一步会自动包含不可枚举属性、Symbol 键和 getter，且不会触发 getter）。",
+      "第 3 步：利用“按指定原型和属性描述符创建对象”的内置方法一次性造出副本并返回，同时记住这只是浅复制，嵌套子对象引用保持共享。"
+    ],
+    "jargon": [
+      {
+        "term": "属性描述符",
+        "plain": "记录一个属性全部底层规则的“身份证”，包括它的值或 getter/setter，以及是否可写（writable）、可遍历（enumerable）、可配置（configurable）。"
+      },
+      {
+        "term": "Symbol",
+        "plain": "JS 里用来创建独一无二属性名的特殊类型，常用于隐藏内部字段，普通的 for...in 或 Object.keys 看不到它。"
+      },
+      {
+        "term": "内部槽",
+        "plain": "像 Date 存时间戳、Map 存键值对表格那样藏在引擎底层的私有状态，不能仅靠复制普通属性描述符搬到新对象上。"
+      }
+    ]
+  },
+  "js-this": {
+    "plainGoal": "实现 bindMethod(obj, key)，把对象上的某个方法提前锁死给原对象，哪怕单独拿出去当回调或挂到别的对象上调用，this 依然指向 obj 且参数和返回值原样透传。",
+    "scenario": "把对象方法直接传给按钮点击监听、定时器或数组回调时，方法脱离原对象执行会导致 this 丢失报错，提前绑定接收者可以彻底避免这个问题。",
+    "examples": [
+      {
+        "input": "const student = { name: \"小林\", greet(prefix, end) { return prefix + this.name + end; } }; const greet = bindMethod(student, \"greet\"); greet(\"你好，\", \"！\")",
+        "expected": "\"你好，小林！\"",
+        "why": "方法脱离 student 独立调用时，this 仍稳稳指向 student，且传入的多个参数和返回值都原样传递。"
+      },
+      {
+        "input": "const other = { name: \"路人\", run: bindMethod(student, \"greet\") }; other.run(\"嗨，\", \"\")",
+        "expected": "\"嗨，小林\"",
+        "why": "即使把绑定后的函数挂到另一个对象 other 上调用，接收者依然是原来的 student，不会被 other 改写。"
+      },
+      {
+        "input": "const box = { boom() { throw new Error(\"出错\"); } }; bindMethod(box, \"boom\")()",
+        "expected": "原样抛出 Error(\"出错\")",
+        "why": "包装函数不吞掉异常，原方法抛出的错误会直接传递给调用方。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 bindMethod 内部先通过 obj[key] 取出原方法并保存下来。",
+      "第 2 步：返回一个新的普通包装函数，使用剩余参数接收调用方传入的任意数量参数。",
+      "第 3 步：在包装函数里显式指定 obj 作为 this 来调用原方法并传入全部参数，最后直接把原方法的执行结果 return 出去。"
+    ],
+    "jargon": [
+      {
+        "term": "接收者",
+        "plain": "调用方法时点号前面的那个对象（即函数内部 this 指向的对象），比如 student.greet() 的接收者就是 student。"
+      },
+      {
+        "term": "透传",
+        "plain": "中间包装层不做删改，把外界传来的所有参数原样递给原函数，再把原函数的返回值或错误原样交回给调用方。"
+      }
+    ]
+  },
+  "js-proxy": {
+    "plainGoal": "用 Proxy 实现 createPerson(initialAge)，造出一个带年龄校验的对象：初始化和之后每次给 age 赋值都只允许非负整数，不合法就抛 RangeError，其他字段正常读写。",
+    "scenario": "编写数据模型或表单状态容器时，为了防止业务代码误把年龄、库存、数量写成负数、小数或字符串，可以在赋值入口加一层代理实时拦下脏数据。",
+    "examples": [
+      {
+        "input": "const p = createPerson(18); p.age = 20; p.name = \"小林\"; [p.age, p.name]",
+        "expected": "[20, \"小林\"]",
+        "why": "20 是合法的非负整数，允许修改；name 不是 age 字段，直接放行正常写入。"
+      },
+      {
+        "input": "const p = createPerson(18); p.age = -1",
+        "expected": "抛出 RangeError，且 p.age 保持原来的 18",
+        "why": "set 拦截器在真正写入前检查出 -1 不合法，立刻抛错并阻止了非法赋值。"
+      },
+      {
+        "input": "createPerson(18.5)",
+        "expected": "抛出 RangeError",
+        "why": "初始化阶段同样执行年龄校验，18.5 不是整数，对象创建时就会被拒绝。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先把“检查是否为非负整数、否则抛出 RangeError”抽成一个共用校验函数，避免初始化和赋值两处逻辑不一致。",
+      "第 2 步：在创建代理对象之前，先用校验函数检查 initialAge，挡住非法初始值。",
+      "第 3 步：用 Proxy 包裹包含 age 的目标对象，并在 set 拦截器里判断：只有当赋值的属性名是 \"age\" 时才触发校验，其他属性不误拦。",
+      "第 4 步：校验通过后，通过 Reflect.set 把赋值操作标准转发给目标对象，并返回它的布尔成功状态。"
+    ],
+    "jargon": [
+      {
+        "term": "Proxy（代理）",
+        "plain": "给普通对象套上一层“门卫”，之后外部对对象的赋值等操作都要先经过门卫检查再放行。"
+      },
+      {
+        "term": "转发（Reflect.set）",
+        "plain": "拦截检查通过后，按 JS 标准行为把这次赋值真正落到目标对象上，并返回本次写入是否成功的布尔值。"
+      },
+      {
+        "term": "RangeError",
+        "plain": "JS 内置的错误类型之一，专门用来表示数值超出了允许的有效范围。"
+      }
+    ]
+  },
+  "js-json": {
+    "plainGoal": "实现 parseProfile(text)，安全解析用户资料 JSON：只接受含字符串 name 和非负整数 age 的普通对象并只保留这两个字段，碰到坏 JSON、数组、null 或非法字段一律返回 null。",
+    "scenario": "从 localStorage 读取本地缓存的用户信息，或解析外部配置文件时，文本可能损坏、字段类型不对或混进多余脏属性，必须先安全解析再严格校验才能进业务状态。",
+    "examples": [
+      {
+        "input": "parseProfile('{\"name\":\"小林\",\"age\":18,\"role\":\"admin\"}')",
+        "expected": "{ name: \"小林\", age: 18 }",
+        "why": "name 和 age 都合法，按白名单只提取这两个字段，顺手丢弃多余的 role。"
+      },
+      {
+        "input": "parseProfile('{\"name\":123,\"age\":-1}')",
+        "expected": "null",
+        "why": "虽然符合 JSON 语法，但 name 不是字符串且 age 为负数，字段校验不通过，返回 null。"
+      },
+      {
+        "input": "parseProfile('{broken')",
+        "expected": "null",
+        "why": "JSON 语法损坏会让解析抛错，函数需捕获异常并安全返回 null（传入 \"null\" 或 \"[1,2]\" 同样返回 null）。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先确认传入的 text 是字符串，不是就直接返回 null；再用 try/catch 包裹 JSON.parse，捕获一切语法损坏错误并返回 null。",
+      "第 2 步：检查解析结果是不是普通对象，把 null、数组以及纯数字或字符串等非对象全部淘汰。",
+      "第 3 步：校验字段规则：name 必须是字符串，age 必须是非负整数，任意一项不满足都返回 null。",
+      "第 4 步：全部通过后，新建一个只包含 name 和 age 两个属性的白名单对象返回，不要直接把原对象里多余的字段带出去。"
+    ],
+    "jargon": [
+      {
+        "term": "持久化",
+        "plain": "把内存里的对象序列化成文本存进硬盘或浏览器缓存，让页面刷新或重启后还能恢复数据。"
+      },
+      {
+        "term": "白名单对象",
+        "plain": "只挑出明确允许的几个字段重新拼出新对象，把 JSON 里混进来的未知字段或额外属性全部过滤掉。"
+      }
+    ]
+  },
+  "js-regexp": {
+    "plainGoal": "写一个无状态用户名校验函数 isUsername(value)：只接受 3~12 位的 ASCII 字符串，必须以英文字母开头、后面只能跟字母、数字或下划线，且连续多次调用结果始终稳定。",
+    "scenario": "做账号注册或资料编辑表单的用户名校验时，既要拦截非法字符和错误长度，也要避免误加正则全局标志 g 导致同一个合法名字“第一次过、第二次不过”。",
+    "examples": [
+      {
+        "input": "[isUsername(\"Alice_7\"), isUsername(\"Alice_7\")]",
+        "expected": "[true, true]",
+        "why": "以字母开头、共 7 个合法字符，且校验过程无状态，连续调用多次结果都一致。"
+      },
+      {
+        "input": "isUsername(\"1Alice\")",
+        "expected": "false",
+        "why": "虽然总长度在 3~12 之间，但首字符是数字而不是英文字母，不符合规则。"
+      },
+      {
+        "input": "isUsername(\"ab\")",
+        "expected": "false",
+        "why": "只有 2 个字符，未满最短 3 位限制（同理包含 ! 符号、换行或传入非字符串都会返回 false）。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先做类型判断，只要 value 不是字符串就短路返回 false，防止数字或对象被正则隐式转成字符串后意外通过。",
+      "第 2 步：设计整串匹配的正则：用首尾锚点锁死完整字符串，第一位限制为大小写英文字母，后面紧跟 2 到 11 位英文字母、数字或下划线（合计 3 到 12 位）。",
+      "第 3 步：不要给正则加 g 或 y 标志，确保每次测试都互不影响、不会留下 lastIndex 匹配位置状态。"
+    ],
+    "jargon": [
+      {
+        "term": "无状态校验",
+        "plain": "每次调用的结果只取决于本次输入，不受上次调用残留状态的影响（正则加了 g 标志就会记录上次位置变成有状态）。"
+      },
+      {
+        "term": "ASCII 字符",
+        "plain": "标准英文键盘上的基础字母、数字和符号，不含中文或全角字符，本题限定为英文字母、数字和下划线。"
+      }
+    ]
+  },
+  "js-loading": {
+    "plainGoal": "实现 whenReady(doc, callback)，妥善安排 DOM 初始化代码：文档还在加载时就等 DOMContentLoaded 事件只跑一次；如果文档已经解析完毕就直接同步执行回调。",
+    "scenario": "编写可嵌入任意网页的第三方脚本或使用 async 加载脚本时，代码启动时页面可能还没解析完，也可能早就解析好了，如果死等事件就会永远不执行。",
+    "examples": [
+      {
+        "input": "const doc = { readyState: \"loading\", listeners: {}, addEventListener(t, fn) { this.listeners[t] = fn; } }; whenReady(doc, () => log.push(\"ok\"))",
+        "expected": "此时 log 仍为 []，并已给 DOMContentLoaded 注册带 { once: true } 的监听；当触发该事件时才执行一次回调使 log 变为 [\"ok\"]",
+        "why": "页面处于 loading 状态时 DOM 还没建好，需挂一次性监听等待 DOM 就绪，避免提前找元素失败或重复执行。"
+      },
+      {
+        "input": "whenReady({ readyState: \"complete\" }, () => log.push(\"ready\"))",
+        "expected": "立刻同步执行回调，log 马上变为 [\"ready\"]",
+        "why": "文档已经加载完毕，DOMContentLoaded 早已触发过，直接运行回调才不会永久干等。"
+      },
+      {
+        "input": "whenReady({ readyState: \"interactive\" }, () => log.push(\"ready\"))",
+        "expected": "立刻同步执行回调，log 马上变为 [\"ready\"]",
+        "why": "interactive 表示 HTML 节点树已经解析完成（只差图片等外部资源），DOM 已可安全访问。"
+      }
+    ],
+    "steps": [
+      "第 1 步：读取传入文档对象 doc 的 readyState 属性，判断它当前是不是正处于 \"loading\" 状态。",
+      "第 2 步：如果是 \"loading\"，给 doc 注册 \"DOMContentLoaded\" 事件监听，并传入一次性配置选项确保回调最多只触发一次。",
+      "第 3 步：只要 readyState 不是 \"loading\"（比如 \"interactive\" 或 \"complete\"），说明 DOM 已经就绪，直接同步调用 callback()。"
+    ],
+    "jargon": [
+      {
+        "term": "doc.readyState",
+        "plain": "文档汇报当前加载阶段的状态值，依次经历 \"loading\"（解析中）、\"interactive\"（DOM 就绪）和 \"complete\"（所有图片等资源全载完）。"
+      },
+      {
+        "term": "DOMContentLoaded",
+        "plain": "浏览器把 HTML 解析成可操作的元素树后立刻触发的事件，不用傻等大图和视频下载完成。"
+      },
+      {
+        "term": "模拟测试",
+        "plain": "把 document 当作参数 doc 传进来而不写死全局对象，测试时就能用普通假对象轻松验证加载前后的两种分支。"
+      }
+    ]
+  },
+  "js-dom-bom": {
+    "plainGoal": "写一个窗口宽度订阅器 observeWidth(win, render)：刚启动就立刻把当前宽度通知给 render，窗口每次缩放再次汇报最新宽度，并返回一个可重复安全调用的停止函数。",
+    "scenario": "开发响应式导航栏或自适应宽度的图表组件时，组件挂上页面后要立刻按当前宽度布局并跟随缩放更新，卸载时必须取消监听防止内存泄漏。",
+    "examples": [
+      {
+        "input": "const log = []; const stop = observeWidth(win, w => log.push(w))（初始 win.innerWidth 为 1024）",
+        "expected": "立刻触发一次通知使 log 变为 [1024]，并返回停止函数 stop",
+        "why": "订阅建立时就要推送当前视口宽度，页面无需等用户先手动拉窗口就能拿到初始值。"
+      },
+      {
+        "input": "将 win.innerWidth 改为 768 并触发一次 resize 事件",
+        "expected": "再次通知回调，log 变为 [1024, 768]",
+        "why": "resize 触发时会实时读取最新的 win.innerWidth，而不是一直发送最初缓存的旧宽度。"
+      },
+      {
+        "input": "连续调用两次 stop(); stop();，再把宽度改为 500 并触发 resize 事件",
+        "expected": "不会报错，且不再触发回调，log 保持 [1024, 768]",
+        "why": "停止函数内部有防重入开关且精准移除了同一个监听函数引用，重复清理完全安全。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在函数内准备一个布尔标志位记录订阅是否有效，并把“若仍有效则读取最新 win.innerWidth 交给 render”写成具名回调保存起来。",
+      "第 2 步：把保存好的回调注册到 win 的 resize 事件，并立刻手动执行一次它完成初次通知。",
+      "第 3 步：返回停止函数：先检查标志位，如果已经停过就直接返回，保证重复调用不会出问题。",
+      "第 4 步：首次停止时把标志位关闭，并用第 1 步保存的同一个回调函数引用去调用 removeEventListener 解绑事件。"
+    ],
+    "jargon": [
+      {
+        "term": "视口（win.innerWidth）",
+        "plain": "浏览器窗口里真正用来展示网页内容的可视区域，win.innerWidth 表示它当前的像素宽度。"
+      },
+      {
+        "term": "可释放的订阅",
+        "plain": "在开始监听事件的同时返回一个“退订清理函数”，不用时调一下就能彻底拆掉监听、释放引用。"
+      },
+      {
+        "term": "注入模拟窗口",
+        "plain": "把 window 作为参数 win 传入而不写死全局 window，方便在脱离真实浏览器时用假窗口做自动化测试。"
+      }
+    ]
+  },
+  "js-fetch": {
+    "plainGoal": "封装一个可靠的 fetchJSON(url, { signal } = {})：发请求时透传取消信号，先检查 HTTP 状态是否成功（失败就带着状态码抛错），成功后再解析并返回 JSON 数据。",
+    "scenario": "业务页面调接口拉数据时，原生 fetch 遇到 404/500 不会自动报错，而且用户快速切换页面时需要传入取消信号中止过时请求，因此常会做这层统一封装。",
+    "examples": [
+      {
+        "input": "await fetchJSON(\"/api/user\")（服务端返回 200 及合法 JSON '{\"name\":\"小林\"}'）",
+        "expected": "{ name: \"小林\" }",
+        "why": "响应的 ok 为 true，继续等待 response.json() 解析并返回最终对象。"
+      },
+      {
+        "input": "await fetchJSON(\"/api/missing\")（服务端返回 404）",
+        "expected": "Promise 拒绝，抛出包含状态码 404 的 Error（如 Error(\"HTTP 404\")）",
+        "why": "fetch 收到 404 不会自动拒绝，必须主动判断 response.ok 并在失败时带着原状态码抛错。"
+      },
+      {
+        "input": "const ac = new AbortController(); fetchJSON(\"/api/data\", { signal: ac.signal }); ac.abort()",
+        "expected": "底层 fetch 收到同一个 ac.signal，取消后原样抛出中止异常（断网或非 JSON 正文解析错误也同样向外抛出）",
+        "why": "透传调用方的取消信号且不吞掉任何底层错误，让调用方能准确感知取消、断网或脏数据。"
+      }
+    ],
+    "steps": [
+      "第 1 步：把函数写成 async，同时给第二个参数设默认空对象以防调用方只传 url，然后调用 fetch 并把 { signal } 原样透传进去等待响应。",
+      "第 2 步：拿到 Response 后先检查它的 ok 属性，如果不为 true，直接抛出带有 response.status 状态码的 Error，不去解析错误正文。",
+      "第 3 步：确认 HTTP 成功后再调用并返回 response.json()，不要包一层 try/catch 把网络异常、取消异常或非法 JSON 报错偷偷吞掉。"
+    ],
+    "jargon": [
+      {
+        "term": "HTTP 状态（response.ok）",
+        "plain": "服务器返回的 3 位状态码，200~299 代表成功（ok 为 true）；404、500 等失败状态会让 ok 为 false，但原生 fetch 并不会自动抛错。"
+      },
+      {
+        "term": "signal（取消信号）",
+        "plain": "由 AbortController 提供的遥控中止信号，传给 fetch 后可以在外面随时叫停尚未完成的请求。"
+      },
+      {
+        "term": "透传",
+        "plain": "外层封装函数不做改动，直接把调用方传入的 signal 原封不动交给内部的 fetch。"
+      }
+    ]
+  },
+  "js-url": {
+    "plainGoal": "实现 buildSearchUrl(base, query, tags)，基于标准 URL 对象更新搜索词 q、清空旧 tag 并按顺序追加新 tags，同时完好保留原网址里的其他参数和锚点且不重复编码。",
+    "scenario": "做搜索页或商品筛选页时，用户改完关键词并勾选多个标签后，需要把新条件写进可分享的完整链接里，不能弄丢原有的分页参数、锚点，也不能把中文或加号编坏。",
+    "examples": [
+      {
+        "input": "buildSearchUrl(\"https://example.com/search?tag=old\", \"前端 课程\", [\"js\", \"vue\"])",
+        "expected": "\"https://example.com/search?q=%E5%89%8D%E7%AB%AF+%E8%AF%BE%E7%A8%8B&tag=js&tag=vue\"",
+        "why": "删掉了旧的 tag=old，按数组顺序追加新的 tag，并由 URLSearchParams 自动对中文和空格完成一次标准编码。"
+      },
+      {
+        "input": "buildSearchUrl(\"https://example.com/search?page=2&tag=old#top\", \"C++ & JS\", [\"js\", \"js\"])",
+        "expected": "\"https://example.com/search?page=2&q=C%2B%2B+%26+JS&tag=js&tag=js#top\"",
+        "why": "无关参数 page=2 与锚点 #top 均被保留，特殊字符 +、&、空格只编码一次，重复标签也按原顺序完整保留。"
+      },
+      {
+        "input": "buildSearchUrl(\"https://example.com/search?q=old&tag=js#list\", \"vue\", [])",
+        "expected": "\"https://example.com/search?q=vue#list\"",
+        "why": "更新已有的 q 参数，并在 tags 为空数组时清空所有旧 tag，不留多余的 ? 或 &。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用内置的 URL 构造函数解析绝对地址 base，不要手写字符串拼接 ?、& 或手动调编码函数，以免破坏锚点或重复编码。",
+      "第 2 步：操作该 URL 实例的查询参数对象：先将参数 q 设为 query，再删除所有原有的 tag 参数，其他参数和锚点完全不动。",
+      "第 3 步：按顺序遍历 tags 数组，逐项追加名为 tag 的参数（从而保留顺序和重复项），最后把 URL 转回字符串返回。"
+    ],
+    "jargon": [
+      {
+        "term": "绝对 URL",
+        "plain": "包含完整协议和域名的网址（如 https://example.com/search），能直接交给 new URL() 解析。"
+      },
+      {
+        "term": "锚点（hash）",
+        "plain": "网址末尾以 # 开头的部分（如 #top），用于跳转到页面指定位置，改查询参数时必须保留它。"
+      },
+      {
+        "term": "不重复编码",
+        "plain": "直接把原始字符串交给 URLSearchParams 即可，如果自己提前 encode 过一遍，百分号会被再次编码导致链接乱码。"
+      }
+    ]
+  },
+  "js-iteration": {
+    "plainGoal": "实现 range(start, end)，只接受安全整数并返回一个可反复遍历的区间对象，按需依次产出从 start 到 end-1 的数字，不提前在内存里构造完整数组。",
+    "scenario": "生成页码序列、任务编号或遍历超大数字区间时，提前建一个包含几十万元素的数组很费内存，做成可迭代对象既省内存又能直接配合 for...of 和展开语法反复使用。",
+    "examples": [
+      {
+        "input": "const r = range(2, 5); [[...r], [...r]]",
+        "expected": "[[2, 3, 4], [2, 3, 4]]",
+        "why": "区间包含起点 2、不含终点 5，且每次遍历都会重新开始，所以第二次展开依然产出 2、3、4。"
+      },
+      {
+        "input": "[...range(3, 3)]",
+        "expected": "[]",
+        "why": "当 start >= end（如 range(3, 3) 或 range(5, 2)）时属于空区间，不产生任何值。"
+      },
+      {
+        "input": "range(1.5, 5)",
+        "expected": "抛出 TypeError",
+        "why": "1.5 不是安全整数（同理 NaN、字符串或越界大数也会在创建时立即被拒绝）。"
+      }
+    ],
+    "steps": [
+      "第 1 步：入口先检查 start 和 end 是否都是安全整数，只要任一参数不合规就立刻抛出 TypeError。",
+      "第 2 步：返回一个带有 Symbol.iterator 方法的对象，不要预先创建数组，也不要直接返回一个一次性生成器实例。",
+      "第 3 步：把 Symbol.iterator 写成生成器方法，在里面从 start 开始递增到小于 end 为止逐个 yield 产出数字，这样每次开始遍历都会获得全新进度。"
+    ],
+    "jargon": [
+      {
+        "term": "半开区间",
+        "plain": "包含起点 start 但不包含终点 end 的范围（如 range(2, 5) 得到 2、3、4），元素个数正好等于 end - start。"
+      },
+      {
+        "term": "安全整数",
+        "plain": "JS 数字类型能精确表示且不会出现加 1 失效的整数范围，可用 Number.isSafeInteger 校验。"
+      },
+      {
+        "term": "可重复迭代对象",
+        "plain": "实现了 Symbol.iterator 且每次遍历都产出新迭代器的对象，能反复被 for...of 或 [...] 展开而不会用一次就空。"
+      }
+    ]
+  },
+  "js-modules": {
+    "plainGoal": "用 ES 模块规范编写 counter.js 和 main.js：counter.js 具名导出变量 count 和递增函数 increment，main.js 导入并调用两次 increment 后打印最新值 2，不使用全局变量。",
+    "scenario": "多人协作的现代前端项目里，需要把共享计数、登录状态或主题配置拆到独立模块里，由模块提供修改方法，外部文件只负责导入读取，既清晰又避免污染全局 window。",
+    "examples": [
+      {
+        "input": "在 main.js 中具名导入 { count, increment }，依次执行 increment(); increment(); console.log(count);",
+        "expected": "控制台打印 2",
+        "why": "ES 模块的具名导出是实时绑定，counter.js 内部更新 count 后，main.js 里看到的 count 会自动同步为最新值 2。"
+      },
+      {
+        "input": "如果在 main.js 里直接给导入的 count 赋值（如 count = 2）",
+        "expected": "抛出 TypeError（导入绑定是只读的）",
+        "why": "导入方只能读取 count 的最新值，修改逻辑必须留在 counter.js 内部通过 increment 完成。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 counter.js 里用 let 声明并具名导出 count，初始值设为 0（因为后续模块内部要修改它，不能用 const）。",
+      "第 2 步：在 counter.js 里再具名导出一个 increment 函数，在函数内直接递增本模块的 count，不要借助 window 全局变量。",
+      "第 3 步：在 main.js 里用花括号具名导入 ./counter.js 中的 count 和 increment，调用两次 increment 后直接打印 count 即可。"
+    ],
+    "jargon": [
+      {
+        "term": "具名导出（Named Export）",
+        "plain": "导出时保留标识符本身的名字，导入方必须用花括号按相同名字精确导入。"
+      },
+      {
+        "term": "模块实时绑定",
+        "plain": "ES 模块导出的不是拷贝出来的死值，而是指向源模块变量的实时只读窗口，源模块改了值，导入方立刻能读到最新结果。"
+      }
+    ]
+  },
+  "js-closure": {
+    "plainGoal": "写一个计数器工厂 createCounter(start = 0)，返回包含 next 和 reset 的对象：next 先加 1 再返回，reset 恢复到 start 并返回 start，不同实例互不干扰。",
+    "scenario": "在前端页面里给不同弹窗生成独立自增 ID、统计多个任务的各自重试次数时，用闭包把每个计数器的状态私密封装起来，不会互相串号也不会被外部随意改乱。",
+    "examples": [
+      {
+        "input": "const a = createCounter(); [a.next(), a.next(), a.reset(), a.next()]",
+        "expected": "[1, 2, 0, 1]",
+        "why": "不传参时 start 默认为 0；next 每次先自增再返回，reset 把计数拨回 0 并返回 0。"
+      },
+      {
+        "input": "const neg = createCounter(-2); [neg.next(), neg.reset(), neg.next()]",
+        "expected": "[-1, -2, -1]",
+        "why": "支持负数起点：-2 加 1 得 -1，重置回 -2 并返回 -2，再调一次 next 又回到 -1。"
+      },
+      {
+        "input": "const a = createCounter(0), b = createCounter(10); const { next } = a; [next(), b.next(), next()]",
+        "expected": "[1, 11, 2]",
+        "why": "两个实例各自拥有独立闭包变量互不影响，而且解构出 next 单独调用不依赖 this 依然正常工作。"
+      }
+    ],
+    "steps": [
+      "第 1 步：给参数 start 设置默认值 0，并在工厂函数内部用局部变量记录当前计数值，不要放到函数外部变成全局共享。",
+      "第 2 步：在返回对象中定义 next 方法，把内部计数值先加 1 再把加完后的新值返回出去。",
+      "第 3 步：定义 reset 方法，把内部计数值重新赋回初始的 start 并返回 start；两个方法都直接读写闭包变量，不依赖 this。"
+    ],
+    "jargon": [
+      {
+        "term": "闭包",
+        "plain": "内部函数被返回到外部后，依然能记住并持续读写它诞生时所在外层函数里的局部变量。"
+      },
+      {
+        "term": "实例彼此独立",
+        "plain": "每调用一次工厂函数都会新建一份互不相通的私有状态，造出来的多个计数器各自记账，不会互相污染。"
+      }
+    ]
+  },
+  "js-event-loop": {
+    "plainGoal": "实现 async runSequential(tasks)，接收一组无参任务函数，严格按顺序等前一个完成后才调用下一个并返回结果数组；只要中途出错就立刻向外抛出，绝不启动后续任务。",
+    "scenario": "执行有先后依赖的数据库迁移、分步骤提交表单或顺序上传切片时，必须等上一步成功再发下一步，前一步报错时要立刻刹住车防止后面乱跑。",
+    "examples": [
+      {
+        "input": "await runSequential([async () => \"A\", () => \"B\"])",
+        "expected": "[\"A\", \"B\"]",
+        "why": "既兼容返回 Promise 的异步任务，也兼容返回普通值的同步任务，且第二个函数在第一个完成后才被调用。"
+      },
+      {
+        "input": "await runSequential([])",
+        "expected": "[]",
+        "why": "任务数组为空时不执行任何任务，直接返回空数组。"
+      },
+      {
+        "input": "const started = []; await runSequential([() => { started.push(1); return 1; }, async () => { started.push(2); throw new Error(\"失败\"); }, () => { started.push(3); return 3; }])",
+        "expected": "Promise 拒绝并抛出 Error(\"失败\")，且 started 为 [1, 2]（第 3 个任务从未被调用）",
+        "why": "无论同步抛错还是异步拒绝，都会立即中断串行流程并向外传播错误，后续任务函数完全不会启动。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先创建一个空数组用于按顺序收集每个任务的执行结果，这样传入空数组时也能自然返回 []。",
+      "第 2 步：用顺序循环逐个遍历 tasks，每次轮到当前任务时才调用它并立刻 await（切忌提前用 map 把所有函数一口气全调一遍，那会变成并发启动）。",
+      "第 3 步：把 await 得到的值放进结果数组；因为 await 自动兼容普通值和 Promise，且出错会立刻打断循环向外抛错，无需多余的异常吞没逻辑。"
+    ],
+    "jargon": [
+      {
+        "term": "任务工厂",
+        "plain": "包在无参函数里的待执行任务，在真正调用这个函数之前它不会提前发起请求或计算。"
+      },
+      {
+        "term": "串行执行",
+        "plain": "像单队列窗口排队一样，前一个任务彻底做完离开，才轮到下一个任务开始启动。"
+      }
+    ]
+  },
+  "js-promise": {
+    "plainGoal": "实现 loadUserName(fetchUser)，将拉取用户对象的步骤与“提取 name 转大写”串成一条 Promise 链，无论 fetchUser 同步抛错还是异步拒绝，都继续以拒绝状态传给调用方。",
+    "scenario": "在前端数据服务层封装接口数据转换（如拉取用户信息后格式化显示名）时，既要让调用方稳定拿到 Promise，又要确保任何异常都能直达外层的错误处理逻辑。",
+    "examples": [
+      {
+        "input": "await loadUserName(() => Promise.resolve({ name: \"alice\" }))",
+        "expected": "\"ALICE\"",
+        "why": "拿到用户对象后，后续链路读取其 name 字段并转为全大写返回（同步返回 { name: \"alice\" } 也同样成立）。"
+      },
+      {
+        "input": "loadUserName(() => Promise.reject(new Error(\"接口超时\"))).catch(e => e.message)",
+        "expected": "解析为 \"接口超时\"（原拒绝错误完整传递到外层 catch）",
+        "why": "链路里没有吞掉异常或转成空字符串，原来的错误对象会顺着 Promise 链传给调用方。"
+      },
+      {
+        "input": "loadUserName(() => { throw new Error(\"读取失败\"); }).catch(e => e.message)",
+        "expected": "解析为 \"读取失败\"（同步抛错也被转为拒绝 Promise 供外层捕获）",
+        "why": "把 fetchUser 放在 Promise 链的回调里触发，而不是在链外直接裸调，能把同步抛错统一接进 Promise 的拒绝分支。"
+      }
+    ],
+    "steps": [
+      "第 1 步：不要直接在函数里裸调 fetchUser()，而是先起一条已解决的 Promise 链，再把 fetchUser 作为第一步回调挂上去，让同步抛错与异步拒绝统一变成 Promise 拒绝。",
+      "第 2 步：在后面再接一个 .then，接收上一步产出的用户对象，取出 name 并转成大写后返回。",
+      "第 3 步：不要额外写把错误吃掉的 .catch 返回默认值，让失败状态和原错误对象原封不动传给调用方。"
+    ],
+    "jargon": [
+      {
+        "term": "Promise 链",
+        "plain": "用一串相连的 .then 把多步异步处理串成流水线，上一步返回的值会自动传给下一步，错误也会一路顺流而下。"
+      },
+      {
+        "term": "不吞掉错误",
+        "plain": "失败时不要假装成功地返回空字符串或 undefined，而是让 Promise 保持拒绝状态，把原错误交给外层决定怎么提示或重试。"
+      },
+      {
+        "term": "同步抛错",
+        "plain": "函数在返回 Promise 之前就立刻 throw 报错了；如果没放进 Promise 链回调里执行，外层挂的 .catch() 会接不住它。"
+      }
+    ]
+  },
+  "js-async": {
+    "plainGoal": "写一个 async 函数 loadBoth(getA, getB)，同时并发启动两个互不依赖的无参异步函数，等两边都完成后打包返回 { a, b }，任意一边失败则直接交给调用方处理。",
+    "scenario": "进入详情页时需要同时拉取“基本信息”和“评论列表”两个独立接口，如果串行逐个 await 会让等待时间翻倍，并发请求才能让页面更快呈现。",
+    "examples": [
+      {
+        "input": "await loadBoth(() => new Promise(r => setTimeout(() => r(\"A\"), 30)), () => new Promise(r => setTimeout(() => r(\"B\"), 10)))",
+        "expected": "{ a: \"A\", b: \"B\" }（两个任务同时启动，总耗时约 30ms 而非 40ms）",
+        "why": "即使 B 比 A 先完成，结果依然按参数身份一一对应到 a 和 b，且两份任务是并发推进的。"
+      },
+      {
+        "input": "await loadBoth(async () => 42, async () => \"ok\")",
+        "expected": "{ a: 42, b: \"ok\" }",
+        "why": "两个异步任务同时触发并等待全部成功后，组装成指定字段的对象返回。"
+      },
+      {
+        "input": "await loadBoth(async () => \"A\", async () => { throw new Error(\"B 挂了\"); })",
+        "expected": "Promise 拒绝，抛出 Error(\"B 挂了\")",
+        "why": "任一任务失败都不伪造默认结果或吞掉异常，直接把拒绝状态交给调用方。"
+      }
+    ],
+    "steps": [
+      "第 1 步：千万不要先 await getA() 再去调用 getB()，必须先同时调用 getA() 和 getB()，让两个异步操作立刻并行跑起来。",
+      "第 2 步：把两个已启动的 Promise 放进 Promise.all 中一起 await，等两份结果都到齐后按位置依次取出。",
+      "第 3 步：把取出的两份值放进 { a, b } 对象返回，不做多余的异常拦截，确保任何一边失败都会正常向外拒绝。"
+    ],
+    "jargon": [
+      {
+        "term": "并发启动",
+        "plain": "不等第一个异步任务结束，一口气把两个互不依赖的任务都发出去同时运行，总耗时取决于较慢的那个。"
+      },
+      {
+        "term": "串行等待",
+        "plain": "先死等第一个 await 完成才开始启动第二个任务，会让本可以同时进行的网络请求白白多花一倍时间。"
+      }
+    ]
+  },
+  "js-memory": {
+    "plainGoal": "实现 startCounter(button, onCount, timers = globalThis)：点击按钮时悄悄把计数加 1，定时器每秒把当前计数通知给 onCount，并返回可重复安全调用的 stop 函数释放全部资源。",
+    "scenario": "做交互统计或定时上报组件时，既要监听点击又要开定时器周期汇报；页面切换或组件销毁时必须同步清理监听器和定时器，否则旧代码会常驻内存偷偷空转。",
+    "examples": [
+      {
+        "input": "const stop = startCounter(btn, cb, fakeTimers)；先点击 btn 两次，再推进模拟时钟 1000ms",
+        "expected": "点击时不直接触发 cb；满 1000ms 时触发一次 cb(2)",
+        "why": "点击监听只负责把内部计数加 1，定时器则按每秒周期把最新计数通知给 onCount。"
+      },
+      {
+        "input": "连续调用两次 stop(); stop();，之后再点击 btn 或触发定时器",
+        "expected": "不抛错，仅清理一次监听和定时器，后续不再调用 cb",
+        "why": "内部用布尔状态开关防重复清理，首次调用即彻底解绑点击监听并清除定时器，再调直接安全跳过。"
+      },
+      {
+        "input": "fakeTimers.setInterval 返回数字 ID 为 0，随后调用 stop()",
+        "expected": "依然正确调用 fakeTimers.clearInterval(0) 取消定时器",
+        "why": "靠布尔状态位判断是否已停而不是判断 ID 的真假，避免把合法的定时器 ID 0 误判成未创建而漏清。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在函数内准备好初始为 0 的计数变量和表示运行中的布尔开关，并分别保存“点击时累加”与“定时通知 onCount”两个具名回调（执行前都确认仍处于运行状态）。",
+      "第 2 步：给 button 注册 click 监听，同时用 timers.setInterval 启动 1000 毫秒周期定时器并记下返回的定时器 ID。",
+      "第 3 步：返回 stop 清理函数：入口先看布尔开关，若已经停止过就直接返回，既保证重复调用安全，又不依赖定时器 ID 的真假。",
+      "第 4 步：首次停止时先关闭布尔开关，再把保存的同一个点击回调引用传给 removeEventListener，并调用 timers.clearInterval 彻底释放定时器。"
+    ],
+    "jargon": [
+      {
+        "term": "timers = globalThis",
+        "plain": "把定时器工具作为可替换参数且默认指向全局环境，正常运行时用原生定时器，测试时可注入假时钟瞬间推进时间。"
+      },
+      {
+        "term": "资源生命周期",
+        "plain": "事件监听和定时器这类持续占着引用的资源，从创建启用到不再使用时彻底销毁的全过程，忘销毁就会引发内存泄漏。"
+      },
+      {
+        "term": "重复 stop 安全",
+        "plain": "哪怕外部连续多次调用 stop()，也只在第一次执行清理，之后自动忽略且绝不报错。"
+      }
+    ]
+  },
+  "vue-reactivity": {
+    "plainGoal": "写一个 Vue 3 点击加一计数器组件：把数据放进响应式对象后，用 toRefs 安全拆出 count，让点击按钮和直接改原对象都能同步刷新页面。",
+    "scenario": "做表单或详情页时，常把多个字段放进同一个状态对象里，又想拆成单独变量直接给模板展示；如果直接用普通解构，页面就会彻底卡住不再更新。",
+    "examples": [
+      {
+        "input": "初始渲染后，连续点击按钮 3 次",
+        "expected": "按钮上显示的数字依次从 0 变成 1、2、3，同时 state.count 与 count.value 均为 3",
+        "why": "经 toRefs 拆出来的 count 仍与原对象相连，修改 .value 会同步驱动模板重绘。"
+      },
+      {
+        "input": "在脚本里直接执行 state.count = 10",
+        "expected": "按钮文字立刻更新为 10，且 count.value 同步变成 10",
+        "why": "toRefs 保留的是指向原对象属性的响应式引用，而不是只抄了一份初始数字。"
+      },
+      {
+        "input": "在脚本里直接执行 count.value = 20",
+        "expected": "按钮文字立刻更新为 20，同时 state.count 也同步变成 20",
+        "why": "state.count 与解构后的 count 存在双向连接，从哪条路径改都是改同一份状态。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在脚本里创建一个只包含 count: 0 的响应式状态对象，作为唯一数据源。",
+      "第 2 步：不要直接解构该对象，而是先套一层 toRefs 再拆出 count，保住它和原对象的响应式连接。",
+      "第 3 步：写一个 increment 函数，在脚本里记得通过 .value 来给 count 加一。",
+      "第 4 步：在模板中放一个按钮绑定点击事件到 increment，直接插值展示 count（模板会自动解包，不用写 .value）。"
+    ],
+    "jargon": [
+      {
+        "term": "Composition API",
+        "plain": "Vue 3 的组合式写法，让你在 script setup 里按功能像搭积木一样自由组织响应式数据和函数。"
+      },
+      {
+        "term": "toRefs",
+        "plain": "把响应式对象里的每个属性都包成独立的响应式引用，解构出来后仍与原对象实时联动、不会断联。"
+      },
+      {
+        "term": "SFC",
+        "plain": "单文件组件（Single-File Component），也就是把脚本、模板和样式都写进同一个 .vue 文件里。"
+      }
+    ]
+  },
+  "vue-props": {
+    "plainGoal": "写一个 Vue 3 数字输入子组件：展示父组件传下来的数字，用户输入变化时把内容转成数字类型并通过事件通知父组件修改，子组件不擅自改 prop。",
+    "scenario": "封装购物车数量框、价格输入控件并支持父组件 v-model 时，若子组件直接修改 props 会报错，若忘了把输入框字符串转数字还可能把加法算成字符串拼接。",
+    "examples": [
+      {
+        "input": "父组件传入 modelValue 为 5 并渲染子组件",
+        "expected": "页面渲染出数字输入框，框内显示 5",
+        "why": "输入框的值单向绑定自父组件传入的 props.modelValue。"
+      },
+      {
+        "input": "用户在输入框中键入 \"12\" 触发 input 事件",
+        "expected": "子组件发出 update:modelValue 事件，事件载荷为数字 12（typeof 为 number），且未直接修改 props.modelValue",
+        "why": "浏览器原生 input.value 永远是字符串，必须用 Number() 转换后再作为载荷通知父组件更新。"
+      },
+      {
+        "input": "用户清空输入框（input.value 为 \"\"）或输入 \"0\"",
+        "expected": "子组件发出 update:modelValue 事件，载荷为数字 0",
+        "why": "统一通过 Number(input.value) 转换后上报，空字符串会被转为数字 0。"
+      }
+    ],
+    "steps": [
+      "第 1 步：声明组件接收一个数字类型的 modelValue 属性，并声明向外派发的自定义事件 update:modelValue。",
+      "第 2 步：在模板里放一个 type=\"number\" 的输入框，把它的值单向绑定到父级传入的 modelValue。",
+      "第 3 步：监听输入框的 input 事件，取出事件目标的字符串值并用 Number() 转为数字，再通过 emit 发给父组件去真正修改状态。"
+    ],
+    "jargon": [
+      {
+        "term": "单向数据流",
+        "plain": "数据只能从父组件流向子组件，子组件想改值不能直接动手改 prop，必须发事件“请示”父组件来改。"
+      },
+      {
+        "term": "modelValue / update:modelValue",
+        "plain": "Vue 3 中 v-model 背后的默认暗号：父级靠 modelValue 往下传，子级发 update:modelValue 请求更新。"
+      },
+      {
+        "term": "载荷 (payload)",
+        "plain": "触发自定义事件时顺手附带传出去的数据，这道题里就是转换后的新数字。"
+      }
+    ]
+  },
+  "vue-architecture": {
+    "plainGoal": "写一个 Vue 3 课程搜索组件：只存搜索词这一份状态，用计算属性自动忽略大小写和前后空格筛选课程，并同步展示匹配数量与空结果提示。",
+    "scenario": "做商品搜索栏、后台列表过滤时，如果把搜索词、筛选结果和匹配条数拆成三份状态手动同步，很容易漏改出错；只保留唯一原始状态并派生其余数据最省心。",
+    "examples": [
+      {
+        "input": "初始搜索框为空 \"\"，或者只输入了若干空格 \"   \"",
+        "expected": "显示“匹配 3 门”，列表完整展示 JavaScript、Vue、React，不显示空结果提示",
+        "why": "去掉首尾空格后关键词为空字符串，三门课程都匹配，因此返回全部课程。"
+      },
+      {
+        "input": "在搜索框输入 \"  vUe \"",
+        "expected": "显示“匹配 1 门”，列表仅展示 Vue",
+        "why": "计算属性先去首尾空格并把关键词与课程名都转小写再做包含判断，能忽略大小写与空白差异。"
+      },
+      {
+        "input": "在搜索框输入 \"Python\"",
+        "expected": "显示“匹配 0 门”，不渲染课程列表，展示“没有匹配课程”之类的空结果提示",
+        "why": "没有任何课程包含 \"python\"，派生数组为空，模板自动切到空提示分支。"
+      }
+    ],
+    "steps": [
+      "第 1 步：把固定三门课程定义成普通常量数组，只用一个响应式 ref 保存搜索词 query，不要额外存筛选数组或计数变量。",
+      "第 2 步：用 computed 定义派生列表 filtered：先把 query 去首尾空格再转小写，过滤出小写名称包含该关键词的课程。",
+      "第 3 步：在模板里放一个用 v-model 绑定 query 的输入框，并直接读取 filtered.length 展示匹配数量。",
+      "第 4 步：根据 filtered.length 做条件渲染：大于 0 时渲染列表并用课程名作稳定 key，否则显示空结果提示。"
+    ],
+    "jargon": [
+      {
+        "term": "单一状态源",
+        "plain": "只把最原始的输入存成状态，凡是能靠算出来的结果都临时推算，绝不存多份容易互相打架的数据。"
+      },
+      {
+        "term": "computed (计算属性)",
+        "plain": "根据已有状态自动算出派生值的工具；依赖变了就自动重算，没变时还会缓存结果省性能。"
+      },
+      {
+        "term": "双向绑定 (v-model)",
+        "plain": "让输入框内容和状态变量互相联动：用户在框里打字变量会变，代码改变量框里也会跟着变。"
+      }
+    ]
+  },
+  "vue-slots": {
+    "plainGoal": "制作一个可复用的卡片组件 Card.vue，预留带默认标题“提示”的具名头部插槽和默认正文插槽，并给出父组件自定义标题与正文的调用示例。",
+    "scenario": "写弹窗、公告卡片或通用面板时，外框样式和布局完全一致，只有标题和正文千变万化；用插槽把结构定好、把内容留给使用者填，最利于组件复用。",
+    "examples": [
+      {
+        "input": "父组件写 <Card><template #header>学习计划</template>今天完成三课。</Card>",
+        "expected": "卡片头部渲染“学习计划”，正文区域渲染“今天完成三课。”",
+        "why": "父组件通过 #header 覆盖了具名插槽，其余直接写在标签里的内容自动填入默认正文插槽。"
+      },
+      {
+        "input": "父组件只传正文而不传头部：<Card>请先保存草稿</Card>",
+        "expected": "卡片头部自动兜底显示“提示”，正文区域渲染“请先保存草稿”",
+        "why": "header 插槽内部定义了后备内容，父组件未提供对应内容时会自动展示默认值。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 Card.vue 的模板里搭好卡片外壳结构，明确分出头部区域和正文区域。",
+      "第 2 步：在头部区域放入 name=\"header\" 的具名插槽，并在插槽标签内部写上默认标题“提示”；在正文区域放入默认插槽。",
+      "第 3 步：写出父组件的调用示例，用 <template #header> 替换默认标题，把正文内容直接放进 Card 标签内部。"
+    ],
+    "jargon": [
+      {
+        "term": "具名插槽",
+        "plain": "带名字的“内容坑位”（例如 header），父组件必须点名才能把对应的界面块放进这个指定位置。"
+      },
+      {
+        "term": "默认插槽",
+        "plain": "没有起名字的通用坑位，父组件直接塞在组件标签里、未指定名字的内容都会自动落到这里。"
+      },
+      {
+        "term": "后备内容",
+        "plain": "提前写在 slot 标签里的默认兜底文字或结构，只有父组件啥都没往这个坑位传时才会露面。"
+      }
+    ]
+  },
+  "vue-nexttick": {
+    "plainGoal": "写一个 Vue 3 组件：输入框默认不显示，点一下按钮才把它渲染出来，并等真实 DOM 更新完成后自动把输入光标聚焦进去。",
+    "scenario": "点“搜索图标”展开搜索框、点“回复”弹出评论输入框时，希望框一出现就能直接敲字；但如果刚改完开关就立刻调 focus()，输入框还没画出来，聚焦就会扑空。",
+    "examples": [
+      {
+        "input": "组件刚渲染完成、用户还没点击按钮",
+        "expected": "页面只有“显示”按钮，DOM 中没有输入框元素，模板 ref 当前为 null",
+        "why": "visible 初始为 false，v-if 会让输入框完全不被创建进 DOM。"
+      },
+      {
+        "input": "用户点击“显示”按钮",
+        "expected": "输入框出现在页面上，并且立刻获得输入焦点（光标自动落入框内）",
+        "why": "先把 visible 设为 true，再 await nextTick() 等待本轮 DOM 渲染完毕，此时模板 ref 已绑定真实输入框，调用 focus() 才能生效。"
+      }
+    ],
+    "steps": [
+      "第 1 步：创建两个 ref：布尔值 visible（初始 false）控制显隐，以及 field（初始 null）准备引用真实输入框 DOM。",
+      "第 2 步：在模板里放一个按钮和一个带 v-if=\"visible\" 与 ref=\"field\" 的输入框。",
+      "第 3 步：编写 async 点击处理函数，先把 visible 改为 true，切记改数据必须在等待之前。",
+      "第 4 步：紧接着 await nextTick() 等 DOM 真正插好输入框，再安全调用 field.value?.focus() 完成聚焦。"
+    ],
+    "jargon": [
+      {
+        "term": "nextTick",
+        "plain": "Vue 提供的等待函数，意思是“等这一轮数据改动真正更新到页面 DOM 之后，再继续往下执行”。"
+      },
+      {
+        "term": "v-if 条件渲染",
+        "plain": "条件为假时元素根本不在 DOM 树里，变成真时才会现场创建并挂载进页面。"
+      },
+      {
+        "term": "模板 ref",
+        "plain": "给模板标签贴上 ref 标记，让脚本拿到对应的真实 DOM 元素，从而调用 focus() 这类原生方法。"
+      }
+    ]
+  },
+  "vue-router": {
+    "plainGoal": "用 Vue Router 4 配好不带 # 号的动态详情页路由 /course/:id，写代码跳转到 /course/42，并用注释说明刷新页面时服务器该如何兜底、又为何不能误伤接口。",
+    "scenario": "单页应用上线后，站内点击跳转都很顺畅，但用户一按刷新或直接打开分享链接 /course/42 就出现 404，这就是服务端未配合前端 history 路由导致的常见问题。",
+    "examples": [
+      {
+        "input": "应用内执行 router.push('/course/42')",
+        "expected": "浏览器地址栏切换为 /course/42（无 # 号），路由匹配 /course/:id 并渲染 Course 详情组件",
+        "why": "createWebHistory 启用干净路径模式，动态段 :id 匹配 42 并交给前端组件处理。"
+      },
+      {
+        "input": "用户在 /course/42 直接刷新浏览器，向服务器发起 GET /course/42",
+        "expected": "服务器磁盘上没有对应静态文件时，应回退返回单页应用的入口 index.html，再由前端路由解析渲染详情页",
+        "why": "客户端路由路径不是服务器上的真实文件，必须通过服务端入口回退把控制权交回前端应用。"
+      },
+      {
+        "input": "页面发起后端接口请求 GET /api/courses/42",
+        "expected": "服务器将 /api/* 路由交给后端 API 服务处理，绝不回退返回 index.html",
+        "why": "接口路径如果被错回退成网页 HTML，会导致前端 JSON 解析失败并掩盖真实的接口 404。"
+      }
+    ],
+    "steps": [
+      "第 1 步：从 vue-router 引入创建路由和 history 模式所需的函数，并导入课程详情页组件。",
+      "第 2 步：调用 createRouter 配置 history 为 createWebHistory()，在 routes 里声明动态路径 /course/:id 对应课程组件，并导出 router。",
+      "第 3 步：写一行编程式导航代码，推动路由跳转到 /course/42。",
+      "第 4 步：添加注释清楚说明两层边界：页面刷新请求（如 GET /course/42）回退到 index.html，而 /api/* 接口请求交给后端服务不能返回 HTML。"
+    ],
+    "jargon": [
+      {
+        "term": "history 路由",
+        "plain": "利用浏览器 History API 实现的干净网址（像 /course/42，不带 #），但直接刷新时会真实请求服务器。"
+      },
+      {
+        "term": "动态参数路由 (:id)",
+        "plain": "路径里的占位片段，一条规则就能接住 /course/1、/course/42 等所有详情页地址。"
+      },
+      {
+        "term": "服务端入口回退",
+        "plain": "服务器找不到页面路径对应的真实文件时，统一返回单页应用入口 index.html 的部署规则。"
+      }
+    ]
+  },
+  "vue-composition": {
+    "plainGoal": "编写一个可复用的 Vue 3 开关工具函数 useToggle：每次调用都生成独立的响应式布尔状态，自带翻转和恢复初值两个操作，多处调用绝不串改。",
+    "scenario": "项目里弹窗开关、侧边栏折叠、筛选面板展开到处都在重复写同一套布尔值切换与重置逻辑，抽成一个组合式函数就能随拿随用且互不干扰。",
+    "examples": [
+      {
+        "input": "调用 const a = useToggle()，先调 a.toggle()，再调 a.reset()",
+        "expected": "初始 a.value.value 为 false；toggle() 后变成 true；reset() 后恢复为 false",
+        "why": "默认初值为 false，toggle 取反当前值，reset 恢复本次调用记录的初值。"
+      },
+      {
+        "input": "调用 const b = useToggle(true)，先调 b.toggle()，再调 b.reset()",
+        "expected": "初始为 true；toggle() 后变成 false；reset() 后恢复为 true（不是写死的 false）",
+        "why": "每次调用都在函数内部把本次传入的初值转成布尔常量保存下来，reset 按它恢复。"
+      },
+      {
+        "input": "同时创建 a = useToggle(false) 和 b = useToggle(false)，仅调用 a.toggle()",
+        "expected": "a.value.value 变为 true，而 b.value.value 保持 false 不受影响",
+        "why": "响应式 ref 创建在函数内部作用域，每次调用都拥有完全隔离的独立状态。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 useToggle(initial = false) 函数内部，先把传入的 initial 规范化为布尔常量存起来，作为本次调用的复位基准。",
+      "第 2 步：在函数体内用 ref 创建一个独立的响应式状态 value（切忌提到函数外层做成共享全局变量）。",
+      "第 3 步：编写 toggle（基于当前值取反）和 reset（把 value 设回刚才保存的基准初值），最后一起返回 { value, toggle, reset }。"
+    ],
+    "jargon": [
+      {
+        "term": "组合式函数 (Composable)",
+        "plain": "Vue 3 里约定以 use 开头命名的普通函数，把响应式状态和操作方法打包成可复用的逻辑积木。"
+      },
+      {
+        "term": "调用间隔离",
+        "plain": "每次调用工具函数都会另起炉灶建一套新状态，两个组件各自用同一函数不会互相串台。"
+      }
+    ]
+  },
+  "vue-assets": {
+    "plainGoal": "在 Vite + Vue 3 中通过 import 引入本地头像，放进固定 64×64 像素容器里：加载前显示“加载中”、失败显示“加载失败”、成功显示图片，且全程不让页面排版跳动。",
+    "scenario": "页面头像或卡片封面若没预先定死占位尺寸，图下载完撑开的一瞬间整页文字会往下抖；而且 Vite 项目若硬写相对路径字符串，打包上线后常会找不到图片。",
+    "examples": [
+      {
+        "input": "组件刚挂载，头像图片仍在加载中（未触发 load 也未触发 error）",
+        "expected": "64×64 容器稳稳占位，叠层显示“加载中”；<img> 标签保留在 DOM 中正常发起加载，但视觉上先设为隐藏",
+        "why": "如果用 v-if 把未加载完的 <img> 移除，浏览器根本不会去下载图片，@load 也就永远不会触发。"
+      },
+      {
+        "input": "图片加载成功，触发 <img> 的 load 事件",
+        "expected": "“加载中”文案消失，头像以 visibility: visible 显现出来，外层 64×64 尺寸纹丝不动",
+        "why": "容器与图片提前锁定了 64×64 宽高，加载前后占据空间完全一致，不会引发页面跳动。"
+      },
+      {
+        "input": "图片加载失败，触发 <img> 的 error 事件",
+        "expected": "图片保持隐藏不露出破图图标，容器内显示“加载失败”",
+        "why": "状态区分了 loaded 与 failed，优先展示失败提示并隐藏失效图片。"
+      }
+    ],
+    "steps": [
+      "第 1 步：保留通过 import 引入 ./assets/avatar.png 拿到构建后 URL 的写法，并定义 loaded 和 failed 两个初始为 false 的响应式状态。",
+      "第 2 步：准备一个固定宽高 64px × 64px、相对定位的容器，始终在里面渲染 <img>，绑好 src、width、height 以及 @load 和 @error 回调。",
+      "第 3 步：不要用 v-if 控制 <img> 存在与否，改用内联样式 visibility：仅在加载成功且未失败时 visible，其余时候 hidden。",
+      "第 4 步：在容器里叠加绝对定位的提示文本：failed 为真显示“加载失败”，否则在 !loaded 时显示“加载中”。"
+    ],
+    "jargon": [
+      {
+        "term": "import 静态资源",
+        "plain": "在 Vite 里像导入模块一样导入图片，打包工具会自动处理路径和文件哈希，避免上线后 404。"
+      },
+      {
+        "term": "布局跳动",
+        "plain": "图片加载前没占地方、加载完突然把下面内容挤下去的画面抖动现象，提前固定尺寸就能消除。"
+      },
+      {
+        "term": "visibility: hidden 与 v-if 的区别",
+        "plain": "前者只是把元素藏起来看不见，节点还在页面里且照常加载图片；后者直接不渲染节点，连下载都不会开始。"
+      }
+    ]
+  },
+  "vue-render": {
+    "plainGoal": "把列表渲染里用数组索引当 key 的问题代码改成稳定的 item.id，并用注释说明为什么在列表开头插入新项时，用索引会导致旧节点和新数据错位。",
+    "scenario": "写可动态插行、删行或重排的表单列表时，如果图省事用 index 当 key，在第一行前面插一条新数据后，用户原本填在旧第一行里的文字会诡异地粘到新行上。",
+    "examples": [
+      {
+        "input": "原列表为 [{id:1,title:'甲'}, {id:2,title:'乙'}]，在开头插入 {id:3,title:'丙'}，模板使用 :key=\"item.id\"",
+        "expected": "Vue 识别出 id=1 和 id=2 是原有项，在最前面新建 id=3 的 DOM 节点，旧节点的输入框状态准确跟着原数据后移",
+        "why": "唯一 id 绑定的是数据本身的身份，不会因排在前面的元素变动而改变。"
+      },
+      {
+        "input": "同样的头部插入场景，若错误使用 :key=\"index\"",
+        "expected": "新插进来的“丙”占了 index=0，Vue 误以为它就是原来的第 0 个节点，于是把“甲”的旧 DOM 状态张冠李戴地复用给“丙”，后续全部错位",
+        "why": "数组索引只代表“第几个座位”，头部插队后所有人的座位号都变了，位置身份不再等于数据身份。"
+      }
+    ],
+    "steps": [
+      "第 1 步：去掉 starter 模板里 v-for 多余的 index 变量，只保留遍历元素 item。",
+      "第 2 步：将 :key=\"index\" 替换为唯一且稳定的 :key=\"item.id\"，保持内部输入框渲染不变。",
+      "第 3 步：在代码旁边用 HTML 注释简明解释原理：头部插入会让后面所有下标整体偏移，导致位置身份与数据身份脱节，唯有稳定 id 能维持正确对应。"
+    ],
+    "jargon": [
+      {
+        "term": "虚拟节点 (VNode)",
+        "plain": "Vue 在内存里描述页面元素的轻量对象，更新界面时靠对比新旧虚拟节点来决定复用还是新建真实 DOM。"
+      },
+      {
+        "term": "key (列表身份标识)",
+        "plain": "贴在列表每一项上的唯一“身份证号”，告诉 Vue 列表变化时哪条元素还是原来的那一条。"
+      }
+    ]
+  },
+  "vue-list": {
+    "plainGoal": "写一个 Vue 3 子组件：接收包含完成状态的 tasks 任务数组，先用计算属性挑出未完成任务，再以 task.id 为 key 渲染标题，不改原数组也不混写 v-if 和 v-for。",
+    "scenario": "做待办清单的“仅看未完成”或订单列表筛选时，如果直接在同一个 li 标签上同时写 v-if 和 v-for，在 Vue 3 中会因优先级冲突直接报错，正确做法是先过滤再循环。",
+    "examples": [
+      {
+        "input": "传入 tasks=[{id:1,title:'写代码',done:false}, {id:2,title:'跑步',done:true}, {id:3,title:'读书',done:false}]",
+        "expected": "仅渲染“写代码”（key=1）和“读书”（key=3）两个列表项，且原始 tasks 数组保持 3 项未被改动",
+        "why": "computed 用 filter 生成新的未完成列表，既过滤了已完成项又不破坏父级原数组。"
+      },
+      {
+        "input": "传入全部已完成的数组，或未传 tasks（props.tasks 为 undefined）",
+        "expected": "pendingTasks 为空数组，不渲染任何列表项且页面不报错",
+        "why": "先用空值合并 ?? [] 做兜底再调用 filter，避免未传数据时读取方法崩溃。"
+      },
+      {
+        "input": "父组件把 id=1 任务的 done 改为 true",
+        "expected": "列表自动移除“写代码”，只保留“读书”",
+        "why": "pendingTasks 依赖 props.tasks，数据变更会自动重新计算并更新视图。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用 defineProps 声明接收数组类型的 tasks 属性。",
+      "第 2 步：用 computed 定义 pendingTasks，先对 props.tasks 做空数组兜底，再用纯函数 filter 留下 !t.done 的项，切勿原地 sort 或 splice 修改输入数组。",
+      "第 3 步：在模板里直接用 v-for 遍历 pendingTasks，以 task.id 作为 key 渲染 task.title，不在同一节点混用 v-if 和 v-for。"
+    ],
+    "jargon": [
+      {
+        "term": "v-if 与 v-for 同节点问题",
+        "plain": "Vue 3 里同一标签上 v-if 比 v-for 先执行，导致 v-if 根本拿不到循环变量，应该先过滤出数组再遍历。"
+      },
+      {
+        "term": "原地修改",
+        "plain": "直接改动传入数组本身的内容（如 splice、sort），会破坏父级原始数据并引发难查的副作用。"
+      }
+    ]
+  },
+  "vue-lifecycle": {
+    "plainGoal": "写一段 Vue 3 响应式窗口宽度追踪代码：组件挂载后立刻读取当前宽度并开始监听 resize，组件卸载时用同一个函数引用把监听干净移除。",
+    "scenario": "做自适应图表、响应式布局判断时常要监听浏览器窗口缩放；如果页面切换销毁组件时忘了注销监听（或传了另一个新函数），旧回调会一直残留造成内存泄漏。",
+    "examples": [
+      {
+        "input": "浏览器当前宽度 1280px，组件刚挂载完成（尚未拖动窗口）",
+        "expected": "width.value 立即更新为 1280",
+        "why": "onMounted 里在添加监听的同时先主动调了一次更新函数，确保初始宽度准确。"
+      },
+      {
+        "input": "用户将浏览器窗口缩放至 800px 宽",
+        "expected": "触发 window resize 事件，width.value 实时更新为 800",
+        "why": "挂载时绑定的 update 回调会读取最新的 window.innerWidth 写入响应式 ref。"
+      },
+      {
+        "input": "组件卸载销毁后，窗口再次缩放到 1024px",
+        "expected": "resize 监听已成功解除，update 不再被调用，width.value 不再变化",
+        "why": "onUnmounted 向 removeEventListener 传入了与 addEventListener 完全同一个 update 函数引用。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用 ref(0) 定义保存窗口宽度的响应式变量 width。",
+      "第 2 步：抽出一个单独的具名函数 update，负责把 window.innerWidth 赋给 width.value，确保注册和移除共享同一函数引用。",
+      "第 3 步：在 onMounted 里先调一次 update() 初始化宽度，再用 window.addEventListener('resize', update) 开启监听。",
+      "第 4 步：在 onUnmounted 里用 window.removeEventListener('resize', update) 清理监听，切忌在增删两处各写一个匿名箭头函数。"
+    ],
+    "jargon": [
+      {
+        "term": "挂载 (onMounted)",
+        "plain": "组件第一次真正画到页面上之后触发的生命周期钩子，适合在这里读取页面尺寸和绑定浏览器事件。"
+      },
+      {
+        "term": "卸载 (onUnmounted)",
+        "plain": "组件从页面彻底销毁前触发的钩子，专门用来清理监听器、定时器等外部资源以防内存泄漏。"
+      },
+      {
+        "term": "同一个函数引用",
+        "plain": "JS 里写两次 () => {} 会造出两个不同对象，移除监听必须传和绑定时完全一样的那个函数变量才能生效。"
+      }
+    ]
+  },
+  "vue-async-data": {
+    "plainGoal": "写一个按 userId 拉取用户数据的 Vue 3 组件：具备加载中、报错、数据三态，并在切换 ID 或卸载时立刻取消旧请求，彻底杜绝慢响应覆盖新页面。",
+    "scenario": "点击侧边栏切换不同用户资料时，若前一个请求网速慢、后一个请求先返回，没做取消和过期防护就会出现“选的是用户 B，页面突然跳成用户 A”的经典错乱。",
+    "examples": [
+      {
+        "input": "传入 userId=\"a/b\" 并挂载，接口正常返回 200 及 JSON { name: \"小王\" }",
+        "expected": "立即请求 /api/users/a%2Fb；先显示“加载中”，成功后隐藏加载态并展示用户数据",
+        "why": "watch 开启了 immediate: true，且用 encodeURIComponent 编码路径段避免斜杠破坏接口地址。"
+      },
+      {
+        "input": "先传 userId=\"1\"（很慢），未返回前马上切换为 userId=\"2\"（很快返回）；随后请求 1 结束或触发 AbortError",
+        "expected": "切换瞬间旧请求被取消且作废，页面最终稳定展示用户 2；旧请求的成功数据、AbortError 或 finally 都不会改动当前 loading/error/user",
+        "why": "在 await 前通过 onCleanup 注册了取消控制器和局部 active 失效标记，过期请求的三个出口全被挡住。"
+      },
+      {
+        "input": "传入 userId=\"404\"，服务器返回 HTTP 404 状态码",
+        "expected": "识别到 !res.ok 后抛出错误，loading 变为 false，页面以 role=\"alert\" 展示报错信息",
+        "why": "fetch 遇到 404/500 不会自动 reject，必须手动检查 res.ok 并把非取消类异常展示到 error 状态。"
+      }
+    ],
+    "steps": [
+      "第 1 步：声明 user、loading、error 三个响应式状态，用 watch 监听 () => props.userId 并配置 immediate: true 让组件首次挂载就发请求。",
+      "第 2 步：在异步 watch 回调的最开头（任何 await 之前），创建 AbortController 和局部标记 active = true，并通过第三个参数 onCleanup 注册失效与取消逻辑。",
+      "第 3 步：进入请求前先重置三态（开启 loading、清空旧 error 和 user），用 encodeURIComponent 编码 ID 拼接 URL 并传入 signal，请求后校验 res.ok 再解析 JSON。",
+      "第 4 步：在成功写 user、捕获非 AbortError 写 error、以及 finally 关闭 loading 三处都用 if (active) 把关；模板按加载中、错误、数据顺序条件展示。"
+    ],
+    "jargon": [
+      {
+        "term": "竞态 / 过期响应",
+        "plain": "先发的请求因为网慢反而后回来，一不留神把后来已经展示好的最新数据给覆盖掉的错位 Bug。"
+      },
+      {
+        "term": "onCleanup",
+        "plain": "Vue watch 回调里的第三个参数，用来登记“下次重新执行或组件卸载时要先干的善后工作”，比如中断上次请求。"
+      },
+      {
+        "term": "AbortController",
+        "plain": "浏览器自带的请求遥控器，把它的 signal 交给 fetch，随时调 abort() 就能掐断还在路上的网络请求。"
+      }
+    ]
+  },
+  "vue-keepalive": {
+    "plainGoal": "写一个用在 KeepAlive 缓存里的 Vue 3 计时器组件：只有激活可见时才每秒加 1，切走或卸载时立刻停表且不清零，再切回来接着数且绝不叠加多个计时器。",
+    "scenario": "多标签页后台系统常开启 KeepAlive 保住表单进度，此时切去别的标签并不会触发卸载；若组件里有定时器或轮询，必须趁停用时暂停、激活时恢复，否则后台白白空转。",
+    "examples": [
+      {
+        "input": "组件首次进入页面并停留 3 秒",
+        "expected": "onActivated 触发启动计时，页面显示秒数从 0 递增至 3",
+        "why": "KeepAlive 内的组件首次挂载时也会触发 onActivated，在此统一启动即可。"
+      },
+      {
+        "input": "第 3 秒时切走隐藏（触发 onDeactivated），隔 5 秒后再切回（再次触发 onActivated）",
+        "expected": "切走期间秒数停在 3 不增长也不归零，切回瞬间仍显示 3，随后继续按每秒 +1 变成 4、5",
+        "why": "停用时清掉了定时器但保留 seconds 状态，重新激活后无缝续上。"
+      },
+      {
+        "input": "重复调用启动逻辑，或组件最终被彻底卸载（触发 onUnmounted）",
+        "expected": "重复启动不会多开第二个计时器（不会每秒 +2）；彻底卸载时定时器被清除不泄漏",
+        "why": "用 timer !== undefined 保证启停幂等防重，同时在停用和卸载两处都调用停止逻辑。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用 ref(0) 保存累计秒数 seconds，再声明一个变量 let timer（不赋初值即为 undefined）存放定时器句柄。",
+      "第 2 步：写一个幂等的 start() 函数：只要 timer !== undefined 就直接返回防重复，否则开启每秒给 seconds 加一的 setInterval 并存入 timer。",
+      "第 3 步：写一个幂等的 stop() 函数：若 timer === undefined 直接返回，否则清除定时器并把 timer 设回 undefined，注意不要重置 seconds。",
+      "第 4 步：把 start 挂到 onActivated，把 stop 同时挂到 onDeactivated 和 onUnmounted，确保缓存隐藏和彻底销毁都能停表。"
+    ],
+    "jargon": [
+      {
+        "term": "KeepAlive",
+        "plain": "Vue 内置的组件缓存外壳，切走里面的组件时不销毁而是先“冻结保存状态”，切回来时直接唤醒复用。"
+      },
+      {
+        "term": "onActivated / onDeactivated",
+        "plain": "专为 KeepAlive 缓存组件准备的钩子：重新切回展示时触发前者，切走藏进缓存时触发后者。"
+      },
+      {
+        "term": "幂等防重",
+        "plain": "连续调用多次启动和调用一次结果完全相同，不会因为多调用了一次就凭空多开出加速乱跳的定时器。"
+      }
+    ]
+  },
+  "vue-store": {
+    "plainGoal": "写一份标准的 Vuex Store 配置片段：初始化空课程数组，用同步 mutation 写入列表，用异步 action 请求 /api/courses 并在确认 HTTP 成功后 commit 提交。",
+    "scenario": "多个页面都要共享同一份课程列表时，需要把数据放进 Vuex 统一管理；严格遵守“异步请求放 action、同步改数据放 mutation”，状态变化才能清晰可追踪。",
+    "examples": [
+      {
+        "input": "调用 loadCourses action，服务端对 /api/courses 返回 HTTP 200 及 [{ id: 1, name: 'Vue' }]",
+        "expected": "校验响应成功后解析 JSON，通过 commit('setCourses', list) 把 state.courses 更新为该数组",
+        "why": "action 负责异步拉数与检查状态，最后统一走同步 mutation 落库。"
+      },
+      {
+        "input": "调用 loadCourses action，服务端对 /api/courses 返回 HTTP 500",
+        "expected": "检测到 !r.ok 后抛出带状态码的错误，不执行 commit，state.courses 保持初始 []",
+        "why": "必须先检查 HTTP 状态码是否成功，避免把错误页面或异常响应误写入全局状态。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在配置对象里用工厂函数定义 state，返回初始值 { courses: [] }。",
+      "第 2 步：在 mutations 里定义同步方法 setCourses(state, list)，直接把新列表赋给 state.courses。",
+      "第 3 步：在 actions 里定义 async loadCourses({ commit })：请求 /api/courses，先检查响应 ok 状态（不成功就抛错），再解析 JSON 并 commit('setCourses', 数据)。"
+    ],
+    "jargon": [
+      {
+        "term": "state",
+        "plain": "Vuex 里集中存放全局共享数据的地方，所有组件都可以从这里读课程列表。"
+      },
+      {
+        "term": "mutation",
+        "plain": "Vuex 中唯一允许直接修改 state 的同步入口，好让调试工具精准记录每次数据变动。"
+      },
+      {
+        "term": "action / commit",
+        "plain": "action 用来发请求等异步操作，拿到数据后不能直接改 state，必须调 commit 把数据交给对应的 mutation 去写入。"
+      }
+    ]
+  },
+  "react-events": {
+    "plainGoal": "写一个可点击打开的 React 卡片组件，内部放一个删除按钮：点卡片触发打开，点删除只触发删除而不误触打开，且按钮在表单里也不会意外提交。",
+    "scenario": "邮件列表、收藏夹卡片常设计为整卡可点进详情、角落放个删除按钮；若不拦住事件冒泡，点删除时会顺带跳进刚被删掉的详情页。",
+    "examples": [
+      {
+        "input": "点击卡片空白处或标题文字",
+        "expected": "只触发 onOpen，不触发 onDelete",
+        "why": "外层卡片容器绑定了 onOpen，点击非按钮区域会正常执行打开逻辑。"
+      },
+      {
+        "input": "点击卡片内部的“删除”按钮",
+        "expected": "只触发 onDelete，绝对不会触发外层的 onOpen",
+        "why": "按钮的点击处理先调用了 e.stopPropagation()，阻断了点击事件继续向上冒泡到卡片容器。"
+      },
+      {
+        "input": "将 Card 放在 <form> 表单内，点击“删除”按钮",
+        "expected": "仍只调用 onDelete，不会触发表单提交导致页面刷新",
+        "why": "按钮显式声明了 type=\"button\"，避免了 HTML 按钮默认 type=\"submit\" 的隐患。"
+      }
+    ],
+    "steps": [
+      "第 1 步：渲染外层卡片元素（如 article），把 onClick 绑定为 onOpen，内部放标题和“删除”按钮。",
+      "第 2 步：给“删除”按钮加上 type=\"button\"，防止它被放进表单时意外充当提交按钮。",
+      "第 3 步：给“删除”按钮绑定点击处理函数，先调事件对象的 stopPropagation() 截断冒泡，再调用 onDelete()。"
+    ],
+    "jargon": [
+      {
+        "term": "事件冒泡",
+        "plain": "点到子元素（按钮）时，点击事件会像水泡一样一路往上传给父元素（整张卡片），把外层的点击回调也触发了。"
+      },
+      {
+        "term": "stopPropagation",
+        "plain": "拦住事件继续往上层父元素冒泡的方法，告诉浏览器“这次点击到这里就处理完了”。"
+      }
+    ]
+  },
+  "react-hooks": {
+    "plainGoal": "编写一个可复用的 React 自定义 Hook useToggle：每次调用都返回独立的开关状态、函数式翻转方法和恢复初始值方法，多个组件同时用也互不干扰。",
+    "scenario": "页面里常同时出现弹窗显隐、筛选折叠、暗色切换等好几个开关，把状态和切换动作抽成一个自定义 Hook 后，各处一行调用就能各自管各自的开关。",
+    "examples": [
+      {
+        "input": "调用 const a = useToggle()，在同一轮事件里连续调用两次 a.toggle()",
+        "expected": "初始 a.on 为 false；单次调用变 true，连续调用两次会先变 true 再变 false",
+        "why": "toggle 使用函数式更新 v => !v，每次都基于队列里最新值翻转，不吃旧快照的亏。"
+      },
+      {
+        "input": "调用 const b = useToggle(true)，先调 b.toggle() 再调 b.reset()",
+        "expected": "toggle() 后 b.on 为 false，reset() 后恢复为本次传入的初始值 true",
+        "why": "reset 会把状态重置回本次调用时传入的 initial 参数。"
+      },
+      {
+        "input": "两个组件分别调用 useToggle(false)，只对第一个组件触发 toggle()",
+        "expected": "第一个组件的 on 变成 true，第二个组件的 on 依然保持 false",
+        "why": "状态保存在各自组件顶层调用的 useState 中，Hook 只复用逻辑不共享同一份状态。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 useToggle(initial = false) 的顶层直接调用 useState(initial) 创建开关状态 on 与更新函数（不要把状态放在模块顶层）。",
+      "第 2 步：实现 toggle 方法，给更新函数传回调按前值取反，避免连续调用或闭包场景下读到旧值。",
+      "第 3 步：实现 reset 方法将状态设回 initial，最后返回对象 { on, toggle, reset }。"
+    ],
+    "jargon": [
+      {
+        "term": "自定义 Hook",
+        "plain": "名字以 use 开头、内部封装了 useState 等 React Hook 的函数，专门用来在组件间复用“有状态的逻辑”。"
+      },
+      {
+        "term": "函数式更新",
+        "plain": "写成 setOn(v => !v) 而不是 setOn(!on)，让 React 保证每次计算都拿到最新的前一个值。"
+      }
+    ]
+  },
+  "react-render": {
+    "plainGoal": "写一个纯声明式的 React 列表组件 ItemList：空数组时显示“暂无项目”，有数据时以业务 id 为 key 渲染无序列表，且标题按安全纯文本展示不碰真实 DOM。",
+    "scenario": "商品清单、通知列表等页面既要友好处理“一条都没有”的空状态，又要保证用户输入里的尖括号等字符不会变成恶意 HTML 脚本。",
+    "examples": [
+      {
+        "input": "传入空数组 items={[]}",
+        "expected": "渲染出提示文本“暂无项目”（如 <p>暂无项目</p>），不渲染空的 <ul>",
+        "why": "组件开头先处理空列表分支，直接返回空状态提示的 React 元素。"
+      },
+      {
+        "input": "传入 items={[{ id: 'a', title: '学习 JSX' }, { id: 'b', title: '完成挑战' }]}",
+        "expected": "渲染 <ul>，内部两个 <li> 分别以 'a' 和 'b' 为 key，依次显示“学习 JSX”和“完成挑战”",
+        "why": "在 JSX 花括号中用 map 把数据数组映射成带稳定业务 key 的列表元素。"
+      },
+      {
+        "input": "传入包含 HTML 标签字符的标题 items={[{ id: 'c', title: '<img src=x>' }]}",
+        "expected": "页面原样以纯文本显示 <img src=x>，不会把它解析成真实图片标签",
+        "why": "普通 JSX 文本插值 {item.title} 会自动转义内容，安全无注入风险。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在组件函数顶部先判断 items.length === 0，若是则直接返回一个显示“暂无项目”的 JSX 节点。",
+      "第 2 步：非空时返回 <ul>，在花括号内通过 items.map 遍历每条数据生成 <li>。",
+      "第 3 步：给每个 <li> 绑定稳定的业务标识 key={item.id}，直接用普通文本插值 {item.title} 输出标题，不直接操作 DOM 也不注入 HTML。"
+    ],
+    "jargon": [
+      {
+        "term": "React 元素 (Element)",
+        "plain": "JSX 写出来的界面蓝图对象，用来告诉 React 应该画什么，而不是自己动手调 document.createElement。"
+      },
+      {
+        "term": "JSX 文本插值",
+        "plain": "用 {变量} 把文字放进标签里，React 会自动转义特殊符号当纯文本显示，天然防范 HTML 注入。"
+      }
+    ]
+  },
+  "react-refs": {
+    "plainGoal": "写一个带“清空”按钮的 React 受控输入框：内容全靠 state 管理，点按钮时用 state 清空文字并用 ref 自动聚焦输入框，绝不直接改 DOM 的 value。",
+    "scenario": "搜索框一键清空或表单重写时，既要让 React 状态里的文字彻底清零，又想把光标立刻放回框里方便用户马上重打，这正是 state 和 ref 配合的标准场景。",
+    "examples": [
+      {
+        "input": "用户在输入框输入 \"Hello\"",
+        "expected": "状态 value 更新为 \"Hello\"，输入框受控展示 \"Hello\"",
+        "why": "输入框的 value 和 onChange 都与 React state 绑定，输入变化实时回流到 state。"
+      },
+      {
+        "input": "框内有文字时点击“清空”按钮",
+        "expected": "状态 value 变回 \"\" 使输入框变空，且输入框立刻获得光标焦点",
+        "why": "数据清空走 setValue('') 触发重渲染，DOM 聚焦命令则通过 ref.current?.focus() 执行。"
+      },
+      {
+        "input": "若绕过 state 直接改 field.current.value = ''",
+        "expected": "属于错误写法，React 内部 state 仍存着旧文字，重渲染时会反弹回旧值或造成数据不同步",
+        "why": "显示数据必须由 state 唯一掌控，ref 只负责执行聚焦这类原生 DOM 动作。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用 useState('') 维护输入框文字 value，用 useRef(null) 创建一个指向真实输入框 DOM 的引用 field。",
+      "第 2 步：渲染 <input>，同时绑定 ref={field}、value={value} 和 onChange 回调，构成受控输入框。",
+      "第 3 步：渲染“清空”按钮，点击时先调用 setValue('') 清空状态，再用可选链 field.current?.focus() 让输入框聚焦。",
+      "第 4 步：检查确认没有直接给 DOM 元素的 .value 赋值。"
+    ],
+    "jargon": [
+      {
+        "term": "受控输入框",
+        "plain": "框里显示什么字完全听 React state 的，用户打字时通过 onChange 通知 state 改值，再反过来更新界面。"
+      },
+      {
+        "term": "useRef",
+        "plain": "用来拿到页面上真实 DOM 元素（或存不触发渲染的值）的抓手，适合执行聚焦、滚动等命令式操作。"
+      }
+    ]
+  },
+  "react-state": {
+    "plainGoal": "写一个初始为 0 的 React 计数器按钮：点一次通过循环排队 5 次函数式更新让数字加 5，再点一次变 10，避开反复用旧 count 只加 1 的快照坑。",
+    "scenario": "一次点击或批处理回调里连续多次修改同一状态时，如果直接拿当前渲染快照里的 count 去加一，五次操作都在算 0 + 1，最终只加了一次。",
+    "examples": [
+      {
+        "input": "初始显示 0，点击一次按钮",
+        "expected": "按钮显示的数字从 0 变成 5",
+        "why": "循环里连续排入 5 次函数式更新 c => c + 1，React 会把上一次结果依次递给下一次累加。"
+      },
+      {
+        "input": "在显示 5 的基础上再点击一次按钮",
+        "expected": "按钮显示的数字从 5 变成 10",
+        "why": "每次点击都在当前最新状态上稳稳叠加 5 次，不依赖首次渲染的旧 count。"
+      },
+      {
+        "input": "若错误地在循环里连续 5 次写 setCount(count + 1)",
+        "expected": "点一次只会变成 1 而非 5",
+        "why": "同一轮渲染里 count 是不会原地变化的快照，五次写入的都是同一个 0 + 1。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用 useState(0) 初始化计数状态 count 与更新函数 setCount。",
+      "第 2 步：编写点击回调 addFive，在 5 次循环里每次都向 setCount 传入纯更新函数（接收前值并返回加 1），不要引用外层 count，也不要直接修改 count。",
+      "第 3 步：渲染按钮绑定 onClick={addFive} 并展示 {count}。"
+    ],
+    "jargon": [
+      {
+        "term": "状态快照",
+        "plain": "React 每次渲染时 state 就像拍好的定格照片，这次点击函数还没跑完前，变量里的 count 永远停在拍照片那一刻的值。"
+      },
+      {
+        "term": "函数式更新",
+        "plain": "把 c => c + 1 这样的纯计算函数交给 setCount，让 React 排队逐次用最新结果往下算。"
+      }
+    ]
+  },
+  "react-props": {
+    "plainGoal": "实现一个包含两个输入框的 React 组件 Twins：全组件只存一份 name 状态，在任意一个框里输入修改，另一个框都会实时同步成一模一样的文字。",
+    "scenario": "页面顶部搜索栏和侧边筛选框、或者左右双栏实时预览需要共享同一份输入时，把状态统一放在共同父级存一份即可，完全没必要搞两份状态再用 Effect 互抄。",
+    "examples": [
+      {
+        "input": "在第一个输入框键入 \"阿明\"",
+        "expected": "第一个输入框与第二个输入框同时显示 \"阿明\"",
+        "why": "两个输入框都受控绑定到同一份 name state，改一处就会带动共同状态更新。"
+      },
+      {
+        "input": "接着在第二个输入框把文字改成 \"小云\"",
+        "expected": "两个输入框同步全部变为 \"小云\"",
+        "why": "两个输入框共用同一更新逻辑，修改唯一状态源后整组件重渲染保持一致。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 Twins 组件里只用 useState('') 定义唯一一份 name 状态，不要拆出两份状态或写 useEffect 互相同步。",
+      "第 2 步：定义一个复用的输入变更处理函数，把事件目标的最新值写入 setName。",
+      "第 3 步：渲染两个输入框（可加 aria-label 区分名称），两者都将 value 设为 name、将 onChange 设为该共用处理函数。"
+    ],
+    "jargon": [
+      {
+        "term": "状态提升",
+        "plain": "当多个元素或子组件要同步共享一份数据时，把这份数据提到它们共同的父级里只存一份，再统一往下传。"
+      },
+      {
+        "term": "受控组件",
+        "plain": "输入框不自己私存内容，显示啥全听 props 或父级 state 指挥，有改动时再通过 onChange 汇报。"
+      }
+    ]
+  },
+  "react-types": {
+    "plainGoal": "用 TypeScript 写一个严格验货的 parseProduct 函数，把未知输入校验并筛选成只含三字段的合法商品对象；再写只读卡片 ProductCard 展示商品并通过回调传出 ID。",
+    "scenario": "后端接口或本地存储传来的数据在浏览器运行时不受 TS 编译检查保护，一旦金额变成负数、小数或混入脏字段，直接强转类型会让页面算错账甚至白屏。",
+    "examples": [
+      {
+        "input": "parseProduct({ id: \"p1\", name: \"耳机\", priceCents: 29900, hack: true })",
+        "expected": "返回 { id: \"p1\", name: \"耳机\", priceCents: 29900 }（自动丢弃多余的 hack 字段）",
+        "why": "对象类型及三个字段均合法，且按白名单重新构造仅包含三字段的新对象。"
+      },
+      {
+        "input": "parseProduct({ id: \"p1\", name: \"耳机\", priceCents: -1 })、priceCents 为 9.9、或传入 null / 数组 []",
+        "expected": "全部返回 null",
+        "why": "拒绝非普通对象、负数、小数或超出安全整数范围的非法金额。"
+      },
+      {
+        "input": "渲染 <ProductCard product={{ id: \"p1\", name: \"耳机\", priceCents: 29900 }} onAdd={fn} /> 并点击“加入购物车”",
+        "expected": "展示商品名“耳机”与换算价格“¥299.00”；点击按钮调用 fn(\"p1\")，且不修改传入的 product 对象",
+        "why": "Props 声明为只读契约，组件只读取展示并通过回调函数通知外部执行加购操作。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 parseProduct(value: unknown) 开头先过滤掉假值、非 object 以及数组，不满足直接返回 null。",
+      "第 2 步：将通过初筛的值视为 Record<string, unknown> 逐项做运行时校验：id 和 name 必须是 string，priceCents 必须是 number、满足 Number.isSafeInteger 且 >= 0。",
+      "第 3 步：校验全通过后，手动拼一个只含 { id, name, priceCents } 的新对象返回，不盲目用类型断言原样透传。",
+      "第 4 步：为 ProductCard 定义接收只读 Product 和 onAdd(id: string) 的 Props 类型，展示名称和按分换算的价格，点击按钮触发 onAdd(product.id)。"
+    ],
+    "jargon": [
+      {
+        "term": "unknown 类型",
+        "plain": "TypeScript 里最严谨的“未知值”类型，强迫你必须先写运行代码验明类型，才能安全访问它的字段。"
+      },
+      {
+        "term": "运行时数据边界",
+        "plain": "外部接口数据刚进入自己程序的大门口；TS 类型打包后就没了，必须在这里用真实代码做检查。"
+      },
+      {
+        "term": "非负安全整数",
+        "plain": "大于等于 0、没有小数且没超过 JS 精确表示上限的整数，电商常以“分”为单位这样存价格以防小数误差。"
+      }
+    ]
+  },
+  "react-effects": {
+    "plainGoal": "写一个按频道号自动订阅消息的 React Hook useChannel：订阅当前频道并把收到的消息返回给组件，一旦切频道、换订阅函数或组件卸载，自动退订旧频道。",
+    "scenario": "做实时聊天室、行情频道切换时，如果换房间后不退订旧通道，页面就会不断串进来上一个房间的消息，还会在后台越积越多僵尸连接。",
+    "examples": [
+      {
+        "input": "调用 useChannel(\"room-1\", subscribe)，随后频道推送消息 \"你好\"",
+        "expected": "初始返回 null，以 (\"room-1\", handler) 建立一次订阅；推送到达后 Hook 返回 \"你好\"",
+        "why": "useEffect 挂起后建立订阅，消息回调把最新内容写入 state 驱动视图更新。"
+      },
+      {
+        "input": "channelId 从 \"room-1\" 切到 \"room-2\"（或传入新的 subscribe 函数）",
+        "expected": "先执行上一次返回的 unsubscribe() 退订 room-1，重置消息为 null，再为 room-2 建立新订阅",
+        "why": "依赖数组包含 channelId 和 subscribe，任一变动时 React 会先跑上次的清理函数再跑新 Effect。"
+      },
+      {
+        "input": "使用 useChannel 的组件被卸载销毁",
+        "expected": "自动调用当前订阅对应的 unsubscribe()，不遗留活跃连接",
+        "why": "组件卸载时 React 会自动执行最后一次 Effect 返回的 cleanup 函数。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 useChannel 内部用 useState(null) 保存当前频道收到的最新消息 message。",
+      "第 2 步：在 useEffect 里先将 message 重置为 null，再调用 subscribe(channelId, setMessage) 建立订阅。",
+      "第 3 步：直接把 subscribe 返回的取消函数 return 出去作为 cleanup，依赖数组写全 [channelId, subscribe]，最后返回 message。"
+    ],
+    "jargon": [
+      {
+        "term": "useEffect",
+        "plain": "React 用来和外部系统（订阅、定时器、网络等）保持同步的 Hook，会在页面渲染完后自动执行。"
+      },
+      {
+        "term": "cleanup (清理函数)",
+        "plain": "useEffect 里 return 出来的收尾函数，每次依赖变化重跑前或组件卸载时都会被 React 自动调用来释放旧资源。"
+      }
+    ]
+  },
+  "react-lifecycle": {
+    "plainGoal": "实现按主题订阅实时消息的 React 组件 MessagePanel：切换主题或卸载时自动退订并清空显示，还要加一道局部有效标记挡住旧订阅退订后迟到的回调。",
+    "scenario": "对接异步消息推送时，哪怕刚刚调用了退订，网络或事件队列里可能还有一条旧主题消息正在赶来的路上；不拦截迟到回调就会把新主题的面板给盖掉。",
+    "examples": [
+      {
+        "input": "渲染 <MessagePanel topic=\"tech\" subscribe={sub} />，先无消息，随后推送 \"更新完成\"",
+        "expected": "初始显示标题 tech 和兜底提示“等待消息”；收到推送后正文更新为 \"更新完成\"",
+        "why": "空消息时显示等待提示，有效订阅收到回调后转为字符串写入 state。"
+      },
+      {
+        "input": "把 topic 从 \"tech\" 切换为 \"music\"，退订旧订阅后，旧订阅回调又迟到送来 \"旧科技消息\"",
+        "expected": "切换后立刻显示标题 music 与“等待消息”，迟到的 \"旧科技消息\" 被彻底忽略不会写入界面",
+        "why": "清理函数不仅调用了 unsubscribe()，还把旧 Effect 闭包里的局部 active 设成了 false。"
+      },
+      {
+        "input": "组件卸载销毁",
+        "expected": "将 active 置为 false 并调用 unsubscribe() 释放订阅，不产生卸载后更新告警或资源泄漏",
+        "why": "cleanup 在卸载时同步完成退订与回调拦截；同时调用方应保持 subscribe 函数引用稳定，避免无意义的频繁重订阅。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用 useState(\"\") 保存当前最新消息，切忌在组件渲染主流程里直接调用 subscribe。",
+      "第 2 步：在依赖 [topic, subscribe] 的 useEffect 开头声明局部标记 active = true，并先清空旧 message 以重置界面。",
+      "第 3 步：调用 subscribe(topic, callback)，回调里先判断 if (active) 再把值转字符串写入 state；返回清理函数，依次把 active 置为 false 并调用 unsubscribe()。",
+      "第 4 步：渲染主题标题和消息（为空时展示“等待消息”），并注意提醒调用方保持 subscribe 引用稳定减少不必要的重连。"
+    ],
+    "jargon": [
+      {
+        "term": "副作用 (Side Effect)",
+        "plain": "除了算出 JSX 界面之外、会跟外部世界互动的操作（如开启订阅），必须放进 useEffect 而不能在渲染期间直接跑。"
+      },
+      {
+        "term": "迟到回调",
+        "plain": "明明已经取消了旧订阅，但因为异步延迟还是多触发了一次的老回调函数，需要靠局部 active 开关拦截。"
+      },
+      {
+        "term": "subscribe 身份稳定",
+        "plain": "父组件别在每次渲染时都现造一个新箭头函数传进来，否则子组件会误以为订阅源变了而反复断开重连。"
+      }
+    ]
+  },
+  "react-router": {
+    "plainGoal": "用 react-router-dom 搭建包含首页、动态课程详情页和 404 页面的单页路由：站内跳转全部用 Link 无刷新切换，详情页用 useParams 读取 ID，并注释说明服务端直达配置。",
+    "scenario": "多页面 React 应用需要点击列表进详情、从详情返回首页、输错地址给 404，而且切换页面时不能像传统网页那样整页闪白重新加载。",
+    "examples": [
+      {
+        "input": "访问首页 / 并点击“进入课程 42”链接",
+        "expected": "不刷新整页，地址栏变为 /courses/42，详情页通过 useParams() 读出 id 为 \"42\" 并展示“课程 42”及返回首页链接",
+        "why": "Link 接管了站内导航走前端路由切换，动态段 :id 的实际值由 useParams 读取而非硬编码。"
+      },
+      {
+        "input": "在详情页点击“返回首页”链接",
+        "expected": "无刷新切回 / 展示首页，不使用 window.location",
+        "why": "普通站内导航用 Link 保持单页应用状态和顺滑体验。"
+      },
+      {
+        "input": "访问不存在的地址 /abc/xyz（或在地址栏直接刷新 /courses/42）",
+        "expected": "站内未知路径命中通配路由 * 显示 404 页面与返回入口；而直接刷新直达 /courses/42 时，服务器需配置 History 回退到入口 HTML（API 与静态文件除外）",
+        "why": "前端路由只负责浏览器加载完 JS 后的匹配，浏览器直达刷新时的首包响应仍需服务端配合。"
+      }
+    ],
+    "steps": [
+      "第 1 步：实现 Home 首页组件，用 <Link to=\"/courses/42\"> 提供前往详情页的入口。",
+      "第 2 步：实现 Detail 详情组件，调用 useParams() 读取动态 id 并渲染，同时提供 <Link to=\"/\"> 返回首页（留意路由参数只是字符串，不能盲目当可信业务 ID）。",
+      "第 3 步：在 App 中用 BrowserRouter 包裹 Routes，依次配置首页 /、详情 /courses/:id 和兜底 404 的通配 Route（path=\"*\"）。",
+      "第 4 步：加注释说明部署注意点：浏览器客户端匹配和服务端直达请求是两回事，服务器要为页面路径配置 History 回退，且 API 与静态资源需单独处理。"
+    ],
+    "jargon": [
+      {
+        "term": "Link 组件",
+        "plain": "react-router-dom 提供的站内导航链接，点它只换地址和页面组件，不会像原生跳转或 window.location 那样整页重载。"
+      },
+      {
+        "term": "useParams",
+        "plain": "用来读取当前动态网址里占位参数（例如 /courses/:id 里的 42）的 Hook，取出的值一律是字符串。"
+      },
+      {
+        "term": "通配路由 (*)",
+        "plain": "匹配所有未声明路径的兜底规则，专门用来接住输错的地址并展示 404 提示页。"
+      }
+    ]
+  },
+  "react-redux": {
+    "plainGoal": "编写纯函数 todosReducer：收到新增指令就不可变地追加一条 done=false 的待办，收到切换指令就只复制并翻转对应 ID 的完成状态，遇到未知指令原样返回旧状态。",
+    "scenario": "用 Redux 或 useReducer 管理列表状态时，如果直接 push 或原地改 item.done，框架比对引用以为数据没变就不会刷新界面，还会破坏状态变更记录。",
+    "examples": [
+      {
+        "input": "todosReducer([], { type: \"todos/add\", payload: { id: \"a\", title: \"学前端\" } })",
+        "expected": "返回新数组 [{ id: \"a\", title: \"学前端\", done: false }]，原数组保持空数组不变",
+        "why": "通过数组与对象展开生成新副本并在末尾追加，默认带上 done: false。"
+      },
+      {
+        "input": "对上一步结果 runAdded 调用 todosReducer(runAdded, { type: \"todos/toggle\", payload: \"a\" })",
+        "expected": "返回 [{ id: \"a\", title: \"学前端\", done: true }]，且旧状态 runAdded[0].done 依然为 false",
+        "why": "使用 map 只对命中的那一条创建新对象并翻转 done，未改写旧数组及旧条目。"
+      },
+      {
+        "input": "todosReducer(runAdded, { type: \"other/noop\" })",
+        "expected": "直接返回原来的 runAdded 引用（与入参完全相等）",
+        "why": "遇到不认识的 action 类型不做改动原样返回，避免无意义的新引用触发多余渲染。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用 switch 按 action.type 分流处理，default 分支直接返回旧 state，保证函数无任何副作用。",
+      "第 2 步：在 'todos/add' 分支里用展开语法构造新数组，末尾追加一个拷贝自 action.payload 并附带 done: false 的新对象（禁用 push）。",
+      "第 3 步：在 'todos/toggle' 分支里用 state.map 遍历，找到 id 等于 action.payload 的那一项时浅拷贝并翻转 done，其余项直接原样返回。"
+    ],
+    "jargon": [
+      {
+        "term": "纯 reducer",
+        "plain": "只根据旧状态和指令算出新状态的纯函数：同样的输入永远得同样输出，绝不原地修改入参也不发请求。"
+      },
+      {
+        "term": "action / payload",
+        "plain": "action 是描述“要干嘛”的指令对象，type 指明操作类型，payload 装着这次操作携带的具体数据。"
+      },
+      {
+        "term": "不可变更新",
+        "plain": "不直接涂改旧数组或旧对象，而是复制一份带着新改动的副本返回，方便框架快速察觉变化并追踪历史。"
+      }
+    ]
+  },
+  "react-key": {
+    "plainGoal": "编写人员列表组件 People 和行组件 Row：在 map 直接返回的 Row 上绑好稳定的 user.id 作 key，并额外把 id 和 name 作为普通 props 传进去供 Row 使用。",
+    "scenario": "写可排序、可筛选的表格或人员列表时，若把 key 错写到子组件内部标签上，排序后子组件的输入框或勾选状态就会串行；且新手常误以为子组件能直接读取 props.key。",
+    "examples": [
+      {
+        "input": "渲染 <People users={[{ id: 'u1', name: '张三' }, { id: 'u2', name: '李四' }]} />",
+        "expected": "渲染 <ul>，内部两个 <Row> 的 key 分别为 'u1'、'u2'，最终渲染出 <li data-id=\"u1\">张三</li> 与 <li data-id=\"u2\">李四</li>",
+        "why": "key 挂在 map 直接子节点 <Row> 上维护身份，同时把 id 和 name 作为普通 props 传进 Row。"
+      },
+      {
+        "input": "将 users 排序对调为 [{ id: 'u2', name: '李四' }, { id: 'u1', name: '张三' }]",
+        "expected": "React 借助 <Row> 上的稳定 key 将两个 Row 实例精准换位，不会出现数据与组件状态张冠李戴",
+        "why": "只有写在 map 直接返回的 <Row> 上的 key，才能保住每个 Row 组件实例自己的身份。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 People({ users }) 里返回 <ul>，在花括号中用 users.map 逐个渲染 <Row />。",
+      "第 2 步：在 <Row /> 上直接绑定 key={user.id}，同时再把 id={user.id} 和 name={user.name} 当作普通 props 传下去。",
+      "第 3 步：实现 Row({ id, name })，返回带有 data-id={id} 且展示 {name} 的 <li>，不要把 key 挪到 Row 内部的 li 上。"
+    ],
+    "jargon": [
+      {
+        "term": "key 不是普通 prop",
+        "plain": "key 是 React 内部私用的身份标记，不会出现在子组件的 props 里；子组件自己要用 id，必须另外传一份普通 id 属性。"
+      },
+      {
+        "term": "map 的直接子节点",
+        "plain": "key 必须贴在数组 map 回调函数最外层直接返回的那个元素（这里是 Row）上才起作用，贴在更里层无效。"
+      }
+    ]
+  },
+  "react-persistence": {
+    "plainGoal": "写一个刷新不丢数据的纯客户端 React 计数器：初始化时先安全读本地缓存并校验版本号和范围，递增防超安全整数，每次计数变化用 Effect 自动保存并在失败时给提示。",
+    "scenario": "做本地草稿计数、刷题进度条等持久化功能时，如果先设默认 0 再在 Effect 里读缓存，保存逻辑会抢先把 0 覆盖掉老数据；还要防缓存被改坏或无痕模式写满报错导致白屏。",
+    "examples": [
+      {
+        "input": "localStorage['course-count-v1'] 已有 '{\"version\":1,\"count\":7}'，刷新页面后点击一次“加一”",
+        "expected": "页面初始直接显示 7（不会被默认 0 覆盖）；点击后显示 8，本地存储同步更新为 '{\"version\":1,\"count\":8}'",
+        "why": "通过 useState(readCount) 惰性初始化在首次渲染前完成读档，随后由 Effect 持久化新值。"
+      },
+      {
+        "input": "本地存储里的内容是 '{\"version\":2,\"count\":9}'、负数 '{\"version\":1,\"count\":-3}' 或坏掉的 JSON",
+        "expected": "不报错崩溃，自动兜底以 0 初始化显示",
+        "why": "readCount 用 try/catch 捕获解析异常，并严格校验 version === 1 且 count 为非负安全整数。"
+      },
+      {
+        "input": "count 已达 Number.MAX_SAFE_INTEGER，或 localStorage 被禁用/写满导致 setItem 抛异常",
+        "expected": "到达上限时“加一”按钮被禁用且不会越界；写入失败时页面不崩，而是以 role=\"alert\" 展示保存失败提示",
+        "why": "按钮禁用与函数式更新双重防溢出，Effect 内的 try/catch 将存储失败转成可见错误提示。"
+      }
+    ],
+    "steps": [
+      "第 1 步：写独立的 readCount() 函数：在 try/catch 里读取并解析 course-count-v1，仅当 version === 1 且 count 是非负安全整数时返回它，否则一律返回 0。",
+      "第 2 步：用惰性初始化 useState(readCount) 创建 count（传函数引用别加括号，防每次渲染重复读存储也防 0 覆盖旧记录），并建 error 状态存保存异常文案。",
+      "第 3 步：在依赖 [count] 的 useEffect 里用 try/catch 把 { version: 1, count } 写入 localStorage，成功清空 error、失败写提示（切忌在 setCount 更新函数里写存储）。",
+      "第 4 步：渲染计数值、带上限保护与禁用态的“加一”按钮及 role=\"alert\" 错误提示；同时明确该方案面向纯客户端渲染，SSR 场景需另行安排客户端恢复时机。"
+    ],
+    "jargon": [
+      {
+        "term": "惰性初始化",
+        "plain": "把初始化函数本身传给 useState（不加括号），让 React 只在组件刚创建时执行一次读缓存，避免每次重绘反复读硬盘。"
+      },
+      {
+        "term": "数据持久化",
+        "plain": "把页面一关就没了的内存状态存进 localStorage 等本地存储里，刷新后还能照样找回来。"
+      },
+      {
+        "term": "非负安全整数",
+        "plain": "大于等于 0、没有小数且不超过 Number.MAX_SAFE_INTEGER（约 9 千万亿）的整数，超过上限再加 1 会失去计算精度。"
+      }
+    ]
+  },
+  "performance-lazy": {
+    "plainGoal": "写一个 lazyImages(root) 函数：只盯住 root 容器里带 data-src 的图片，当图片快滚进屏幕（距离视口还有 100px）时，再把 data-src 填进 src 加载并停止盯它；最后返回一个函数，调用它就能一键停止所有观察。",
+    "scenario": "电商商品列表或长图文页面动辄几十张图，如果页面一打开就全下载，首屏会很慢还费流量；做成快看到时提前 100px 再加载，页面切走时再调用清理函数避免内存泄漏。",
+    "examples": [
+      {
+        "input": "页面刚打开，第二张图在屏幕下方 600px 处（带有 data-src）",
+        "expected": "该图的 src 仍为空，不会提前发起下载",
+        "why": "图片还没进入「视口 + 100px 提前量」的范围，继续等待即可"
+      },
+      {
+        "input": "向下滚动，第二张图距离视口底部只剩 80px",
+        "expected": "把 img.dataset.src 赋给 img.src，并取消观察这张图",
+        "why": "已经进入 100px 提前区，开始加载；加载过就不再需要观察它"
+      },
+      {
+        "input": "调用返回的清理函数 stopImages() 后再继续滚动",
+        "expected": "observer 断开连接，剩下未加载的图片不再触发加载",
+        "why": "组件卸载或手动停止时必须释放 IntersectionObserver"
+      }
+    ],
+    "steps": [
+      "第 1 步：创建一个 IntersectionObserver，配置项里把 rootMargin 设为 '100px'，实现提前 100px 触发。",
+      "第 2 步：在回调里遍历 entries，先跳过没相交的项（!entry.isIntersecting），相交时把目标图片的 dataset.src 写到 src，并调用 unobserve 停止观察这张图。",
+      "第 3 步：只用 root.querySelectorAll('img[data-src]') 找出容器里的目标图片，逐个交给 observer.observe。",
+      "第 4 步：返回一个清理函数，里面调用 observer.disconnect()，让外部可以随时收尾。"
+    ],
+    "jargon": [
+      {
+        "term": "IntersectionObserver",
+        "plain": "浏览器自带的「视野哨兵」，元素快进入屏幕时自动通知你，不用自己监听高频 scroll 事件"
+      },
+      {
+        "term": "rootMargin",
+        "plain": "给视口四周额外加一圈隐形缓冲区，设成 '100px' 就是还没滚到、离屏幕边缘 100px 时就提前触发"
+      },
+      {
+        "term": "data-src",
+        "plain": "先把图片真实地址暂存在自定义属性里，避免浏览器一开始就把 src 里的图片全下载下来"
+      },
+      {
+        "term": "disconnect / unobserve",
+        "plain": "unobserve 是不再盯某一张图；disconnect 是让整个哨兵下班，彻底停止观察所有图"
+      }
+    ]
+  },
+  "performance-layout": {
+    "plainGoal": "写一个 resizeCards(container, cards) 函数：先只测一次容器宽度并算出半宽，再在循环里把每张卡片的宽度设为这个半宽（带 px）；并用注释说清楚窗口或容器变宽变窄时怎么重新算、卸载时怎么清理。",
+    "scenario": "给几十张信息卡片统一调整宽度时，如果边循环改样式边读取布局宽度，浏览器每轮都被迫立刻重新算一次页面排版，页面会明显掉帧卡顿。",
+    "examples": [
+      {
+        "input": "container 宽度为 360px，cards 有 2 张卡片",
+        "expected": "只读 1 次 container.clientWidth，两张卡片的 style.width 都设为 '180px'",
+        "why": "先读后写，避免循环里读写交替触发多次强制同步回流"
+      },
+      {
+        "input": "拖动滑块把容器宽度改成 440px，再次点击重新计算",
+        "expected": "重新读一次 440，两张卡片宽度更新为 '220px'",
+        "why": "容器尺寸变化后重新执行同一套「读一次、批量写」逻辑即可"
+      },
+      {
+        "input": "页面窗口拉伸或所在模块卸载时（需在注释说明）",
+        "expected": "说明可用 ResizeObserver（或节流后的 resize）触发重算，卸载时 disconnect / removeEventListener",
+        "why": "防止容器变化不同步，也防止监听残留造成内存泄漏"
+      }
+    ],
+    "steps": [
+      "第 1 步：在循环开始之前，只读取一次容器宽度（例如 container.clientWidth）并除以 2，存进局部常量。",
+      "第 2 步：遍历 cards，在循环体里只做写入操作：把每张卡片的 style.width 设为带 'px' 单位的半宽字符串，绝不在循环里读宽度。",
+      "第 3 步：在函数下方补充简短注释，说明容器尺寸变化时怎么用 ResizeObserver 或 resize 监听重新调用，以及离开页面时如何断开清理。"
+    ],
+    "jargon": [
+      {
+        "term": "回流（Reflow / Layout）",
+        "plain": "浏览器重新计算页面上元素的位置和大小，开销比只改颜色大得多"
+      },
+      {
+        "term": "读写交替（强制同步布局）",
+        "plain": "刚改完一个元素尺寸又立刻去读几何属性，逼着浏览器把原本可以合并的排版计算拆成一遍遍立刻重算"
+      },
+      {
+        "term": "ResizeObserver",
+        "plain": "专门盯住某个容器大小变化的监听器，比监听整个窗口 resize 更精准"
+      }
+    ]
+  },
+  "performance-rate-limit": {
+    "plainGoal": "写一个 throttle(fn, wait) 节流函数：第一次调用马上执行 fn；在接下来的 wait 毫秒冷却期内，不管再怎么疯狂调用都直接忽略（冷却结束也不自动补发最后一次）；同时完整保留原函数的 this 和参数。",
+    "scenario": "用户连续狂点「提交/点赞」按钮，或者滚动页面不断上报位置，我们希望点击瞬间立刻响应，但在冷却时间内不再重复触发。",
+    "examples": [
+      {
+        "input": "wait = 50ms，第 0ms 调用 runLimited('第一次')",
+        "expected": "立刻执行，输出 '执行: 第一次'",
+        "why": "首次调用不受拦截，马上生效（首触发）"
+      },
+      {
+        "input": "第 10ms 紧接着调用 runLimited('紧接着')",
+        "expected": "什么都不执行，冷却满 50ms 后也不会补发这次调用",
+        "why": "距离上次执行不到 50ms，且本题要求不做尾触发"
+      },
+      {
+        "input": "第 90ms 再次调用 runLimited('稍后')，或作为对象方法 obj.run(1, 2) 调用",
+        "expected": "距离上次已满 50ms，立即执行，并且 fn 内拿到的 this 是 obj、参数是 (1, 2)",
+        "why": "过了冷却期重新放行，同时保持原有上下文与传参"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 throttle 内部用闭包存一个「上次执行时间」变量 last，初始值设为 -Infinity（或确保第一次一定放行）。",
+      "第 2 步：返回一个普通 function(...args)（不要用箭头函数，否则会丢失调用时的 this）。",
+      "第 3 步：在返回函数里用 performance.now() 取当前时间，若距上次间隔 >= wait，就更新 last 并用 fn.apply(this, args) 执行返回；否则直接什么都不做。",
+      "第 4 步：补一句注释写明你采用的是「首触发、窗口内忽略、不做尾触发」策略。"
+    ],
+    "jargon": [
+      {
+        "term": "节流（Throttle）",
+        "plain": "给函数加一个冷却时间，在冷却期内只放行一次，不像防抖那样每次点击都重新计时"
+      },
+      {
+        "term": "首触发 / 尾触发",
+        "plain": "首触发是刚进来那一下立刻执行；尾触发是冷却期结束时把期间最后一次被拦下的调用再补执行一遍"
+      },
+      {
+        "term": "单调时间（performance.now()）",
+        "plain": "只往前走、不受电脑修改系统时钟影响的计时器，用来算时间间隔比 Date.now() 更稳妥"
+      }
+    ]
+  },
+  "performance-resources": {
+    "plainGoal": "写一个标准的响应式 <img> 标签：列出 400w、800w、1200w 三张 webp 候选图，告诉浏览器窄屏（<=600px）占满整屏宽、宽屏显示 400px 宽，同时声明 4:3 比例占位、开启懒加载并写上正确的 alt 描述。",
+    "scenario": "手机看课程封面只需要小图，高分屏桌面端才需要清晰大图；配置好 srcset 和 sizes 后，浏览器会自动挑最省流量又清晰的那一张，并且预留高度不让页面文字跳动。",
+    "examples": [
+      {
+        "input": "在宽度 375px 的手机上查看该课程封面",
+        "expected": "命中 (max-width: 600px) 100vw，浏览器按设备像素比从 400w/800w/1200w 里挑最合适的图，不会硬下超大原图",
+        "why": "sizes 告诉了浏览器这块图在窄屏下的真实渲染宽度"
+      },
+      {
+        "input": "在宽度 1440px 的桌面浏览器上查看该课程封面",
+        "expected": "命中默认 400px，同时标签上有 width/height 呈 4:3（如 1200x900 或 400x300），加载前页面不跳动",
+        "why": "浏览器提前知道 4:3 宽高比就能先占好位置（避免 CLS 抖动）"
+      },
+      {
+        "input": "该封面位于页面中下方（非首屏），或图片暂时加载失败",
+        "expected": "带有 loading=\"lazy\" 延迟加载，且显示 alt=\"前端课程\"",
+        "why": "不抢占首屏带宽，同时保证无障碍和兜底文案"
+      }
+    ],
+    "steps": [
+      "第 1 步：写好兜底的 src=\"photo-400.webp\"，再用 srcset 列出三张图以及各自对应的真实宽度描述符（400w、800w、1200w）。",
+      "第 2 步：写上 sizes 属性，先放媒体条件 (max-width: 600px) 对应 100vw，再放默认情况 400px。",
+      "第 3 步：补齐呈 4:3 比例的整数 width 和 height（例如 1200 和 900），再加上 loading=\"lazy\" 和 alt=\"前端课程\"。"
+    ],
+    "jargon": [
+      {
+        "term": "srcset 与 w 描述符",
+        "plain": "给浏览器一张「不同分辨率图片的菜单」，400w 表示这张图文件本身宽 400 像素"
+      },
+      {
+        "term": "sizes",
+        "plain": "提前告诉浏览器这张图在不同屏幕宽度下大概会占多宽，方便它下载前就选好尺寸"
+      },
+      {
+        "term": "loading=\"lazy\"",
+        "plain": "浏览器原生懒加载开关，非首屏图片快滚到时再下载"
+      }
+    ]
+  },
+  "engineering-modules": {
+    "plainGoal": "写一份入口文件 main.js：页面一启动就静态导入并立刻执行首页的 renderHome；再导出一个 async 函数 openAdmin，只有用户真正点击进入后台时才动态加载 ./admin.js 并调用 renderAdmin，并用注释说清两条加载路径。",
+    "scenario": "大多数访客只看首页，根本不进后台管理页；把后台代码拆出去按需加载，能明显减小首屏 JS 体积，让首页打开更快。",
+    "examples": [
+      {
+        "input": "用户刚打开网站（执行 main.js，未调用 openAdmin）",
+        "expected": "renderHome() 立刻执行，此时不会去请求和加载 ./admin.js 对应的分包",
+        "why": "首页属于首屏启动路径，直接静态 import 打包进主入口"
+      },
+      {
+        "input": "用户点击「进入管理后台」，触发 openAdmin()",
+        "expected": "此时才执行 await import('./admin.js')，拿到模块后调用里面的 renderAdmin()",
+        "why": "动态 import() 会让打包工具把后台代码拆成独立 chunk，交互时再按需下载"
+      }
+    ],
+    "steps": [
+      "第 1 步：在文件顶部用静态语法 import { renderHome } from './home.js' 引入首页函数，并直接调用它。",
+      "第 2 步：在导出的 async function openAdmin() 函数体内，用 await import('./admin.js') 动态加载后台模块。",
+      "第 3 步：从动态导入返回的模块对象里解构出 renderAdmin 并调用，再用简短注释分别标出「首屏启动路径」和「交互按需加载路径」。"
+    ],
+    "jargon": [
+      {
+        "term": "静态导入（import ... from）",
+        "plain": "写在文件顶部，构建工具一看就知道启动必须用到，会直接打进初始包"
+      },
+      {
+        "term": "动态导入（import()）",
+        "plain": "像函数一样按需调用，返回一个 Promise，构建工具会自动把它拆成单独的代码块（chunk）"
+      },
+      {
+        "term": "命名导出（Named Export）",
+        "plain": "模块里按名字导出的成员（如 renderAdmin），动态 import 回来后要从结果对象里按名字取出来"
+      }
+    ]
+  },
+  "engineering-loaders": {
+    "plainGoal": "写一个 Webpack 风格的 DonePlugin 插件类：在 apply(compiler) 里监听构建完成的 done 钩子，打包结束时打印 'ready'；最后补一段配置示例，把插件实例放进 plugins 数组里。",
+    "scenario": "团队想在每次打包结束后自动打印提示、上报耗时或通知部署脚本，这类需要介入整个构建生命周期的任务，就需要通过 Plugin 挂到构建钩子上，而不是写 Loader。",
+    "examples": [
+      {
+        "input": "在配置文件里挂载 plugins: [new DonePlugin()] 并开始构建",
+        "expected": "构建初始化时注册 done 监听，此时不打印；等整个构建完成触发 done 钩子时打印 'ready'",
+        "why": "apply 只负责挂钩子，真正的回调函数要等到 done 事件发生才执行"
+      },
+      {
+        "input": "对比 plugins: [new DonePlugin()] 与错误写法 plugins: [DonePlugin]",
+        "expected": "必须传实例化后的对象 new DonePlugin()",
+        "why": "Webpack 会直接调用每个数组元素的 .apply(compiler) 方法，传类本身没有实例方法会报错"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 DonePlugin 类的 apply(compiler) 方法里，找到完成阶段的钩子 compiler.hooks.done。",
+      "第 2 步：调用它的 .tap('DonePlugin', () => { ... }) 注册同步回调，在回调里打印 'ready'。",
+      "第 3 步：在类定义下方写一段配置示例（如 module.exports = { plugins: [new DonePlugin()] }），注意放进去的是 new 出来的实例。"
+    ],
+    "jargon": [
+      {
+        "term": "Plugin（插件）",
+        "plain": "往构建流程的各个时间点（开始、编译、完成）挂载逻辑的扩展，而 Loader 只负责把某类文件翻译成 JS"
+      },
+      {
+        "term": "compiler.hooks.done.tap",
+        "plain": "向打包器的「全部构建完成」事件注册一个同步监听函数，第一个参数是插件名字，方便排错"
+      }
+    ]
+  },
+  "engineering-babel-hmr": {
+    "plainGoal": "写一个极简 Babel 插件：遍历语法树里的字符串字面量节点（StringLiteral），只把内容严格等于 'draft' 的字符串改成 'published'，别的字符串和同名变量都不动；并写注释说明为什么它不会误改变量名 draft。",
+    "scenario": "批量迁移旧项目里的文案、接口状态码或埋点名时，直接全局查找替换很容易把变量名、注释、拼在一起的长单词全改坏；用 AST 插件就能精准只改目标语法节点。",
+    "examples": [
+      {
+        "input": "源码：const status = 'draft'",
+        "expected": "转换后：const status = 'published'",
+        "why": "'draft' 是 StringLiteral 且值恰好全等于 'draft'"
+      },
+      {
+        "input": "源码：const msg = 'draft-v2'",
+        "expected": "保持原样：const msg = 'draft-v2'",
+        "why": "题目要求精确等值匹配，不误伤只包含 draft 子串的字符串"
+      },
+      {
+        "input": "源码：const draft = 1",
+        "expected": "变量名 draft 保持不变",
+        "why": "变量名在 AST 里是 Identifier（标识符）节点，不会被 StringLiteral 访问器处理"
+      }
+    ],
+    "steps": [
+      "第 1 步：在插件返回的 visitor 对象里定义一个 StringLiteral(path) 访问方法。",
+      "第 2 步：通过 path.node.value 拿到字符串实际内容，用严格相等 === 'draft' 判断。",
+      "第 3 步：命中后把 path.node.value 直接改写成 'published'。",
+      "第 4 步：加一行注释说明 StringLiteral（字符串值）和 Identifier（变量名/标识符）在 AST 里属于不同节点类型，因此不会误改变量 draft。"
+    ],
+    "jargon": [
+      {
+        "term": "AST（抽象语法树）",
+        "plain": "Babel 先把源码拆成一棵带类型的「代码结构树」，插件按节点类型精准修改，再重新生成代码"
+      },
+      {
+        "term": "visitor（访问者）",
+        "plain": "你声明「每遇到某种语法节点就叫我一声」的回调集合，例如只关心 StringLiteral"
+      },
+      {
+        "term": "StringLiteral vs Identifier",
+        "plain": "前者是带引号的字符串本身（'draft'），后者是变量名、函数名等标识符（let draft）"
+      }
+    ]
+  },
+  "engineering-git": {
+    "plainGoal": "写一份带注释的 Git 命令清单（不用真执行）：你在干净的 feature 分支上，先把远端 origin/main 的最新提交抓下来看一眼，再用 merge 合并进来；如果撞上代码冲突，写清楚怎么查冲突文件、改完测试、暂存并完成合并提交。",
+    "scenario": "多人协作开发新功能时，主干 main 已经合进了同事的代码；直接瞎敲 git pull 容易在不了解改动的情况下强行合并，先 fetch 再看日志再 merge 是团队里最稳妥的做法。",
+    "examples": [
+      {
+        "input": "开始同步前，确认当前 feature 分支有没有没保存的改动",
+        "expected": "先用 git status 确认工作区干净，再用 git fetch origin 拉取远端元数据",
+        "why": "fetch 只下载远端提交记录，不会立刻改你本地正在写的代码"
+      },
+      {
+        "input": "同步前想先看 origin/main 到底比我多了哪些提交",
+        "expected": "执行 git log --oneline HEAD..origin/main 查看差异提交，确认后再执行 git merge origin/main",
+        "why": "先心中有数再合并，而且用 merge 不会改写已经共享出去的历史"
+      },
+      {
+        "input": "git merge origin/main 报冲突",
+        "expected": "用 git status 找到冲突文件 → 手动删掉冲突标记并改好测试 → git add 标记已解决 → git commit 完成合并提交",
+        "why": "没冲突时 merge 会自动提交；有冲突时必须人工解决并重新暂存提交"
+      }
+    ],
+    "steps": [
+      "第 1 步：写出准备阶段命令：检查干净状态（git status）并抓取远端最新提交（git fetch origin）。",
+      "第 2 步：写出审查与合并命令：查看远端新增提交日志（如 git log --oneline HEAD..origin/main），再执行 git merge origin/main。",
+      "第 3 步：用注释 + 命令写出冲突兜底流程：查冲突文件、手动编辑去掉冲突标记并运行测试、用 git add 暂存已解决文件、最后 git commit 完成合并，并顺便注明无冲突时无需再手动 commit。"
+    ],
+    "jargon": [
+      {
+        "term": "fetch vs pull",
+        "plain": "fetch 只把远端最新记录悄悄下载到本地仓库供你查看；pull 等于 fetch 后立刻自动 merge/rebase"
+      },
+      {
+        "term": "HEAD..origin/main",
+        "plain": "Git 区间写法，意思是「origin/main 里有、但我当前分支 HEAD 里还没有」的新增提交"
+      },
+      {
+        "term": "冲突标记",
+        "plain": "合并撞车时 Git 往文件里插入的 <<<<<<<、=======、>>>>>>> 分隔符，必须手动处理删干净才能提交"
+      }
+    ]
+  },
+  "browser-security": {
+    "plainGoal": "把用户提交的评论作者和正文安全地插进页面容器里，即使内容夹带 HTML 标签或恶意脚本，也只当作普通文字原样显示，绝不解析执行。",
+    "scenario": "做社区评论区、弹幕或个人简介展示时，只要把陌生人输入的内容渲染到网页上，就必须防住脚本注入攻击，避免他人借评论窃取登录态或破坏页面。",
+    "examples": [
+      {
+        "input": "在页面容器 #comments 中调用 renderComment(container, { author: \"小林\", body: \"<b>这段标签应作为文字显示</b>\" })",
+        "expected": "#comments 末尾新增一个 <article>，里面的 <strong> 显示“小林”，<p> 原样显示“<b>这段标签应作为文字显示</b>”这串文字，不会真的生成加粗的 <b> 标签",
+        "why": "使用纯文本赋值而非拼接 HTML，浏览器会把尖括号当成普通字符展示，不解析为标签。"
+      },
+      {
+        "input": "调用 renderComment(container, { author: \"访客\", body: \"<img src=x onerror=alert(1)>\" })",
+        "expected": "<p> 中完整保留字面文本“<img src=x onerror=alert(1)>”，<article> 里不会生成 <img> 节点，也不会执行脚本或弹出警告",
+        "why": "安全渲染应把用户输入当作纯文本节点原样保留，而不是靠删除危险关键字来碰运气防护。"
+      },
+      {
+        "input": "评论对象缺少字段，例如 renderComment(container, { author: undefined, body: null })",
+        "expected": "仍追加完整的 <article><strong></strong><p></p></article>，作者和正文显示为空文本，不会出现“undefined”或“null”字样",
+        "why": "对缺失或空值做空字符串兜底，既保证结构完整，又避免把程序内部空值直接展示给用户。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用创建 DOM 节点的方法分别创建 article、strong、p 三个元素，全程不拼接 HTML 字符串，也绝不使用 innerHTML。",
+      "第 2 步：对 comment.author 和 comment.body 先做空值兜底（缺失或 null 时视为空字符串），再统一转为字符串。",
+      "第 3 步：用只设置纯文本内容的方式把作者填入 strong、正文填入 p，保证任何标签和脚本代码都原样以文字呈现。",
+      "第 4 步：把 strong 和 p 依次放进 article，最后把整个 article 追加到传入的 container 末尾。"
+    ],
+    "jargon": [
+      {
+        "term": "innerHTML",
+        "plain": "把字符串当成 HTML 源码直接解析并塞进页面的属性，用来放用户输入极易触发脚本注入漏洞。"
+      },
+      {
+        "term": "textContent",
+        "plain": "专门读写元素内部纯文字的属性，浏览器不会把它当 HTML 标签解析，是防脚本注入的常用安全做法。"
+      },
+      {
+        "term": "XSS（跨站脚本攻击）",
+        "plain": "攻击者在评论、昵称等输入框里夹带恶意脚本，网站若将其当成网页代码渲染，脚本就会在其他访客浏览器里偷偷运行。"
+      }
+    ]
+  },
+  "browser-cache": {
+    "plainGoal": "模拟服务器核对客户端发来的资源版本指纹：如果对方手里已经是最新版的 '\"v2\"' 就只回 304 复用缓存，否则回 200 并发送最新正文。",
+    "scenario": "网站上线静态资源或高频查询接口后，不想让用户每次刷新都重复下载未变动的数据，服务端就会用 ETag 指纹做协商缓存来节省带宽并加快响应。",
+    "examples": [
+      {
+        "input": "首次请求未携带缓存指纹：getResponse(undefined)",
+        "expected": "返回 { status: 200, headers: { ETag: '\"v2\"' }, body: 'hello' }",
+        "why": "客户端本地还没有资源版本，服务器需返回 200 状态码、当前指纹 '\"v2\"' 和完整正文 'hello'。"
+      },
+      {
+        "input": "客户端带着完全一致的带引号指纹来校验：getResponse('\"v2\"')",
+        "expected": "返回 { status: 304, headers: { ETag: '\"v2\"' } }，且返回对象中不包含 body 字段",
+        "why": "版本指纹精确命中，资源没有更新，回 304 让客户端继续用本地缓存即可，无需再发正文。"
+      },
+      {
+        "input": "客户端传入旧版本、不带双引号或弱标签：getResponse('\"v1\"')、getResponse('v2') 或 getResponse('W/\"v2\"')",
+        "expected": "一律返回 { status: 200, headers: { ETag: '\"v2\"' }, body: 'hello' }",
+        "why": "双引号本身属于 ETag 值的一部分，且本题明确只做精确匹配，不把弱标签或标签列表误判为命中。"
+      }
+    ],
+    "steps": [
+      "第 1 步：把固定的资源版本指纹 '\"v2\"'（注意字符串内容本身包含一对双引号）和对应的 headers 对象准备好。",
+      "第 2 步：将传入的 ifNoneMatch 与固定指纹做严格全等比较；完全相等时，直接返回只含 status 为 304 和 headers 的对象，不要附加 body 字段。",
+      "第 3 步：其余所有不匹配的情况（包括 undefined、旧版本、缺引号、弱标签），统一返回带 status 为 200、同一 headers 以及 body 为 'hello' 的对象。"
+    ],
+    "jargon": [
+      {
+        "term": "ETag（实体标签）",
+        "plain": "服务器给某份资源内容贴上的“版本指纹”（标准写法自带双引号），内容改动时指纹随之变化。"
+      },
+      {
+        "term": "If-None-Match",
+        "plain": "浏览器再次请求资源时附带旧 ETag 的请求头，用来向服务器确认本地缓存有没有过时。"
+      },
+      {
+        "term": "304 状态码",
+        "plain": "服务器告诉浏览器“资源没变，继续用本地缓存”的信号，因此响应里不传正文以省流量。"
+      }
+    ]
+  },
+  "browser-rendering": {
+    "plainGoal": "把很长的待处理列表拆成每批最多 20 项按原顺序执行，批次之间通过定时器主动交回主线程，防止长时间同步计算把页面卡死。",
+    "scenario": "前端批量导入几千条表格数据、预处理搜索索引或大批量计算时，一口气跑完循环会让按钮点不动、画面掉帧，需要分批切分任务给浏览器留出渲染和响应交互的空档。",
+    "examples": [
+      {
+        "input": "传入 1 到 45 共 45 个数字的数组，visit 回调按顺序把每个数字收集进数组 visited",
+        "expected": "依次分成 20、20、5 三批按原顺序处理，批间通过 setTimeout 让出任务；await 完成后 visited 长度为 45，首项为 1、末项为 45",
+        "why": "每批上限 20 个，45 个元素恰好切为三批，并在还有剩余批次时排入下一轮宏任务，确保不阻塞渲染。"
+      },
+      {
+        "input": "传入只有 8 个元素的短数组，或传入空数组 []",
+        "expected": "短数组在一批内全部处理完毕后 Promise 兑现；空数组不触发 visit 且返回的 Promise 正常兑现（无返回值）",
+        "why": "最后不足一批或没有元素时不再多余等待，所有边界输入都能顺利完成。"
+      },
+      {
+        "input": "若批间改用 await Promise.resolve() 代替 setTimeout 让出",
+        "expected": "不满足题目要求，无法真正把控制权让回浏览器主线程",
+        "why": "已兑现 Promise 只会继续排微任务插队执行，浏览器在微任务清空前仍无法渲染画面。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用按步长 20 递增的循环遍历整个 items 数组，每次定位当前批次的起始下标。",
+      "第 2 步：截取当前批次最多 20 个元素（末尾不足 20 个就取剩余全部），按原顺序逐个调用 visit。",
+      "第 3 步：判断当前批处理完后是否还有剩余元素；如果还有，就用 Promise 包装一次 setTimeout(resolve, 0) 并 await 它，真正把任务让回事件循环。",
+      "第 4 步：函数本身标记为 async，所有批次处理完后自然结束即可，不需要额外返回结果。"
+    ],
+    "jargon": [
+      {
+        "term": "让出任务",
+        "plain": "把一大块连续计算切碎，算完一小批就主动交回执行权，让浏览器有机会刷新画面和响应用户点击。"
+      },
+      {
+        "term": "微任务",
+        "plain": "像 Promise.then 这类会在当前代码刚跑完就立刻插队执行的小任务，一直排微任务仍会堵住页面渲染。"
+      },
+      {
+        "term": "Promise 兑现",
+        "plain": "异步流程顺利跑完并进入成功完成状态，这样外部用 await 等待时就能准确知道全部批次都已处理完毕。"
+      }
+    ]
+  },
+  "browser-events": {
+    "plainGoal": "只在父列表上绑定一个点击事件，就能管住里面所有（包含后续动态新增的）删除按钮，点按钮或里面的子元素都能删掉对应那一行，并支持一键解绑。",
+    "scenario": "写待办清单、购物车或动态课程列表时，条目随时会新增和删减，给每个按钮逐个绑监听既费内存又管不到新条目，用事件委托统一收口才稳妥好维护。",
+    "examples": [
+      {
+        "input": "点击 #task-list 里第一项删除按钮内部的 <span>删除</span>，或先点“新增一项”再点新追加条目里的删除按钮",
+        "expected": "对应那一个 <li> 从 #task-list 中被删除，其余列表项保持不变",
+        "why": "点击事件会冒泡到父容器 list，通过从触发目标向上查找匹配的按钮和所属 li，既兼容按钮内嵌套元素又自动覆盖新条目。"
+      },
+      {
+        "input": "点击列表中的普通文字（非删除按钮），或点击列表外部带有 data-remove 属性的按钮",
+        "expected": "不会删除任何 <li> 元素",
+        "why": "非按钮区域匹配不到删除按钮，列表外按钮也不在 list 内部范围内，都会被安全忽略。"
+      },
+      {
+        "input": "点击“停止委托”执行返回的解绑函数（甚至连续调用两次），之后再点击列表内的删除按钮",
+        "expected": "列表项不再被删除，且重复调用解绑函数不会报错或产生额外副作用",
+        "why": "解绑时移除了绑定阶段保存的同一个监听器引用，后续点击不再进入删除逻辑。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 attachDelete 内部先定义一个具名的点击处理函数，方便后续在解绑函数里传入同一个函数引用。",
+      "第 2 步：在点击回调里先确认 event.target 是元素节点，再向上查找最近的带 data-remove 属性的按钮，兼容用户点到按钮内部 span 或图标的情况。",
+      "第 3 步：校验找到的按钮确实位于 list 内部，再从按钮向上找到所属的 li 并同样确认它在 list 内，满足条件后移除这个 li。",
+      "第 4 步：只在 list 上绑定这一次 click 监听，并返回一个用于移除该监听器的解绑函数。"
+    ],
+    "jargon": [
+      {
+        "term": "事件委托",
+        "plain": "不给每个子按钮分别绑监听，而是利用点击会向上冒泡的规律，只在共同父容器上绑一个“总监听器”统一处理。"
+      },
+      {
+        "term": "data-* 自定义属性",
+        "plain": "HTML 允许在标签上用 data- 开头自造的标记属性（如 data-remove），常用来给 JS 识别按钮用途而不和样式类名混在一起。"
+      },
+      {
+        "term": "解绑函数",
+        "plain": "调用后可以把之前注册的事件监听器彻底撤销的清理函数，避免功能关闭或组件销毁后继续误触发。"
+      }
+    ]
+  },
+  "network-methods": {
+    "plainGoal": "写一个异步请求函数，用 PUT 把整份个人资料以 JSON 格式覆盖发送到对应用户的接口，并正确处理 ID 编码、非 2xx 报错以及 204 空响应。",
+    "scenario": "在个人设置页点击“保存修改”提交整套资料时，前端需要把用户 ID 安全拼进请求路径、告诉后端发送的是 JSON，并在接口出错或只回 204 不带正文时给出准确行为。",
+    "examples": [
+      {
+        "input": "调用 replaceProfile(\"u/100 1\", { name: \"小林\" })，服务器返回 200 和 JSON {\"id\":\"u/100 1\",\"name\":\"小林\"}",
+        "expected": "向 /api/profiles/u%2F100%201 发出 PUT 请求，带 Content-Type: application/json 与序列化后的请求体，最终返回解析后的对象 {\"id\":\"u/100 1\",\"name\":\"小林\"}",
+        "why": "对路径参数做 URL 编码防止斜杠和空格破坏接口路径，200 成功响应则按 JSON 解析返回。"
+      },
+      {
+        "input": "调用 replaceProfile(\"42\", { name: \"小陈\" })，服务器更新成功并返回状态码 204（无正文）",
+        "expected": "函数返回 null，不会尝试解析空响应体导致报语法错误",
+        "why": "204 代表请求成功但故意不返回内容，直接返回 null 才能避免 response.json() 崩溃。"
+      },
+      {
+        "input": "调用 replaceProfile(\"999\", { name: \"测试\" })，服务器返回 404 或 500",
+        "expected": "抛出包含状态码信息（如 HTTP 404 或 HTTP 500）的 Error",
+        "why": "fetch 遇到 404/500 仍会兑现 Promise，必须显式检查 response.ok 后主动抛错。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先对 id 做 URL 路径片段编码，再拼接到 /api/profiles/ 后面，避免特殊字符把接口路径拆坏。",
+      "第 2 步：发起 fetch 请求，指定方法为 PUT，在请求头设置 JSON 内容类型，并把 profile 序列化为 JSON 字符串放进 body。",
+      "第 3 步：拿到响应对象后第一时间检查 response.ok；只要不是 2xx 成功状态，就抛出包含 response.status 的 Error。",
+      "第 4 步：确认请求成功后，先特判状态码 204 直接返回 null，其他成功响应再调用 response.json() 返回结果。"
+    ],
+    "jargon": [
+      {
+        "term": "PUT 方法",
+        "plain": "HTTP 中表示“用这份完整数据覆盖更新目标资源”的请求方式，语义上重复发同样内容结果一致（幂等）。"
+      },
+      {
+        "term": "URL 路径编码",
+        "plain": "把斜杠、空格、中文等字符转成 %XX 安全格式，防止参数内容被误认成网址里的分隔符。"
+      },
+      {
+        "term": "204 状态码",
+        "plain": "表示服务器已经成功处理完请求，但不返回任何响应正文，前端看到它应跳过 JSON 解析。"
+      }
+    ]
+  },
+  "network-http-versions": {
+    "plainGoal": "遍历页面资源加载日志，按每条记录实际用到的网络协议分别累计次数并放进 Map 返回，缺少协议信息的统一归类到 'unknown'。",
+    "scenario": "给网站升级 HTTP/2 或 HTTP/3 并做前端性能监控时，需要汇总页面里所有脚本和图片的协议占比，排查哪些资源还停留在旧协议或因跨域限制没拿到协议数据。",
+    "examples": [
+      {
+        "input": "countProtocols([{ nextHopProtocol: \"h2\" }, { nextHopProtocol: \"h2\" }, { nextHopProtocol: \"h3\" }, { nextHopProtocol: \"\" }])",
+        "expected": "返回 Map，内容依次为 \"h2\" => 2、\"h3\" => 1、\"unknown\" => 1",
+        "why": "同协议按次数累加，空字符串代表协议信息缺失，归入 'unknown' 而不猜测为 HTTP/1.1。"
+      },
+      {
+        "input": "countProtocols([{ nextHopProtocol: undefined }, {}])",
+        "expected": "返回 Map，内容为 \"unknown\" => 2",
+        "why": "显式 undefined 或缺少该字段都属于未知协议，统一合并计数到 'unknown'。"
+      },
+      {
+        "input": "countProtocols([])",
+        "expected": "返回一个空的 Map（size 为 0）",
+        "why": "空列表时应平稳返回空 Map，保持返回值类型始终一致。"
+      }
+    ],
+    "steps": [
+      "第 1 步：新建一个空的 Map，用来记录“协议名称 -> 出现次数”。",
+      "第 2 步：逐条遍历 entries，读取当前记录的 nextHopProtocol；如果为空字符串或 undefined 等缺失值，就统一换成 'unknown'。",
+      "第 3 步：从 Map 里取出该协议已有的计数（尚未记录则按 0 算），加 1 后写回 Map，全部遍历完后返回这个 Map。"
+    ],
+    "jargon": [
+      {
+        "term": "nextHopProtocol",
+        "plain": "浏览器资源性能记录里的字段，标明下载该文件所用的网络协议（如 h2、h3），跨域未授权暴露时常为空字符串。"
+      },
+      {
+        "term": "h2 / h3",
+        "plain": "分别是 HTTP/2 和 HTTP/3 的简称，相比老版本 HTTP/1.1 更擅长并发传输资源、减轻排队卡顿。"
+      },
+      {
+        "term": "Map",
+        "plain": "JavaScript 内置的键值对集合，适合做分类统计，取值和计数比普通对象更直观也不怕撞到原型属性。"
+      }
+    ]
+  },
+  "network-https": {
+    "plainGoal": "用标准 URL 解析器严格检查 API 地址：必须是合法 HTTPS 网址且不能夹带账号密码，合格时去掉末尾 # 锚点返回标准网址，不合格就报错。",
+    "scenario": "在系统设置里让用户填写 Webhook 回调地址或第三方 API 地址时，必须堵住明文 HTTP、网址里泄露密码以及畸形字符串绕过前缀校验等安全漏洞。",
+    "examples": [
+      {
+        "input": "validateEndpoint(\"https://example.com/api#section\")",
+        "expected": "返回 \"https://example.com/api\"",
+        "why": "网址格式合法、协议是 https: 且不含凭据，清空末尾的 #section 后返回标准化 URL 字符串。"
+      },
+      {
+        "input": "validateEndpoint(\"http://example.com/api\") 或 validateEndpoint(\"not-a-url\")",
+        "expected": "抛出 Error",
+        "why": "明文 http 协议不符合 HTTPS 要求，非法网址则会被 URL 构造器直接解析拒之门外。"
+      },
+      {
+        "input": "validateEndpoint(\"https://user:pass@example.com/api\") 或 validateEndpoint(\"https://user@example.com/api\")",
+        "expected": "抛出 Error",
+        "why": "网址中包含用户名或密码字段，存在明文泄露凭据风险，必须明确拒绝。"
+      }
+    ],
+    "steps": [
+      "第 1 步：把输入字符串交给标准 URL 构造器解析，借助它自动拦截格式残缺或非绝对地址，不要只靠字符串前缀判断。",
+      "第 2 步：检查解析结果的协议字段是否严格等于 'https:'，不是就抛出 Error。",
+      "第 3 步：检查解析结果的 username 和 password，只要任意一项非空就抛出 Error 拒绝含凭据的网址。",
+      "第 4 步：把解析对象的 hash 置为空字符串去掉锚点，最后返回标准化后的完整 href 字符串。"
+    ],
+    "jargon": [
+      {
+        "term": "URL API",
+        "plain": "浏览器和 Node 原生提供的网址解析工具，能把网址准确拆成协议、域名、账号密码、路径和锚点，并校验格式是否有效。"
+      },
+      {
+        "term": "hash（锚点）",
+        "plain": "网址末尾 # 号及后面的片段（如 #section），主要用于页内定位，发请求给 API 接口前通常要清除。"
+      },
+      {
+        "term": "URL 凭据",
+        "plain": "形如 https://用户名:密码@域名 把账号密码直接写进网址的做法，极易通过日志或历史记录泄露，安全场景必须禁止。"
+      }
+    ]
+  },
+  "network-dns-tcp": {
+    "plainGoal": "根据导航计时对象的起止时间戳，分别算出 DNS 解析耗时和连接建立耗时；起止时间无效或倒挂时记为 null，但真实耗时 0ms 必须保留。",
+    "scenario": "做网页首屏性能监控时，前端会上报浏览器导航计时数据来拆分慢在域名查询还是建连握手；命中缓存或复用连接时耗时常为 0ms，绝不能被代码错当成数据缺失。",
+    "examples": [
+      {
+        "input": "timingSummary({ domainLookupStart: 10, domainLookupEnd: 15, connectStart: 15, connectEnd: 40 })",
+        "expected": "返回 { dnsMs: 5, connectionMs: 25 }",
+        "why": "两组时间戳均为有限数字且结束不小于开始，相减分别得到 5ms 和 25ms。"
+      },
+      {
+        "input": "timingSummary({ domainLookupStart: 12, domainLookupEnd: 12, connectStart: 12, connectEnd: 12 })",
+        "expected": "返回 { dnsMs: 0, connectionMs: 0 }",
+        "why": "起止相等代表命中缓存或复用连接，耗时 0ms 是有效数值，必须原样保留而不是转成 null。"
+      },
+      {
+        "input": "timingSummary({ domainLookupStart: 20, domainLookupEnd: 10 })",
+        "expected": "返回 { dnsMs: null, connectionMs: null }",
+        "why": "DNS 阶段结束小于开始（负时长非法），连接阶段缺少时间戳（非有限数字），两个阶段都应返回 null。"
+      }
+    ],
+    "steps": [
+      "第 1 步：抽一个只负责算单阶段时长的辅助小函数，接收开始和结束两个时间戳，避免重复写两遍判断。",
+      "第 2 步：在辅助函数里依次验证：开始和结束都是有限数字，且结束大于等于开始；满足则返回两者之差，否则返回 null（不要用 || 判断，以免把 0 当成假值抹掉）。",
+      "第 3 步：分别传入 domainLookupStart/domainLookupEnd 算 dnsMs，传入 connectStart/connectEnd 算 connectionMs，组成结果对象返回。"
+    ],
+    "jargon": [
+      {
+        "term": "domainLookup（DNS 解析）",
+        "plain": "把网址域名查询翻译成服务器 IP 地址的过程，耗时越短代表查地址越快。"
+      },
+      {
+        "term": "connect（TCP 建连）",
+        "plain": "找到服务器 IP 后与对方握手打通可靠传输通道的阶段。"
+      },
+      {
+        "term": "有限数值",
+        "plain": "真正可计算的普通数字，不包含 undefined、NaN、Infinity 或字符串，可用 Number.isFinite 精准把关。"
+      }
+    ]
+  },
+  "html-semantics": {
+    "plainGoal": "用原生语义化表单标签写出一个邮件订阅框：可见标签精准关联必填邮箱输入框，并配一个原生提交按钮，不用 div 假扮控件。",
+    "scenario": "做网站邮件订阅、注册登录或意见反馈表单时，写好原生语义化标签能让键盘 Tab 切换、回车提交、手机邮箱键盘弹出、读屏软件播报和格式校验全部开箱即用。",
+    "examples": [
+      {
+        "input": "用鼠标点击表单里的“邮箱”文字标签（label）",
+        "expected": "输入光标自动聚焦到对应的邮箱输入框中",
+        "why": "label 的 for=\"email\" 与输入框的 id=\"email\" 严格配对，点击文字等同于激活对应输入框。"
+      },
+      {
+        "input": "不填内容或填入“abc”后，点击“订阅”按钮或在输入框内直接按回车",
+        "expected": "浏览器触发原生校验并阻止提交，提示必填或要求输入合法邮箱格式",
+        "why": "输入框设置了 type=\"email\" 与 required，按钮是放在 form 内的原生 type=\"submit\" 控件。"
+      },
+      {
+        "input": "填入合法邮箱“hi@example.com”后点击“订阅”",
+        "expected": "通过校验并提交表单，提交字段名为 email",
+        "why": "输入框配置了 name=\"email\"，浏览器提交表单时会按这个键名打包用户输入。"
+      }
+    ],
+    "steps": [
+      "第 1 步：用原生 form 标签包住整个订阅区域，让回车提交与表单校验有所依托。",
+      "第 2 步：放一个可见的 label 标签写明“邮箱”，把它的 for 属性设为 email，不要只拿 placeholder 充当说明。",
+      "第 3 步：放一个原生 input，同时配置 id=\"email\"、name=\"email\"、type=\"email\" 以及 required，再配一个文案为“订阅”的原生 submit 按钮，拒绝用 div 模拟。"
+    ],
+    "jargon": [
+      {
+        "term": "语义化标签",
+        "plain": "按内容真实角色选用对应的标准 HTML 标签（按钮用 button、表单用 form），让浏览器、键盘和读屏器都能理解页面结构。"
+      },
+      {
+        "term": "label 关联",
+        "plain": "用 label 的 for 指向输入框的 id，把文字说明和输入框绑定成一对，提升点击范围和无障碍可读性。"
+      },
+      {
+        "term": "原生表单提交",
+        "plain": "依靠 form 与 type=\"submit\" 按钮自动串联的校验、回车响应与数据提交机制；表单里其他非提交按钮记得标成 type=\"button\" 防止误触发。"
+      }
+    ]
+  },
+  "html-document": {
+    "plainGoal": "手写一份结构完整、规范闭合的最小中文 HTML5 网页骨架，配置好编码、视口和“练习页”标题，正文放一张带替代文字的图片和空挂载容器 #app。",
+    "scenario": "从零创建任何静态网页或前端框架入口 index.html 时都要写这份标准骨架，漏掉任何基础声明都可能引发怪异模式排版错位、中文乱码或手机页面被异常缩小。",
+    "examples": [
+      {
+        "input": "浏览器加载写好的完整 HTML 文档",
+        "expected": "浏览器以标准模式解析中文页面，标签页标题显示“练习页”，中文内容无乱码，移动端按 1:1 视口正常显示",
+        "why": "文档开头有标准 doctype，html 标明 lang=\"zh-CN\"，head 里配齐了 UTF-8、viewport 与 title。"
+      },
+      {
+        "input": "图片地址加载失败，或读屏软件朗读正文内容",
+        "expected": "页面展示图片 alt 里的文字说明，读者仍能理解图片意图",
+        "why": "正文中的 img 按要求提供了有意义的 alt 替代文本。"
+      },
+      {
+        "input": "检查正文里空容器 #app 的标签闭合方式",
+        "expected": "写作完整的成对标签 <div id=\"app\"></div>，而不是错误自闭合的 <div id=\"app\" />",
+        "why": "在 HTML 规则里 div 是普通容器元素，斜杠自闭合无效，必须写明结束标签以防吞掉后续元素。"
+      }
+    ],
+    "steps": [
+      "第 1 步：第一行写标准 HTML5 文档声明，随后写 html 根元素并加上中文语言标识 lang=\"zh-CN\"。",
+      "第 2 步：在 head 里依次放齐 UTF-8 字符集 meta、移动端自适应 viewport meta，以及内容为“练习页”的 title。",
+      "第 3 步：在 body 中放一张带 src 和清晰 alt 描述的 img，再放一个 id 为 app 的空 div 容器并写好成对的结束标签。"
+    ],
+    "jargon": [
+      {
+        "term": "DOCTYPE",
+        "plain": "写在网页第一行的文档模式声明，用来告诉浏览器按现代 HTML5 标准渲染，别退回兼容旧时代网页的怪异模式。"
+      },
+      {
+        "term": "UTF-8 字符集",
+        "plain": "通用万国文字编码格式，在 head 里尽早声明它能防止网页上的中文变成乱码。"
+      },
+      {
+        "term": "viewport",
+        "plain": "控制手机浏览器如何缩放网页的视口配置，设为按设备宽度 1 倍显示，页面才不会缩成密密麻麻的迷你电脑版。"
+      }
+    ]
+  },
+  "html-scripts": {
+    "plainGoal": "给三个职责不同的外部脚本选对加载属性，让它们并行下载不卡页面，同时保证有先后依赖的脚本等 DOM 就绪后按顺序执行、独立脚本随时可执行。",
+    "scenario": "实际项目里页面常同时引入公共基础库、业务入口脚本和第三方统计埋点；加载属性选错不是白屏卡顿，就是业务代码抢在基础库前面跑导致直接报错。",
+    "examples": [
+      {
+        "input": "HTML 中先写带 defer 的 library.js，再写带 defer 的 app.js，网络上 app.js 体积更小先下载完成",
+        "expected": "二者都会在后台与 HTML 解析并行下载，但 app.js 会乖乖等到 DOM 解析完毕且 library.js 执行结束后才执行",
+        "why": "defer 保证下载不阻塞解析，且所有 defer 脚本会在 DOM 就绪后严格按标签书写顺序执行。"
+      },
+      {
+        "input": "HTML 中给完全独立的 metrics.js 加上 async 属性",
+        "expected": "metrics.js 在后台并行下载，一旦下载完立刻执行，不必等 library.js、app.js 或 DOM 解析完成",
+        "why": "metrics.js 不依赖其他脚本也不操作页面 DOM，使用 async 能尽早完成统计且不拖累其他脚本。"
+      },
+      {
+        "input": "若错误地给 library.js 和 app.js 也用 async，或写定时器盲等几百毫秒",
+        "expected": "不符合要求，弱网下仍可能出现 app.js 比 library.js 先跑而报错",
+        "why": "async 不保证执行先后顺序，靠定时器猜网速既慢又不可靠，必须用浏览器的声明式属性解决。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先理清依赖关系：library.js 和 app.js 既要操作 DOM，又有前者先于后者的严格顺序；metrics.js 彼此独立。",
+      "第 2 步：把 library.js 写在 app.js 前面，给这两个外部脚本标签都加上 defer 属性，利用浏览器机制保证并行下载、DOM 就绪后按序执行。",
+      "第 3 步：给独立的 metrics.js 加上 async 属性，最后按题目要求写好简洁的 HTML 注释，说明为何这样选型。"
+    ],
+    "jargon": [
+      {
+        "term": "defer",
+        "plain": "脚本属性之一：一边解析网页一边后台下载，等 HTML 全解析完后，再严格按标签先后顺序逐个执行。"
+      },
+      {
+        "term": "async",
+        "plain": "脚本属性之一：后台并行下载，谁先下完就立刻插队执行，不管彼此顺序，适合统计埋点这类独立脚本。"
+      },
+      {
+        "term": "并行下载",
+        "plain": "让浏览器在读取 HTML 结构的同时多路并进地去拉外部 JS 文件，避免死等脚本下载导致页面白屏。"
+      }
+    ]
+  },
+  "html-graphics": {
+    "plainGoal": "用纯矢量 SVG 画一条任意缩放都清晰的 60% 绿色进度条：底层铺满宽背景矩形、上层叠加六成宽绿色前景矩形，并写明无障碍名称。",
+    "scenario": "在数据看板、学习打卡卡片或高清屏组件里，用 SVG 画进度条和图表既省体积又永不发虚，同时补上无障碍名称能让视障用户也听懂当前进度。",
+    "examples": [
+      {
+        "input": "渲染带 viewBox=\"0 0 100 20\" 的 SVG，依次包含 100×20 背景 rect 与 60×20 绿色前景 rect",
+        "expected": "画面按 5:1 等比清晰缩放，浅色底轨铺满全宽，绿色进度条压在底轨上方准确占左起 60% 宽度",
+        "why": "viewBox 定好了 100×20 内部坐标系，SVG 按标签先后从底到顶绘制，后写的绿色矩形会覆盖在背景之上。"
+      },
+      {
+        "input": "若把两个 rect 顺序写反（先写宽 60 的绿色，再写宽 100 的背景）",
+        "expected": "后绘制的满宽背景会把绿色进度条整个盖住，肉眼看不到进度",
+        "why": "SVG 不依赖 z-index，后出现的元素默认遮挡先出现的元素。"
+      },
+      {
+        "input": "屏幕阅读器朗读这个 SVG 元素",
+        "expected": "将其识别为图形并准确读出“完成百分之六十”",
+        "why": "在 SVG 上提供了可访问角色（role=\"img\"）和可访问名称（aria-label=\"完成百分之六十\"）。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 svg 根标签上设置内部画布坐标系 viewBox 为 0 0 100 20，同时加上图片语义角色和“完成百分之六十”的可访问名称。",
+      "第 2 步：先放入背景矩形 rect，宽 100、高 20，填充浅灰等柔和底色，构成进度条轨道。",
+      "第 3 步：紧跟在背景矩形后面放入前景矩形 rect，宽 60、高 20，填充绿色，确保绿色进度叠画在背景上方，全程不使用任何位图。"
+    ],
+    "jargon": [
+      {
+        "term": "SVG",
+        "plain": "用数学坐标和形状标签画出来的矢量图形，放大多少倍边缘都保持锐利，不像 PNG/JPG 位图一拉大就糊。"
+      },
+      {
+        "term": "viewBox",
+        "plain": "SVG 内部的虚拟画板尺寸（格式：起点x 起点y 宽 高），内部图形按这套坐标定位，外框变大变小时会整体等比缩放。"
+      },
+      {
+        "term": "可访问名称",
+        "plain": "通过 aria-label 或 title 等方式给纯图形配上的文字说明，方便盲人读屏软件把图形含义念出来。"
+      }
+    ]
+  },
+  "html-offline": {
+    "plainGoal": "在 Service Worker 中只接管“打开网页”这类导航请求：优先联网获取最新页面，断网失败时回退到缓存的 /offline.html，连缓存也没有就返回 503 文本提示。",
+    "scenario": "开发支持断网体验的网页应用（PWA）时，用户没信号刷新页面希望看到友好的自定义离线提示页，而不是浏览器默认断网页，同时又不能误拦图片和普通 API 请求。",
+    "examples": [
+      {
+        "input": "页面发起图片、CSS 或接口请求（event.request.mode 不等于 'navigate'）",
+        "expected": "监听器直接 return，不调用 event.respondWith，交给浏览器按默认流程处理",
+        "why": "题目限定只拦截顶层页面导航请求，避免干扰其他类型资源加载。"
+      },
+      {
+        "input": "断网时用户打开或刷新页面（mode 为 'navigate'），fetch 因网络异常失败，且本地缓存存有 /offline.html",
+        "expected": "页面展示缓存中 /offline.html 的内容",
+        "why": "网络请求 reject 后进入 catch 分支，从 caches 中成功命中并回传了离线兜底页。"
+      },
+      {
+        "input": "断网时用户导航页面，fetch 失败，且本地缓存中找不到 /offline.html",
+        "expected": "返回一个状态码为 503 的纯文本 Response（如“暂时离线”）",
+        "why": "即便离线页还没缓存或已失效，也必须兜底返回有效 Response，不能让 respondWith 收到 undefined。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 fetch 事件监听开头先检查 event.request.mode，只要不是 'navigate' 就直接 return 放行，千万不调 event.respondWith。",
+      "第 2 步：对导航请求调用 event.respondWith(...)，里面优先执行 fetch(event.request) 走网络拿最新页面。",
+      "第 3 步：给 fetch 接上 catch 处理真正的网络失败（注意服务器回 404 属于有网响应，不会进 catch），在 catch 里异步查找 caches 中的 '/offline.html'。",
+      "第 4 步：缓存查到了就直接返回；没查到就构造一个简短文本且 status 为 503 的新 Response 返回。"
+    ],
+    "jargon": [
+      {
+        "term": "Service Worker",
+        "plain": "运行在浏览器后台的独立代理脚本，能拦截网页发出的网络请求，并在断网时从本地缓存给页面兜底。"
+      },
+      {
+        "term": "navigate 请求",
+        "plain": "用户在地址栏回车、点链接跳转或刷新整张 HTML 网页时触发的页面级导航请求。"
+      },
+      {
+        "term": "503 状态码",
+        "plain": "表示“服务暂时不可用”的 HTTP 状态码，在离线且连兜底页都没缓存时用来明确告知浏览器当前无法提供服务。"
+      }
+    ]
+  },
+  "css-display": {
+    "plainGoal": "把 .card 调整为边框盒总宽正好 240px、内边距 16px、实线边框 2px、外边距 8px，使内部装内容的宽度精准落在 204px 并写注释说明算法。",
+    "scenario": "按设计稿排多列商品或课程卡片时，经常写了 width 之后一加 padding 和 border 就把卡片撑宽导致一行放不下，切到 border-box 才能让实际宽度与设计稿毫厘不差。",
+    "examples": [
+      {
+        "input": "给 .card 设置 box-sizing: border-box、width: 240px、padding: 16px、border: 2px solid #94a3b8、margin: 8px",
+        "expected": "开发者工具中测得边框盒总宽正好 240px，其中内容区宽为 240 - 16×2 - 2×2 = 204px",
+        "why": "在 border-box 下，width 直接涵盖内容、左右内边距和左右边框，不会向外膨胀。"
+      },
+      {
+        "input": "检查 .card 的 margin: 8px 对盒子尺寸的影响",
+        "expected": "卡片左右外部各留 8px 空白（外部水平共占 16px），但卡片自身边框盒宽度依然是 240px",
+        "why": "margin 属于盒子之外的间隔空间，永远不计入元素的边框盒 width。"
+      },
+      {
+        "input": "若未设置 border-box（沿用浏览器默认 content-box）",
+        "expected": "边框盒总宽会撑大到 240 + 32 + 4 = 276px，内容区仍为 240px，不符合题目要求",
+        "why": "默认的 content-box 只把 width 算给内容区，padding 和 border 会额外加在外面。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先把 .card 的 box-sizing 切到 border-box，让接下来写的 width 直接锁定包含内边距与边框在内的总宽度。",
+      "第 2 步：依次写上 width: 240px、padding: 16px、2px 实线 border（配一个合适的边框色）和 margin: 8px。",
+      "第 3 步：核对尺寸算式：240 减去左右两边的 16px 内边距和 2px 边框正好剩 204px 内容区（margin 在外不算进 width），把这道计算过程写成注释放进样式里。"
+    ],
+    "jargon": [
+      {
+        "term": "边框盒（border-box）",
+        "plain": "一种盒子算宽高的规则：设定的 width 直接等于“内容 + 内边距 + 边框”合起来的总宽度，最符合切图直觉。"
+      },
+      {
+        "term": "内容区",
+        "plain": "盒子最里面真正用来放文字和子元素的那块区域，扣掉四周内边距和边框后剩下的就是它。"
+      },
+      {
+        "term": "padding / border / margin",
+        "plain": "盒子从内到外的三层包装：padding 是边框里的留白，border 是边框线本身，margin 是盒子外头和邻居拉开的间距。"
+      }
+    ]
+  },
+  "css-units-center": {
+    "plainGoal": "写全屏遮罩 .overlay 和自适应弹窗 .dialog：无论弹窗本身多高、屏幕多宽，弹窗都能在屏幕正中稳稳居中，窄屏不撑爆，长内容可顺畅滚动。",
+    "scenario": "做确认弹窗、表单弹窗或协议阅读窗时，内容高度常常动态变化，设备从手机到大显示器各不相同，用现代固定遮罩加 Grid 居中加弹性宽限可以一次搞定全部适配。",
+    "examples": [
+      {
+        "input": "在宽屏窗口（如 1280px 宽）中预览弹窗",
+        "expected": ".overlay 固定铺满整个视口，.dialog 在水平和垂直方向精准居中，宽度封顶在 32rem 不再继续拉宽",
+        "why": "fixed 配合 inset: 0 铺满视口，Grid 双向居中无需提前知道弹窗高度，min(100%, 32rem) 限制了最大宽度。"
+      },
+      {
+        "input": "将预览区域缩小到窄手机宽度（如 360px）",
+        "expected": ".overlay 四周保留 16px 内边距，.dialog 自动缩进适配剩余宽度，不会横向溢出屏幕",
+        "why": "弹窗设为 border-box 并在 100% 与 32rem 之间取较小值，窄屏时自动贴合容器内宽。"
+      },
+      {
+        "input": "往 .dialog 里塞入超出屏幕高度的超长文字内容",
+        "expected": "弹窗不会把顶部或底部截断到无法查看，用户可以通过滚动条看完所有内容",
+        "why": "遮罩层与弹窗都开启了 overflow: auto，且弹窗限制了扣除上下留白后的最大视口高度。"
+      }
+    ],
+    "steps": [
+      "第 1 步：把 .overlay 设为固定定位（fixed）并用 inset: 0 贴紧视口四边，保证页面滚动时遮罩始终覆盖全屏。",
+      "第 2 步：给 .overlay 开启 Grid 布局并做水平垂直双向居中，加上 16px 四周内边距和 overflow: auto，给窄屏留呼吸感并兜底滚动。",
+      "第 3 步：给 .dialog 加上 border-box，宽度用 min(100%, 32rem)（或等效的 100% 配 max-width: 32rem）兼顾大屏封顶与窄屏不溢出。",
+      "第 4 步：给 .dialog 限制扣除上下 32px 边距后的最大视口高度并允许内部滚动，避免超长文案把弹窗撑出可视区。"
+    ],
+    "jargon": [
+      {
+        "term": "视口（viewport）",
+        "plain": "浏览器窗口里你此刻肉眼能看见网页内容的那一整块可见屏幕区域。"
+      },
+      {
+        "term": "Grid 双向居中",
+        "plain": "把父容器变成网格布局并设置居中对齐（如 place-items: center），只需两行就能让未知尺寸的子元素上下左右同时居中。"
+      },
+      {
+        "term": "rem",
+        "plain": "按网页根元素字号倍算的长度单位（默认 1rem 约 16px），比写死 px 更能跟着用户的文字缩放习惯一起适配。"
+      }
+    ]
+  },
+  "css-bfc": {
+    "plainGoal": "让包含左浮动 80×80 头像的卡片父容器 .profile 自动撑开包住头像并保留外部阴影，不靠写死高度，也不用会裁掉阴影的 overflow: hidden。",
+    "scenario": "做左图右文的个人信息卡或文章摘要时，浮动图片往往比右边寥寥数行文字高，容易把父容器“戳穿”压到下方区块；用现代 BFC 写法能无副作用包住浮动。",
+    "examples": [
+      {
+        "input": ".profile 内左侧 .avatar 左浮动（80×80，右外边距 12px），右侧只有一行短文案",
+        "expected": ".profile 自动撑开高度完整包住整个头像，外侧阴影正常显示不截断，后面的“下一个区块”乖乖排在卡片下方",
+        "why": "display: flow-root 让父容器生成独立 BFC，算自动高度时会把浮动子项算进来，且不会裁剪外部阴影。"
+      },
+      {
+        "input": "把 .avatar 的高度临时改大到 140px 再恢复为 80px",
+        "expected": ".profile 的高度随之自动增高再回落，始终严丝合缝包住头像",
+        "why": "没有写死父容器的 80px 高度，而是依靠 BFC 规则由内容和浮动元素动态撑开。"
+      },
+      {
+        "input": "如果改用 overflow: hidden 处理浮动，并在 .profile 上加外部阴影或超出角标",
+        "expected": "不符合本题要求，overflow: hidden 会顺带把溢出盒子边界的装饰内容直接裁掉",
+        "why": "题目明确禁止为了清浮动而引入带裁剪副作用的 overflow: hidden。"
+      }
+    ],
+    "steps": [
+      "第 1 步：给父容器 .profile 使用现代无副作用创建 BFC 的显示类型（display: flow-root），不要写死固定高度，也不要用 overflow: hidden。",
+      "第 2 步：给 .profile 添加一圈外部可见的阴影（box-shadow），用来体现非裁剪方案能完整保留外溢效果。",
+      "第 3 步：给 .avatar 设置左浮动、宽 80px、高 80px 以及右外边距 12px，与右侧文字拉开清晰间距。"
+    ],
+    "jargon": [
+      {
+        "term": "BFC",
+        "plain": "块级格式化上下文，像页面里的一个独立“隔离舱”，内部浮动元素不会跑出去影响别人，父容器算高度也会把里面的浮动项包进来。"
+      },
+      {
+        "term": "float（浮动）",
+        "plain": "让元素靠左或靠右贴边、文字环绕其旁的布局方式，但它脱离普通文档流，容易让父容器算不出高度而塌陷。"
+      },
+      {
+        "term": "overflow: hidden 的副作用",
+        "plain": "老办法常借它顺带触发 BFC 来包住浮动，但它的本职是剪掉超出边框的内容，容易把角标、下拉菜单或外溢装饰一刀切掉。"
+      }
+    ]
+  },
+  "css-stacking": {
+    "plainGoal": "用 CSS 变量集中定义导航栏与弹窗层级，让导航吸顶、弹窗全屏覆盖在其上，并用注释讲清弹窗在页面 DOM 里该挂在哪里才不会被祖先元素困在底层。",
+    "scenario": "大型项目里大家互相拼着写 z-index: 99999 仍经常盖不住导航栏，根本原因常是弹窗放进了自带 transform、opacity 或低 z-index 的祖先容器里，需要用变量统一规划并放到顶层挂载。",
+    "examples": [
+      {
+        "input": "页面滚动时 .nav 吸顶（使用 --z-nav: 10），同时页面顶层的 .dialog-layer 打开（使用 --z-dialog: 100）",
+        "expected": ".nav 固定粘在顶部，.dialog-layer 固定铺满整个视口并完整盖住 .nav",
+        "why": "两者同处根层叠上下文，层级 100 高于 10，所以弹层稳压导航栏。"
+      },
+      {
+        "input": "如果把 .dialog-layer 嵌套在设有 z-index: 1 或 transform 的祖先区块内",
+        "expected": "即便 .dialog-layer 自己写了 100 甚至 9999，依然可能被外层层级为 10 的 .nav 压在下面",
+        "why": "z-index 只在同一个层叠上下文内排名，祖先另起一层时，子孙再大的数字也冲不出祖先的层级天花板。"
+      },
+      {
+        "input": "检查样式代码中的变量定义与注释",
+        "expected": ":root 中定义了 --z-nav: 10 与 --z-dialog: 100 并被两处引用，注释明确指出弹层应放在顶层统一容器中避开低层祖先上下文",
+        "why": "用变量集中管理层级避免魔术数字泛滥，并用文档化注释防止结构挂载出错。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 :root 中声明 --z-nav: 10 和 --z-dialog: 100 两个层级变量，让全站层级一目了然。",
+      "第 2 步：给 .nav 设置 sticky 吸顶定位和 top: 0，并用 var(--z-nav) 指定 z-index。",
+      "第 3 步：给 .dialog-layer 设置 fixed 固定定位和 inset: 0 铺满屏幕，并用 var(--z-dialog) 指定 z-index。",
+      "第 4 步：写一段注释明确说明：.dialog-layer 应当放在页面顶层的统一弹层容器里，不要嵌套在带有低 z-index、transform 或 opacity 的祖先元素内部。"
+    ],
+    "jargon": [
+      {
+        "term": "层叠上下文",
+        "plain": "像彼此独立的“叠放文件夹”，文件夹里面的元素只在自己夹内比 z-index 大小，对外整体听祖先文件夹的排序。"
+      },
+      {
+        "term": "CSS 变量（--z-*）",
+        "plain": "在 :root 里集中起名、随处用 var(...) 引用的自定义数值，统一管层级和配色特别省心。"
+      },
+      {
+        "term": "sticky / fixed",
+        "plain": "sticky 是滚到指定位置就粘在屏幕边的“吸顶”定位；fixed 是彻底钉死在屏幕视口上、页面怎么滚都不动的定位。"
+      }
+    ]
+  },
+  "performance-animation": {
+    "plainGoal": "写一个 moveX(el, distance, duration = 300) 水平移动动画：用 requestAnimationFrame 给的时间戳算进度，把元素从 0 平滑移到 distance，到终点后自动停；如果 duration <= 0 就第一帧直接到位；最后返回一个取消函数，随时能刹停动画。",
+    "scenario": "高刷屏（120Hz）和普通屏（60Hz）每秒帧数不同，如果每帧硬加 5px，动画在不同设备上快慢差一倍；按真实流逝时间算进度才能保证到处都是准确 2 秒移完，且切页时能随时取消。",
+    "examples": [
+      {
+        "input": "moveX(box, 220, 2000)，过去了 1000ms 时",
+        "expected": "进度为 0.5，元素 transform 更新为 translateX(110px)；到 2000ms 达到 220px 后停止继续请求下一帧",
+        "why": "按 (now - start) / duration 计算进度并用 Math.min(..., 1) 截断，到 1 就不再调度"
+      },
+      {
+        "input": "moveX(box, 220, 0) 或 duration 为负数",
+        "expected": "首个动画帧直接把元素移到 translateX(220px) 并结束，不出现 NaN / Infinity",
+        "why": "duration <= 0 时直接把进度当成 1，避免除以 0"
+      },
+      {
+        "input": "动画运行到一半，用户点击「取消动画」调用返回的 cancelMove()",
+        "expected": "通过 cancelAnimationFrame(frame) 取消下一次待执行帧，方块立刻停在当前位置",
+        "why": "每次调度都要把最新 frame 编号存下来，取消函数才能精准刹停"
+      }
+    ],
+    "steps": [
+      "第 1 步：定义两个闭包变量：保存最新帧编号的 frame，以及记录动画第一帧开始时间的 start。",
+      "第 2 步：写每帧回调 tick(now)：第一帧把 start 设为 now；算出进度 progress（duration <= 0 时直接取 1，否则取 Math.min((now - start) / duration, 1)）。",
+      "第 3 步：把 el.style.transform 设为 translateX(${distance * progress}px)；只有 progress < 1 时才再次调用 requestAnimationFrame(tick) 并更新 frame。",
+      "第 4 步：启动首帧 requestAnimationFrame(tick)，最后返回 () => cancelAnimationFrame(frame) 作为取消函数。"
+    ],
+    "jargon": [
+      {
+        "term": "requestAnimationFrame (rAF)",
+        "plain": "浏览器专门用来做流畅动画的定时器，会在每次屏幕刷新前触发，并把高精度时间戳 now 传进回调"
+      },
+      {
+        "term": "按时间推进",
+        "plain": "看「已经过去了几毫秒 / 总时长」来决定走到了百分之几，而不是死板地每帧挪固定像素"
+      },
+      {
+        "term": "transform: translateX",
+        "plain": "移动元素位置的 CSS 属性，通常只走合成层，比反复改 left 流畅得多"
+      }
+    ]
+  },
+  "performance-fragment": {
+    "plainGoal": "写一个 renderNames(list, names) 函数：先在离线的 DocumentFragment 里把每个姓名做成 <li>（用 textContent 塞纯文字，绝不解析 HTML 标签），最后一次性把 list 里的旧内容全部替换掉；传入空数组时清空列表。",
+    "scenario": "搜索结果或联系人列表刷新时，如果把用户输入当 HTML 拼接会有 XSS 注入风险，一条条直接插页面也会反复改动真实 DOM；用离线片段组装纯文本节点再整批替换既安全又利索。",
+    "examples": [
+      {
+        "input": "renderNames(ul, ['小林', '<strong>只显示文字</strong>', '阿青'])",
+        "expected": "ul 里原有旧 <li> 全部消失，按顺序变成 3 个新 <li>，第二条页面上原样显示文字 <strong>只显示文字</strong> 而不是加粗",
+        "why": "textContent 只写纯文本，不会把尖括号当成 HTML 标签执行"
+      },
+      {
+        "input": "renderNames(ul, [])",
+        "expected": "ul 被清空，子节点数量变为 0",
+        "why": "把空的 DocumentFragment 传给 list.replaceChildren(fragment) 会清掉全部旧子节点"
+      }
+    ],
+    "steps": [
+      "第 1 步：用 document.createDocumentFragment() 创建一个离线的临时容器 fragment。",
+      "第 2 步：按原顺序遍历 names，每次创建一个 <li>，用 li.textContent = name 填入纯文本，再 append 到 fragment 里。",
+      "第 3 步：循环结束后，直接调用 list.replaceChildren(fragment) 一次性替换掉旧列表（空数组时 fragment 为空，正好把列表清空）。"
+    ],
+    "jargon": [
+      {
+        "term": "DocumentFragment",
+        "plain": "内存里的「临时托盘」，先在托盘上摆好所有 <li>，最后端进真实页面时托盘本身不会多出一层无用标签"
+      },
+      {
+        "term": "textContent vs innerHTML",
+        "plain": "textContent 只当普通字显示，安全防 XSS；innerHTML 会把字符串里的 <script> 或 <strong> 当网页代码解析"
+      },
+      {
+        "term": "replaceChildren",
+        "plain": "清空当前容器所有旧子节点并换入新节点的现代 DOM 方法"
+      }
+    ]
+  },
+  "engineering-build-speed": {
+    "plainGoal": "写一个 summarizeBuilds(rows) 统计函数：从一堆构建耗时记录 { kind, ms } 里，只挑出 cold、warm、incremental 三种合法阶段且 ms 为有效非负数的数据，分别算平均耗时；某个阶段没有任何合法样本就返回 null。",
+    "scenario": "优化前端打包速度时，CI 流水线会收集冷启动、热缓存、增量编译三类耗时日志，日志里常夹杂异常阶段名或脏数据（负数、NaN、字符串），需要先清洗再分桶求均值做性能看板。",
+    "examples": [
+      {
+        "input": "[{kind:'cold',ms:1000}, {kind:'cold',ms:1200}, {kind:'warm',ms:200}, {kind:'incremental',ms:80}, {kind:'cold',ms:-1}]",
+        "expected": "{ cold: 1100, warm: 200, incremental: 80 }",
+        "why": "cold 的 -1 是非法负数被忽略，只对 1000 和 1200 求平均得 1100"
+      },
+      {
+        "input": "[{kind:'other',ms:50}, {kind:'warm',ms:'200'}, {kind:'warm',ms:NaN}, {kind:'incremental',ms:0}]",
+        "expected": "{ cold: null, warm: null, incremental: 0 }",
+        "why": "非法 kind、字符串 '200' 和 NaN 全被过滤；0ms 合法有效；没有合法样本的 cold 和 warm 返回 null"
+      },
+      {
+        "input": "[]（空数组）",
+        "expected": "{ cold: null, warm: null, incremental: null }",
+        "why": "三个阶段都固定保留在返回对象里，没有样本时统一给 null 而不是 0 或 NaN"
+      }
+    ],
+    "steps": [
+      "第 1 步：准备三个固定分桶：{ cold: [], warm: [], incremental: [] }，保证返回结果永远包含这三个键。",
+      "第 2 步：遍历 rows，同时检查三个条件：kind 是允许的三个键之一（可用 Object.hasOwn 避免原型链误判）、Number.isFinite(row.ms) 为真（自动挡掉字符串和 NaN/Infinity）、且 row.ms >= 0。",
+      "第 3 步：把通过校验的耗时放进对应分桶；最后逐桶算平均值，数组为空就填 null。"
+    ],
+    "jargon": [
+      {
+        "term": "冷启动 / 温启动 / 增量编译",
+        "plain": "冷启动是没缓存从头打包；温启动是带着上次持久缓存重跑；增量编译是改了一个文件后只重编受影响部分"
+      },
+      {
+        "term": "Number.isFinite",
+        "plain": "严格判断一个值是不是「真正的有限数字」，像 '200'、NaN、Infinity、null 都会返回 false"
+      },
+      {
+        "term": "Object.hasOwn",
+        "plain": "只检查对象自身有没有这个属性，防止碰到 kind: 'toString' 这种原型链上的名字误当成合法分类"
+      }
+    ]
+  },
+  "browser-storage": {
+    "plainGoal": "从本地存储安全读取带版本号的主题配置：只有 JSON 合法、version 等于 1 且 theme 为 light 或 dark 才采用，其余异常情况一律无副作用回退到 light。",
+    "scenario": "给应用做深浅色主题持久化时，浏览器隐私模式可能直接禁止访问 localStorage，或者版本升级后旧配置损坏，必须严谨校验并兜底，防止用户一进页面就白屏崩溃。",
+    "examples": [
+      {
+        "input": "storage.getItem(\"prefs\") 返回 '{\"version\":1,\"theme\":\"dark\"}'",
+        "expected": "返回 { theme: \"dark\" }",
+        "why": "数据能正常解析、版本正好是 1、主题值属于合法选项，提取干净的 { theme } 返回。"
+      },
+      {
+        "input": "storage.getItem(\"prefs\") 返回 \"{broken\"（损坏 JSON）、null（缺失）、'{\"version\":2,\"theme\":\"dark\"}'（不支持的版本）或 '{\"version\":1,\"theme\":\"pink\"}'（非法值）",
+        "expected": "一律返回 { theme: \"light\" }，且不会向 storage 写入或删除任何键",
+        "why": "只做 JSON 解析不够，还必须严查版本号与主题白名单，不通过就安全回退且不产生副作用。"
+      },
+      {
+        "input": "存储受限导致 storage.getItem 抛出异常（如 new Error(\"禁止读取\")）",
+        "expected": "函数内部捕获异常，不向外抛错，返回 { theme: \"light\" }",
+        "why": "某些浏览器的隐私模式或禁用 Cookie 策略会让读取操作直接抛错，需要整体放进 try/catch 保护。"
+      }
+    ],
+    "steps": [
+      "第 1 步：给 key 参数设好默认值 \"prefs\"，并准备好默认兜底对象 { theme: \"light\" }。",
+      "第 2 步：用 try / catch 包住 storage.getItem(key) 和 JSON.parse(...)，确保读取抛错或 JSON 损坏时能直接回退默认值，绝不用 eval。",
+      "第 3 步：解析后依次检查对象非空、version 严格等于 1、theme 只能是 \"light\" 或 \"dark\"；任意一项不合规范就返回兜底值。",
+      "第 4 步：全部通过后只返回 { theme: data.theme }，全程只读，不对 storage 做任何修改或清理。"
+    ],
+    "jargon": [
+      {
+        "term": "Web Storage",
+        "plain": "浏览器自带的本地键值存储（如 localStorage），用来把用户偏好留在本地，但只能存字符串且可能因权限策略报错。"
+      },
+      {
+        "term": "JSON 解析",
+        "plain": "把存成文本字符串的 JSON 还原回 JS 对象的过程，遇到格式残缺的字符串会直接抛出语法异常。"
+      },
+      {
+        "term": "数据版本号",
+        "plain": "在本地配置里顺带存上的结构编号（如 version: 1），方便以后升级数据结构时识别不兼容的旧缓存。"
+      }
+    ]
+  },
+  "browser-tabs": {
+    "plainGoal": "借助同源广播频道在多个浏览器标签页间同步退出登录：只响应 { type: \"logout\" } 消息触发回调，同时返回广播通知和关闭频道两个操作方法。",
+    "scenario": "用户同时打开多个后台标签页，在其中一页点“退出登录”后，其余页面应立刻跟着退出，避免别人继续在旧标签页上误操作或残留敏感界面。",
+    "examples": [
+      {
+        "input": "标签页 A 和 B 都执行了 watchLogout(onLogout)，随后标签页 A 调用 notify()",
+        "expected": "A 向 session-events 频道广播 { type: \"logout\" }，标签页 B 收到后执行它的 onLogout()；标签页 A 自己不会收到自己刚发出的消息",
+        "why": "BroadcastChannel 会把消息发给同源的其他标签页，不回环发给发送方自己，且仅传递事件类型而不传播登录令牌。"
+      },
+      {
+        "input": "同频道传来 null、字符串 \"logout\" 或 { type: \"ping\" } 等无关数据",
+        "expected": "静默忽略，不调用 onLogout，也不会因读取 null.type 报错",
+        "why": "接收端先判断 event.data 存在再精确校验 type === 'logout'，挡住一切非退出消息。"
+      },
+      {
+        "input": "调用返回的 close() 方法后，其他标签页再广播退出消息",
+        "expected": "当前页已断开频道不再触发 onLogout，底层频道资源被正常释放",
+        "why": "close() 会关闭对应的 BroadcastChannel 实例，防止组件卸载后产生内存泄漏。"
+      }
+    ],
+    "steps": [
+      "第 1 步：创建一个名为 'session-events' 的 BroadcastChannel 实例作为共享频道。",
+      "第 2 步：注册消息监听函数，先做好 event.data 判空，只在 event.data.type 严格等于 'logout' 时触发 onLogout()，其余消息全部忽略。",
+      "第 3 步：返回包含 notify 和 close 的对象：notify 负责往频道只发送 { type: 'logout' }，close 负责调用频道关闭方法释放资源。"
+    ],
+    "jargon": [
+      {
+        "term": "BroadcastChannel（广播频道）",
+        "plain": "浏览器内置的同源“对讲机”，只要同一网站的多个标签页连上同一个频道名，一个喊话其余都能听见。"
+      },
+      {
+        "term": "多标签通信",
+        "plain": "同一个网站开在浏览器多个标签页里的页面之间互相传递状态通知（比如同步登出、同步换肤）。"
+      },
+      {
+        "term": "关闭频道（close）",
+        "plain": "用完对讲机后主动挂断释放连接的操作，避免页面或模块销毁后监听一直挂在后台浪费内存。"
+      }
+    ]
+  },
+  "browser-processes": {
+    "plainGoal": "在后台线程 Worker 里实现带校验的求和处理器：收到 { id, values } 后，仅当 values 全是有限数字时回传总和，否则原样带 id 回传规定错误信息。",
+    "scenario": "网页需要做大数组统计、报表汇总等耗时计算时，丢给 Web Worker 在后台线程算才不会卡住界面；并发派发任务时还必须带上任务 id 并过滤脏数据，防止算出一堆 NaN。",
+    "examples": [
+      {
+        "input": "主线程发来 { id: 1, values: [10, 2.5, -0.5] }",
+        "expected": "Worker 回传 { id: 1, total: 12 }",
+        "why": "values 是合法数组且每一项都是有限数字，求和后保留原任务 id 发回主线程。"
+      },
+      {
+        "input": "主线程发来空数组任务 { id: 2, values: [] }",
+        "expected": "Worker 回传 { id: 2, total: 0 }",
+        "why": "空数组满足校验条件，且累加设了初始值 0，总和准确为 0。"
+      },
+      {
+        "input": "主线程发来 { id: 3, values: [1, \"2\"] }、{ id: 4, values: [1, NaN] }、{ id: 5, values: [Infinity] } 或 { id: 6, values: null }",
+        "expected": "Worker 均回传 { id: 对应id, error: \"values must be finite numbers\" }",
+        "why": "字符串数字、NaN、Infinity 和非数组都过不了数组与有限数字检查，必须拒绝计算并返回精确匹配的错误信息。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 self.onmessage 中从 event.data 取出任务编号 id 和待求和列表 values。",
+      "第 2 步：先检查 values 是否为数组，再检查数组每一项是否都满足 Number.isFinite；不通过就立刻用 self.postMessage 回传 { id, error: \"values must be finite numbers\" } 并结束。",
+      "第 3 步：校验通过后，以 0 为初始值把 values 求和得到 total，再用 self.postMessage 回传 { id, total }，全程不碰任何 DOM。"
+    ],
+    "jargon": [
+      {
+        "term": "Worker（Web Worker）",
+        "plain": "浏览器开辟的后台计算线程，重计算放里面跑不会把页面界面卡住，但它无法直接操作 DOM，只能收发消息。"
+      },
+      {
+        "term": "self.onmessage",
+        "plain": "Worker 后台脚本里的消息收件箱，主线程每次调用 postMessage 派活时都会触发它。"
+      },
+      {
+        "term": "有限数字",
+        "plain": "排除了 NaN、无穷大 Infinity 和字符串数字后的正常数值，用 Number.isFinite 能一次全部筛查出来。"
+      }
+    ]
+  },
+  "browser-threats": {
+    "plainGoal": "给跨窗口通信做严格安检：只有来源网站和发送窗口完全匹配、消息类型为 resize 且高度在 0 到 2000 的有限数字才放行并只返回 { height }，其余全返回 null。",
+    "scenario": "网页嵌套第三方或子域 iframe 时，常靠子页面发消息通知父页面调高容器；但任何网页都能给当前窗口发消息，不严查来源、窗口和数值范围极易被伪造消息搞乱布局。",
+    "examples": [
+      {
+        "input": "event 为 { origin: \"https://example.com\", source: win, data: { type: \"resize\", height: 200, extra: 1 } }，传入 trustedOrigin 为 \"https://example.com\"、expectedSource 为 win",
+        "expected": "返回 { height: 200 }（不透传 extra 等多余字段）",
+        "why": "来源、窗口引用、消息类型和高度范围全部达标，只提取所需的 height 构造干净对象返回。"
+      },
+      {
+        "input": "event.origin 为 \"https://other.example\" 或 \"https://example.com.evil.com\"，或 event.source 不是 expectedSource",
+        "expected": "返回 null",
+        "why": "来源和窗口都必须精确全等，长得像的域名或其他无关窗口发来的消息一律拦下。"
+      },
+      {
+        "input": "来源和窗口都正确，但 height 为 9999、-1、NaN、\"200\"，或 data.type 不是 \"resize\"",
+        "expected": "返回 null",
+        "why": "高度必须是 0..2000 范围内的真正有限数字，未知类型、字符串或越界值都不能放行。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先核对发送身份：检查 event.origin 与 trustedOrigin、event.source 与 expectedSource 是否同时严格相等，任一不对立刻返回 null。",
+      "第 2 步：再核对消息格式：确认 event.data 非空、data.type 严格等于 'resize'，并用 Number.isFinite 确认 data.height 是真正的有限数字。",
+      "第 3 步：接着检查数值区间：确保 data.height 大于等于 0 且小于等于 2000，越界就返回 null。",
+      "第 4 步：全部检查过关后，只组装并返回 { height: data.height }，切忌把原始 data 里多余的未知字段原样透传出去。"
+    ],
+    "jargon": [
+      {
+        "term": "origin（消息来源）",
+        "plain": "发送方网页的“协议 + 域名 + 端口”完整身份标识，校验时必须精确全等，不能靠包含子串判断。"
+      },
+      {
+        "term": "source（来源窗口）",
+        "plain": "实际发出这条消息的窗口对象引用（例如目标 iframe 的 contentWindow），与 origin 双重核对能防同源其他窗口误发。"
+      },
+      {
+        "term": "iframe",
+        "plain": "在当前页面里再嵌进一张独立子网页的窗口元素，父子之间常通过 postMessage 互相通信。"
+      }
+    ]
+  },
+  "network-headers": {
+    "plainGoal": "封装一个支持取消请求的 POST JSON 函数：带上发送和接收 JSON 的请求头，非 2xx 时抛出带状态码的错误，204 返回 null，其余成功响应解析 JSON。",
+    "scenario": "项目里封装通用 API 客户端时，既要让提交类接口统一带上正确的 JSON 协商头和错误拦截，又要兼容后端不回正文的 204 响应，还要支持用户切页时及时取消在途请求。",
+    "examples": [
+      {
+        "input": "postJSON(\"/api/items\", { title: \"笔记\" }, controller.signal)，服务器返回 201 和 JSON {\"id\": 7}",
+        "expected": "发出 POST 请求，附带 Content-Type: application/json、Accept: application/json、JSON 请求体和 signal，最终返回 { id: 7 }",
+        "why": "请求头与正文序列化正确，201 属于成功响应且不是 204，因此正常解析并返回 JSON。"
+      },
+      {
+        "input": "postJSON(\"/api/read\", { id: 7 }, signal)，服务器成功处理并返回 204 No Content",
+        "expected": "返回 null，不调用 response.json()",
+        "why": "204 响应体为空，先特判返回 null 可避免解析空内容时抛出 JSON 语法错误。"
+      },
+      {
+        "input": "服务器返回 422 或 500；或请求尚未返回时外部触发了 controller.abort()",
+        "expected": "422/500 时抛出 Error(\"HTTP 422\") / Error(\"HTTP 500\")；触发 abort 时请求被中止取消",
+        "why": "先检查 response.ok 再读响应体能及时拦截 HTTP 错误，透传 signal 让 fetch 接入原生取消机制。"
+      }
+    ],
+    "steps": [
+      "第 1 步：调用 fetch(url, ...)，指定方法为 POST，并在 headers 里同时声明 Content-Type 和 Accept 均为 application/json。",
+      "第 2 步：把 data 序列化成 JSON 字符串放入 body，并把传入的 signal 原样交给 fetch 选项对象。",
+      "第 3 步：拿到响应后先检查 response.ok；若为 false，立即抛出信息为 \"HTTP \" 拼上状态码的 Error，绝不在出错后去硬解析正文。",
+      "第 4 步：确认成功后先判断状态码是否为 204，是则返回 null；否则调用并返回 response.json()。"
+    ],
+    "jargon": [
+      {
+        "term": "Content-Type 与 Accept",
+        "plain": "一对常见 HTTP 头：Content-Type 说明“我发出去的数据是什么格式”，Accept 说明“我想收什么格式的回包”。"
+      },
+      {
+        "term": "response.ok",
+        "plain": "fetch 响应对象自带的快捷标记，状态码在 200~299 成功区间时为 true，遇到 404/500 等错误时为 false。"
+      },
+      {
+        "term": "signal（取消信号）",
+        "plain": "由 AbortController 生成的取消令牌，传进 fetch 后外部随时能叫停还没跑完的网络请求。"
+      }
+    ]
+  },
+  "network-layers": {
+    "plainGoal": "根据网络请求失败所在的环节（dns/connect/tls/http/business）返回对应的排查建议，遇到不认识的阶段或 toString 等对象原型属性名时统一回退默认引导语。",
+    "scenario": "做接口监控告警或故障排错工具时，把“连不上网”细分成五个网络环节能帮团队快速指明排查方向；而查表时防住原型链属性误命中，是写健壮 JS 工具函数的基本功。",
+    "examples": [
+      {
+        "input": "describeFailure(\"dns\") 与 describeFailure(\"http\")",
+        "expected": "分别返回 \"检查域名记录、解析缓存与解析器\" 和 \"检查状态码、响应头和服务端日志\"（其余 connect、tls、business 也各返回对应阶段提示）",
+        "why": "五个预设阶段均为查找表自身拥有的键，精确命中并返回对应排查方向。"
+      },
+      {
+        "input": "describeFailure(\"something-else\") 或 describeFailure(\"\")",
+        "expected": "返回 \"先定位失败发生在哪个阶段\"",
+        "why": "不在五个已知阶段内的输入统一回退到默认提示，不胡乱猜测具体故障。"
+      },
+      {
+        "input": "describeFailure(\"toString\") 或 describeFailure(\"constructor\")",
+        "expected": "同样返回 \"先定位失败发生在哪个阶段\"，不会返回原生函数或抛异常",
+        "why": "toString 是普通对象继承自原型链的属性，只认自有属性才能避免把它当成合法阶段。"
+      }
+    ],
+    "steps": [
+      "第 1 步：准备一张映射表，准确录入 dns、connect、tls、http、business 五个阶段对应的中文排查提示文案。",
+      "第 2 步：查表时用区分自有与继承属性的方法（如 Object.hasOwn）判断 stage 是否真的属于映射表自己的键，切忌直接用 hints[stage] 取值。",
+      "第 3 步：确认命中自有键就返回对应提示，否则一律返回“先定位失败发生在哪个阶段”。"
+    ],
+    "jargon": [
+      {
+        "term": "分层排障（DNS/TCP/TLS/HTTP/业务）",
+        "plain": "把一次网络请求从底到顶拆成查域名、建连接、加密握手、协议收发和业务逻辑五层，逐层锁定问题出在哪。"
+      },
+      {
+        "term": "TLS",
+        "plain": "HTTPS 用来加密通信和验证服务器证书真伪的安全协议层，证书过期或域名不匹配就会卡在这里。"
+      },
+      {
+        "term": "原型属性（如 toString）",
+        "plain": "普通 JS 对象天生从 Object.prototype 继承来的内置方法名，不做自有属性检查就直接查字典会把它误判成业务数据。"
+      }
+    ]
+  },
+  "html-drag": {
+    "plainGoal": "把指定元素改造成纯文本拖放区：悬停时允许放下、松手时读取 text/plain，只要不是纯空白就原样把文字交给回调函数，并返回一个可卸载两个监听器的清理函数。",
+    "scenario": "做笔记编辑器、素材收集箱或任务看板时，让用户把网页文字直接拖进框里导入非常顺手；但浏览器默认禁止元素接收拖放，且组件销毁后若不撤掉监听会造成泄漏。",
+    "examples": [
+      {
+        "input": "将文字 \"  拖动这一行文字到下方区域  \" 拖入 #drop-zone 并松手",
+        "expected": "允许放置且不触发页面默认跳转，onText 回调收到保留前后空格的原文本 \"  拖动这一行文字到下方区域  \"",
+        "why": "仅用去空白后的结果判断是否为空内容，真正传给回调的是未经裁剪的原始字符串。"
+      },
+      {
+        "input": "拖入纯空格/换行 \"   \\n \"，或事件中不存在 dataTransfer",
+        "expected": "不触发 onText 回调，也不报错",
+        "why": "dataTransfer 不可用时按空字符串兜底，纯空白内容被过滤掉不回调。"
+      },
+      {
+        "input": "调用返回的清理函数后，再次向 #drop-zone 拖放有效文字",
+        "expected": "dragover 与 drop 两个监听器均已被移除，不再触发 onText",
+        "why": "绑定与移除使用同一对具名回调引用，确保清理彻底生效。"
+      }
+    ],
+    "steps": [
+      "第 1 步：分别定义并保存 dragover 和 drop 两个处理函数引用，不要在移除监听时重新创建匿名函数。",
+      "第 2 步：在 dragover 回调里调用 event.preventDefault()，这是告诉浏览器该区域允许放置的关键步骤，否则 drop 根本不会触发。",
+      "第 3 步：在 drop 回调里同样先阻止默认动作，再安全读取 event.dataTransfer 的 'text/plain'（缺失时兜底为空串），确认去掉首尾空白后非空，就把原文本传给 onText。",
+      "第 4 步：把两个监听器绑定到 zone，并返回一个负责把它们一并 removeEventListener 的清理函数。"
+    ],
+    "jargon": [
+      {
+        "term": "dragover 与 drop",
+        "plain": "拖放流程里的两个核心事件：悬停在目标上方时不断触发 dragover，松手放下时触发 drop。"
+      },
+      {
+        "term": "text/plain",
+        "plain": "拖放数据箱（dataTransfer）里专门存放纯文字内容的数据格式标记，不带 HTML 标签样式。"
+      },
+      {
+        "term": "阻止默认动作",
+        "plain": "调用 event.preventDefault() 取消浏览器自带的默认反应（比如禁止拖放或直接打开拖进来的链接/文件）。"
+      }
+    ]
+  },
+  "css-loading": {
+    "plainGoal": "通过 CSS 级联层提前定好 reset、components、overrides 三层顺序，让覆盖层里的 .notice 用普通声明自然盖掉组件层颜色，彻底告别 !important。",
+    "scenario": "多人协作维护基础组件库和业务主题定制时，为了覆盖组件默认配色常被迫叠写超长选择器甚至滥用 !important；用 @layer 排好层序后，定制样式总能优雅地胜出。",
+    "examples": [
+      {
+        "input": "先声明 @layer reset, components, overrides;，在 components 中设 .notice 为 #334155，在 overrides 中设 .notice 为 #075985",
+        "expected": "页面中 .notice 提示文字最终呈现 #075985",
+        "why": "在普通声明中，越靠后声明的级联层优先级越高，因此 overrides 盖过了 components。"
+      },
+      {
+        "input": "即使后续把 @layer overrides 的样式块挪到 @layer components 前面书写",
+        "expected": "只要顶部层序声明顺序不变，.notice 依然显示 #075985",
+        "why": "层与层的高低在首次声明列表时就已确定，不受后面各层内容块出现先后的影响。"
+      },
+      {
+        "input": "尝试在 components 里加长选择器或用 !important 硬压样式",
+        "expected": "不符合本题要求；且级联层本来就优先于选择器权重，不需拼权重更禁止使用 !important",
+        "why": "级联层的目的就是用清晰架构替代“拼权重”和“乱加 !important”的恶性循环。"
+      }
+    ],
+    "steps": [
+      "第 1 步：在 CSS 顶部用一行逗号分隔的 @layer 语句，严格按 reset、components、overrides 的顺序预先定好三层优先级。",
+      "第 2 步：在 @layer components 块中编写 .notice 的基础样式，将颜色设为 #334155。",
+      "第 3 步：在 @layer overrides 块中用同样简洁的 .notice 普通声明把颜色改写为 #075985，全程不写 !important，也无需刻意提高选择器权重。"
+    ],
+    "jargon": [
+      {
+        "term": "级联层（@layer）",
+        "plain": "CSS 的样式分层机制，能提前规定哪一组规则整体压过另一组，无需靠堆砌选择器长度来争夺优先级。"
+      },
+      {
+        "term": "普通声明",
+        "plain": "不带 !important 标记的常规 CSS 属性写法，在级联层体系中后声明的层自然覆盖先声明的层。"
+      },
+      {
+        "term": "!important",
+        "plain": "强行拔高单条样式优先级的特权标记，滥用会让后续维护者很难再正常覆盖样式。"
+      }
+    ]
+  },
+  "css-features-sprites": {
+    "plainGoal": "把横排 3 枚图标的 144×48 二倍雪碧图缩放到 72×24 CSS 像素，给 .icon 裁出 24×24 显示窗口，并通过背景左移让 .icon-search 精准对准第二枚图标。",
+    "scenario": "优化老项目小图标加载或减少零散图片请求时，常把多个高清 @2x 图标拼成一张雪碧图；写样式时必须把整图尺寸和偏移坐标统一换算到同一套 CSS 像素尺度，图标才不会切偏。",
+    "examples": [
+      {
+        "input": "原图 icons@2x.png 尺寸 144×48（横排三枚等大二倍图标），给 .icon 设 24×24 显示盒",
+        "expected": ".icon 为 24×24 的 inline-block 盒子，背景图设为 icons@2x.png，background-size 缩至 72px 24px 且不平铺重复",
+        "why": "二倍图宽高除以 2 后总尺寸正好是 72×24，对应横排三枚 24×24 的清晰图标。"
+      },
+      {
+        "input": "图标元素同时挂上 .icon 和 .icon-search 以展示第二枚图标",
+        "expected": ".icon-search 设置 background-position: -24px 0，窗口内正好完整居中显示第二枚图标",
+        "why": "第一枚在 0 0，把缩放后的背景图向左拖动一枚图标宽度（24px）即可把第二枚对准窗口。"
+      },
+      {
+        "input": "如果忘了缩放整图，或偏移量误按原图像素写成 -48px 0",
+        "expected": "图标会被放大变形，或错位跳到第三枚图标上",
+        "why": "背景偏移坐标必须与 background-size 处于同一套 CSS 像素尺度下计算。"
+      }
+    ],
+    "steps": [
+      "第 1 步：先做二倍图尺寸换算：原图 144×48 整体除以 2，得出在 CSS 像素下整张雪碧图应缩放到 72px × 24px。",
+      "第 2 步：写基础类 .icon：由于 HTML 里常挂在 span 上，先设为 inline-block 让 24px × 24px 宽高生效，再绑定背景图路径。",
+      "第 3 步：在 .icon 上设置 background-size 为 72px 24px 并禁用背景重复（no-repeat）。",
+      "第 4 步：写 .icon-search，将背景水平位置向左偏移一枚图标的宽度（-24px 0），准确露出第二枚图标。"
+    ],
+    "jargon": [
+      {
+        "term": "雪碧图",
+        "plain": "把多个小图标拼在一张图片里的合图，网页上用固定尺寸的小盒子移动背景坐标，每次只露出其中一枚。"
+      },
+      {
+        "term": "二倍图（@2x）",
+        "plain": "按实际显示尺寸的 2 倍宽高切出的高清素材，在手机或高清屏上缩小一半展示能保持边缘细腻不发虚。"
+      },
+      {
+        "term": "CSS 像素与原图像素",
+        "plain": "原图像素是图片文件本身的实际宽高，CSS 像素是页面排版用的逻辑尺寸，给二倍图算偏移时必须先统一到 CSS 像素。"
+      }
+    ]
+  },
+  "css-hairline": {
+    "plainGoal": "用底部伪元素为 .separator 画出高清屏下也能细到 1 物理像素且不挡点击的分隔线，按 2 倍、3 倍屏分别纵向缩放并紧贴底边，同时说明非整数倍屏的限制。",
+    "scenario": "做移动端设置列表或图文分隔行时，直接写 1px 边框在 2 倍/3 倍手机屏上实际会画成 2~3 个物理像素显得发粗，需要用伪元素缩放做出“发丝级”细线又不影响按钮点击。",
+    "examples": [
+      {
+        "input": "在普通 1 倍屏（1dppx）下查看 .separator",
+        "expected": "伪元素细线贴在 .separator 最底部、左右拉满、高 1px 不缩放，且鼠标或手指点击底边附近不会受其阻挡",
+        "why": "父元素建立定位参照，伪元素绝对定位贴底并开启 pointer-events: none 让点击直接穿透。"
+      },
+      {
+        "input": "在 2 倍屏（2dppx）与 3 倍屏（3dppx）下查看 .separator",
+        "expected": "2 倍屏时细线以底边为原点压成 0.5 倍高度；3 倍屏时由写在后面的 3dppx 媒体查询覆盖压成 1/3 高度，且始终紧贴底边不上移",
+        "why": "3dppx 规则排在 2dppx 之后才能正确覆盖高倍屏，transform-origin: bottom 保证压扁后依然紧贴底边。"
+      },
+      {
+        "input": "在 1.5 倍、2.625 倍等非整数 DPR 屏幕（如部分安卓机或缩放后的桌面屏）上显示",
+        "expected": "按这两档媒体查询缩放后可能落在非整数物理像素上，细线会出现轻微发虚或相邻行粗细不均（需在说明中点明此局限）",
+        "why": "屏幕物理发光点不可拆成小数个，非整数倍 DPR 下浏览器只能做取整或抗锯齿近似渲染。"
+      }
+    ],
+    "steps": [
+      "第 1 步：给 .separator 设置相对定位作为参照，切记不要对 .separator 容器本身做整体缩放。",
+      "第 2 步：写 .separator::after 伪元素：提供空 content，用绝对定位让它左右贴边并紧贴底部，高度 1px 并填色，把变换原点定在 bottom，同时设置 pointer-events: none 防止挡点击。",
+      "第 3 步：按从低到高的顺序写两档媒体查询：先在 min-resolution: 2dppx 下把伪元素纵向缩放到 0.5，再在后面写 min-resolution: 3dppx 缩放到 calc(1 / 3)。",
+      "第 4 步：附注说明这套离散倍率方案在 1.5x、2.625x 等非整数 DPR 屏幕上无法精确对齐单物理像素的现实限制。"
+    ],
+    "jargon": [
+      {
+        "term": "伪元素（::after）",
+        "plain": "无需改动 HTML，纯靠 CSS 在元素内部末尾生成的装饰小盒子，非常适合用来画细线、角标等视觉修饰。"
+      },
+      {
+        "term": "DPR / dppx",
+        "plain": "设备像素比，指 1 个 CSS 像素在屏幕上实际由多少个物理像素点来画；2dppx 即 2 倍高清屏。"
+      },
+      {
+        "term": "transform-origin（变换原点）",
+        "plain": "决定缩放或旋转时哪个点固定不动的锚点；设为 bottom 后把线条压扁，它就会死死贴在最底边而不往中间缩。"
+      }
+    ]
+  }
+}

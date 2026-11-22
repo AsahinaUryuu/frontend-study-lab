@@ -94,3 +94,51 @@ dialog{max-height:90vh;overflow-y:auto;overscroll-behavior:contain;max-width:620
 .summary-history-picker{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#5a6f5e}
 .summary-history-picker select{font:inherit;min-height:38px;padding:4px 10px;border:1px solid #c8d8c1;border-radius:8px;background:#fff;color:#254235}
 .summary-snapshot-text{margin:10px 0 0;padding:12px 14px;background:#f4f8f0;border:1px solid #dbe4d3;border-radius:8px;white-space:pre-wrap;word-break:break-word;font:inherit;line-height:1.8}
+
+/* v1.14: human-friendly coding challenge task brief. */
+.challenge-guide{border-top:1px solid var(--line);padding-top:20px;margin-top:8px}
+.guide-badges{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.guide-mode-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;border:1px solid transparent}
+.guide-mode-badge.is-js{background:#e8f5ec;color:#1d6647;border-color:#c6e2cf}
+.guide-mode-badge.is-web{background:#e9f1fb;color:#2e5f8f;border-color:#c9dcf2}
+.guide-mode-badge.is-project{background:#fbf3e1;color:#8a6423;border-color:#ead9b1}
+.challenge-guide h3{margin:10px 0 4px;font-size:18px;color:#213d34}
+.challenge-guide .guide-mode-note{margin:0 0 16px;font-size:12px;color:#6c7e6c;line-height:1.7}
+.guide-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0 18px}
+.guide-goal,.guide-scenario{border-radius:10px;padding:14px 16px;border:1px solid #d4e6d2}
+.guide-goal{background:#f2f8f1;border-left:4px solid var(--green)}
+.guide-scenario{background:#faf8ef;border-color:#ebe3c9;border-left:4px solid #c4a45a}
+.guide-kicker{display:block;font-size:11px;font-weight:700;letter-spacing:.3px;color:#2f5e44;margin-bottom:6px}
+.guide-scenario .guide-kicker{color:#84692f}
+.challenge-guide .guide-goal p,.challenge-guide .guide-scenario p{margin:0;font-size:14px;line-height:1.85;color:#2b4439;white-space:normal}
+.challenge-guide .guide-fallback-desc{white-space:pre-wrap;color:#4f6653;font-size:14px;line-height:1.95}
+.guide-examples{margin:18px 0}
+.guide-examples h4,.guide-rubric h4{font-size:13px;color:#284d3b;margin:0 0 10px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.guide-rubric h4 small{font-size:11px;font-weight:400;color:#738471}
+.guide-examples-wrap{overflow-x:auto;border:1px solid #dce5d6;border-radius:10px;background:#fff;-webkit-overflow-scrolling:touch}
+.guide-examples-table{width:100%;min-width:520px;border-collapse:collapse;text-align:left;font-size:12.5px;line-height:1.75}
+.guide-examples-table th{background:#edf4ea;color:#2f543d;font-weight:600;padding:10px 13px;border-bottom:1px solid #dce5d6;white-space:nowrap}
+.guide-examples-table td{padding:10px 13px;border-bottom:1px solid #e7eee3;vertical-align:top;color:#334c3f;overflow-wrap:anywhere}
+.guide-examples-table tbody tr:last-child td{border-bottom:0}
+.guide-examples-table tbody tr:nth-child(even){background:#fafcf9}
+.guide-rubric{margin:18px 0;padding:14px 18px;border:1px solid #d7e5d6;border-radius:10px;background:#f8fbf6}
+.guide-rubric ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.guide-rubric li{position:relative;padding-left:22px;margin:0;font-size:13px;line-height:1.8;color:#304d3d}
+.guide-rubric li::before{content:"☐";position:absolute;left:0;top:0;color:var(--green);font-weight:700}
+.guide-helpers{display:grid;gap:10px;margin:16px 0}
+.guide-steps,.raw-spec{border:1px solid #e3e9db;border-radius:8px;padding:12px 16px;font-size:12.5px;color:#4f6452;margin:0}
+.guide-helpers .hints{margin:0;font-size:12.5px;color:#4f6452}
+.guide-steps summary,.raw-spec summary,.guide-helpers .hints summary{cursor:pointer;color:#356244;font-weight:600}
+.guide-steps[open],.raw-spec[open]{background:#fafcf6}
+.guide-steps ol{margin:10px 0 2px;padding-left:20px;line-height:1.9;color:#385042}
+.guide-steps li{margin:6px 0}
+.guide-jargon{margin-top:12px;padding-top:12px;border-top:1px dashed #d6e2ce}
+.guide-jargon b{display:block;font-size:12px;color:#2f573f;margin-bottom:8px}
+.guide-jargon dl{margin:0;display:grid;gap:8px}
+.guide-jargon dl>div{background:#fff;border:1px solid #e2eadb;border-radius:7px;padding:8px 11px}
+.guide-jargon dt{font-weight:600;color:#244a39;font-size:12px}
+.guide-jargon dd{margin:3px 0 0;color:#4e6553;font-size:12px;line-height:1.75}
+.challenge-guide .raw-spec p{margin:10px 0 2px;font-size:12.5px;color:#596d5c;line-height:1.85;white-space:pre-wrap}
+.guide-tutor-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-radius:9px;background:#f2f6ee;border:1px dashed #c8d8c2;margin-top:12px;font-size:12px;color:#4f6653}
+.guide-tutor-bar .text-button{font-size:12px;font-weight:600;color:var(--green);padding:4px 2px}
+@media(max-width:760px){.guide-cards{grid-template-columns:1fr}.guide-examples-table{min-width:460px;font-size:12px}.guide-rubric{padding:13px 14px}.guide-tutor-bar{align-items:flex-start;flex-direction:column}}

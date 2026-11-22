@@ -1,6 +1,6 @@
 {
   "name": "frontend-academy",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "private": true,
   "type": "module",
   "description": "基于中文前端面试资料的本地互动学习软件",
