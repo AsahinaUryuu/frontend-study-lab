@@ -85,3 +85,12 @@ dialog{max-height:90vh;overflow-y:auto;overscroll-behavior:contain;max-width:620
 .editor-files button.selected{background:#195c48;color:white;border-color:#195c48}
 #run-status{white-space:normal;text-align:right}
 @media(max-width:760px){.playground{padding:15px}.playground-heading{align-items:flex-start}.run-controls label{width:100%}.run-controls select{width:100%}.run-preview-host{height:270px}.run-console-title{flex-wrap:wrap}.run-input-details{padding:10px}}
+
+.summary-review-section{margin:18px 0;padding:clamp(16px,2vw,24px);background:var(--surface,#fff);border:1px solid #d7e3d3;border-radius:14px}
+.summary-checklist{display:grid;gap:8px;margin:14px 0}
+.summary-check-item{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:10px 14px;min-height:44px;border:1px solid #dbe4d3;border-radius:9px;background:#f7faf2;color:#28533c;font:inherit;font-size:13px;cursor:pointer}
+.summary-check-item:hover{background:#eef5e6}
+.summary-review-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:14px 0}
+.summary-history-picker{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#5a6f5e}
+.summary-history-picker select{font:inherit;min-height:38px;padding:4px 10px;border:1px solid #c8d8c1;border-radius:8px;background:#fff;color:#254235}
+.summary-snapshot-text{margin:10px 0 0;padding:12px 14px;background:#f4f8f0;border:1px solid #dbe4d3;border-radius:8px;white-space:pre-wrap;word-break:break-word;font:inherit;line-height:1.8}

@@ -120,6 +120,14 @@ export function makeCodeReview(lessonId,submission,result,challenge){
   const original=sanitizeChallengeSnapshot(challenge);
   return freeze({id:newId(lessonId,'code'),createdAt:new Date().toISOString(),submission:clean,result:cleanGrade(result),...(original?{challenge:original}:{})});
 }
+export function makeSummaryReview(lessonId,submission,result){
+  const reflection=string(submission?.reflection,3000).trim();
+  if(!reflection)throw new TypeError('回忆内容快照无效。');
+  const rating=['relearn','explain','apply'].includes(submission?.rating)?submission.rating:'';
+  const quizSummary=plain(submission?.quizSummary)?{score:Number.isFinite(submission.quizSummary.score)?Math.round(submission.quizSummary.score):null,correct:Number.isInteger(submission.quizSummary.correct)?submission.quizSummary.correct:0,total:Number.isInteger(submission.quizSummary.total)?submission.quizSummary.total:0,unanswered:Number.isInteger(submission.quizSummary.unanswered)?submission.quizSummary.unanswered:0,wrongPrompts:Array.isArray(submission.quizSummary.wrongPrompts)?submission.quizSummary.wrongPrompts.filter(x=>typeof x==='string').slice(0,12).map(x=>x.slice(0,300)):[]}:null;
+  const codeSummary=plain(submission?.codeSummary)?{score:Number.isFinite(submission.codeSummary.score)?Math.round(submission.codeSummary.score):null,verdict:string(submission.codeSummary.verdict,500),issues:Array.isArray(submission.codeSummary.issues)?submission.codeSummary.issues.filter(x=>typeof x==='string').slice(0,10).map(x=>x.slice(0,300)):[]}:null;
+  return freeze({id:newId(lessonId,'summary'),createdAt:new Date().toISOString(),reflection,rating,...(quizSummary?{quizSummary}:{}),...(codeSummary?{codeSummary}:{}),result:cleanGrade(result)});
+}
 export function makeQuizReview(lessonId,answers,result,questions){
   const clean={};for(const [key,value] of Object.entries(plain(answers)?answers:{})){if(typeof value==='string')clean[key]=value.slice(0,500);else if(Number.isInteger(value))clean[key]=value;}
   return freeze({id:newId(lessonId,'quiz'),createdAt:new Date().toISOString(),answers:clean,result:copyQuizResult(result),...(Array.isArray(questions)?{questions:cleanQuestions(questions)}:{})});
@@ -136,6 +144,14 @@ function cleanCodeReview(value,lesson){
   const original=sanitizeChallengeSnapshot(value.challenge);
   return freeze({id:value.id,createdAt:time(value.createdAt),submission,result:cleanGrade(value.result),...(original?{challenge:original}:{}),...(value.legacy===true?{legacy:true}:{})});
 }
+function cleanSummaryReview(value,lesson){
+  if(!plain(value)||!validId(value.id,lesson.id,'summary'))return null;
+  const reflection=string(value.reflection,3000).trim();if(!reflection)return null;
+  const rating=['relearn','explain','apply'].includes(value.rating)?value.rating:'';
+  const quizSummary=plain(value.quizSummary)?{score:Number.isFinite(value.quizSummary.score)?Math.round(value.quizSummary.score):null,correct:Number.isInteger(value.quizSummary.correct)?value.quizSummary.correct:0,total:Number.isInteger(value.quizSummary.total)?value.quizSummary.total:0,unanswered:Number.isInteger(value.quizSummary.unanswered)?value.quizSummary.unanswered:0,wrongPrompts:Array.isArray(value.quizSummary.wrongPrompts)?value.quizSummary.wrongPrompts.filter(x=>typeof x==='string').slice(0,12).map(x=>x.slice(0,300)):[]}:null;
+  const codeSummary=plain(value.codeSummary)?{score:Number.isFinite(value.codeSummary.score)?Math.round(value.codeSummary.score):null,verdict:string(value.codeSummary.verdict,500),issues:Array.isArray(value.codeSummary.issues)?value.codeSummary.issues.filter(x=>typeof x==='string').slice(0,10).map(x=>x.slice(0,300)):[]}:null;
+  return freeze({id:value.id,createdAt:time(value.createdAt),reflection,rating,...(quizSummary?{quizSummary}:{}),...(codeSummary?{codeSummary}:{}),result:cleanGrade(value.result)});
+}
 function cleanQuizReview(value,lesson){
   if(!plain(value)||!validId(value.id,lesson.id,'quiz'))return null;
   const attempt=quizAttempt(lesson,value);if(!attempt)return null;
@@ -146,23 +162,25 @@ function uniqueReviews(values,cleaner,lesson){
 }
 export function sanitizeTutorState(value,lesson){
   const state=plain(value)?value:{};
-  const codeReviews=uniqueReviews(state.codeReviews,cleanCodeReview,lesson),quizReviews=uniqueReviews(state.quizReviews,cleanQuizReview,lesson);
-  const result={codeReviews,quizReviews,tutorThreads:{}};
+  const codeReviews=uniqueReviews(state.codeReviews,cleanCodeReview,lesson),quizReviews=uniqueReviews(state.quizReviews,cleanQuizReview,lesson),summaryReviews=uniqueReviews(state.summaryReviews,cleanSummaryReview,lesson);
+  const result={codeReviews,quizReviews,summaryReviews,tutorThreads:{}};
   if(codeReviews.some(review=>review.id===state.aiReviewId))result.aiReviewId=state.aiReviewId;
   else if(codeReviews.length)result.aiReviewId=codeReviews.at(-1).id;
   if(quizReviews.some(review=>review.id===state.quizReviewId))result.quizReviewId=state.quizReviewId;
   else if(quizReviews.length)result.quizReviewId=quizReviews.at(-1).id;
-  const allowedCode=new Set(codeReviews.map(review=>review.id)),allowedQuiz=new Set(quizReviews.map(review=>review.id));
+  if(summaryReviews.some(review=>review.id===state.summaryReviewId))result.summaryReviewId=state.summaryReviewId;
+  else if(summaryReviews.length)result.summaryReviewId=summaryReviews.at(-1).id;
+  const allowedCode=new Set(codeReviews.map(review=>review.id)),allowedQuiz=new Set(quizReviews.map(review=>review.id)),allowedSummary=new Set(summaryReviews.map(review=>review.id));
   for(const [key,thread] of Object.entries(plain(state.tutorThreads)?state.tutorThreads:{})){
     if(!plain(thread)||key.length>240||!key.startsWith(lesson.id+':')||!/^[a-zA-Z0-9:_-]+$/.test(key))continue;
-    if(!(key.startsWith(`${lesson.id}:learning:`)||key===`${lesson.id}:code:draft`||key===`${lesson.id}:quiz:draft`||allowedCode.has(key)||allowedQuiz.has(key)))continue;
+    if(!(key.startsWith(`${lesson.id}:learning:`)||key===`${lesson.id}:code:draft`||key===`${lesson.id}:quiz:draft`||key===`${lesson.id}:summary:draft`||allowedCode.has(key)||allowedQuiz.has(key)||allowedSummary.has(key)))continue;
     result.tutorThreads[key]={messages:trimTutorHistory(thread.messages),draft:string(thread.draft,4000)};
   }
   result.tutorThreads=Object.fromEntries(Object.entries(result.tutorThreads).slice(-MAX_THREADS));
   return result;
 }
 export function ensureLegacyReviews(lesson,state){
-  state.codeReviews||=[];state.quizReviews||=[];state.tutorThreads||={};
+  state.codeReviews||=[];state.quizReviews||=[];state.summaryReviews||=[];state.tutorThreads||={};
   if(!state.codeReviews.length&&plain(state.aiResult)&&typeof state.gradedCode==='string'){
     const review=freeze({id:`${lesson.id}:code:legacy`,createdAt:new Date(0).toISOString(),legacy:true,submission:{mode:'code',code:state.gradedCode.slice(0,30000),language:lesson.code?.language||'javascript',testCode:''},result:cleanGrade(state.aiResult)});
     state.codeReviews.push(review);state.aiReviewId=review.id;
@@ -184,6 +202,9 @@ export function ensureTutorState(state,lesson){
 }
 export function addCodeReview(state,review,lesson){
   ensureTutorState(state,lesson);state.codeReviews=[...state.codeReviews.filter(item=>item.id!==review.id),review].slice(-MAX_REVIEWS);state.aiReviewId=review.id;return review;
+}
+export function addSummaryReview(state,review,lesson){
+  ensureTutorState(state,lesson);const clean=cleanSummaryReview(review,lesson);if(!clean)throw new TypeError('回忆评审记录无效。');state.summaryReviews=[...state.summaryReviews.filter(item=>item.id!==clean.id),clean].slice(-MAX_REVIEWS);state.summaryReviewId=clean.id;return clean;
 }
 export function addQuizReview(state,review,lesson){
   ensureTutorState(state,lesson);review=cleanQuizReview({...review,questions:review.questions||lesson.quiz},lesson);state.quizReviews=[...state.quizReviews.filter(item=>item.id!==review.id),review].slice(-MAX_REVIEWS);state.quizReviewId=review.id;return review;
@@ -223,6 +244,19 @@ export function buildTutorContext({lesson,stage='textbook',progress={},profile={
     const review=stageId==='evaluation'?(state.quizReviews.find(item=>item.id===(reviewId||state.quizReviewId))||state.quizReviews.at(-1)):null;
     if(review){context.quizReview=clone(review);key=review.id;label=reviewLabel(review,'客观题反馈');description='追问绑定这次客观题提交的答案、分数和逐题解析。';suggestions=['这次错题为什么错？请逐题解释。','我混淆了哪些概念？','针对这次错题，再出一道类似练习。'];}
     else{key=`${lesson.id}:quiz:draft`;context.answers=cleanAnswers(state.answers,lesson);label='客观练习 · 当前作答';description='已带上本课题目和当前答案，可以询问思路或概念。';suggestions=['请提示我解题思路，先不要公布答案。','当前题目考查什么概念？','能举一个帮助我判断的例子吗？'];}
+  }else if(stageId==='conclusion'){
+    const review=state.summaryReviews.find(item=>item.id===(reviewId||state.summaryReviewId))||state.summaryReviews.at(-1);
+    const currentReflection=string(state.studyCheck?.reflection,3000);
+    if(review){
+      context.kind='summary';context.summaryReview=clone(review);context.currentReflection=currentReflection;
+      key=review.id;label=reviewLabel(review,'回忆与总结评审');
+      description='追问绑定这次「我的回忆与例子」提交快照与 AI 评审；当前回忆草稿单独提供，不会覆盖原评审。';
+      suggestions=['为什么这里扣分？请结合我写的回忆与例子解释。','我举的例子有哪些边界漏洞，应该怎么改写？','针对我写下的疑问，再给我一个直观例子。'];
+    }else{
+      key=`${lesson.id}:learning:${stageId}:${selectedFocus?.id||'overview'}`;
+      if(currentReflection.trim())context.currentReflection=currentReflection;
+      if(selectedFocus){context.focus=selectedFocus;label=selectedFocus.title||label;description='已带上本课教材、当前学习环节及所选内容。';}
+    }
   }else{
     key=`${lesson.id}:learning:${stageId}:${selectedFocus?.id||'overview'}`;
     if(selectedFocus){context.focus=selectedFocus;label=selectedFocus.title||label;description='已带上本课教材、当前学习环节及所选内容。';}

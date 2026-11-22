@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { spawn } from 'node:child_process';
 import { GradeError, gradeSubmission } from './lib/grade.mjs';
+import { reviewSummarySubmission } from './lib/summary-review.mjs';
 import { listModels } from './lib/models.mjs';
 import { tutorReply } from './lib/tutor.mjs';
 import { createLocalConfigStore } from './lib/local-config.mjs';
@@ -67,7 +68,7 @@ export function createApp({ publicDir = path.join(directory, 'public'), fetchImp
       if (requested.includes('\0') || requested.includes('\\') || requested.split('/').some(p => p === '..' || p.startsWith('.'))) {
         throw new GradeError('不可访问此路径。', 403);
       }
-      if (requested === '/api/health' && req.method === 'GET') return json(res, 200, { ok: true, service: 'frontend-academy', version:'1.12.0' });
+      if (requested === '/api/health' && req.method === 'GET') return json(res, 200, { ok: true, service: 'frontend-academy', version:'1.13.0' });
       if(await handleProgressHistory(req,res,{requested,store:progressStore,readBody,json}))return;
       if(requested==='/api/progress'){
         if(req.method==='GET'){requireSameOrigin(req,{requireOrigin:false});return json(res,200,await progressStore.read());}
@@ -82,14 +83,16 @@ export function createApp({ publicDir = path.join(directory, 'public'), fetchImp
         if (!(req.headers['content-type'] || '').toLowerCase().startsWith('application/json')) throw new GradeError('请使用 JSON 提交请求。', 415);
         return json(res, 200, await privateConfig(localConfig,await readBody(req),access.remote));
       }
-      if (requested === '/api/grade' || requested === '/api/models' || requested === '/api/tutor') {
+      if (requested === '/api/grade' || requested === '/api/models' || requested === '/api/tutor' || requested === '/api/review-summary') {
         if (req.method !== 'POST') return json(res, 405, { error: '请使用 POST 提交请求。' });
         requireSameOrigin(req);
         if (!(req.headers['content-type'] || '').toLowerCase().startsWith('application/json')) throw new GradeError('请使用 JSON 提交请求。', 415);
-        const input = await hydrateModelRequest(localConfig,await readBody(req,requested==='/api/models'?100*1024:1024*1024),access.remote);
+        const bodyLimit = requested === '/api/models' ? 100 * 1024 : requested === '/api/review-summary' ? 256 * 1024 : 1024 * 1024;
+        const input = await hydrateModelRequest(localConfig,await readBody(req,bodyLimit),access.remote);
         if (requested === '/api/models') return json(res, 200, await listModels(input, { fetchImpl, timeoutMs }));
         const lesson = await findLesson(publicDir, input.lessonId);
         if(requested==='/api/tutor')return json(res,200,await tutorReply(input,lesson,await findTextbook(publicDir,lesson.id),{fetchImpl,timeoutMs}));
+        if(requested==='/api/review-summary')return json(res,200,await reviewSummarySubmission(input,lesson,await findTextbook(publicDir,lesson.id),{fetchImpl,timeoutMs}));
         if(input.submission===undefined&&typeof input.code==='string'&&input.code.length>100*1024)throw new GradeError('请求代码内容过大。',413);
         return json(res, 200, await gradeSubmission(input, lesson, { fetchImpl, timeoutMs }));
       }

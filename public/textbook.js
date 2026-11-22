@@ -5,7 +5,7 @@ export const STAGES = [
   ['evaluation','答题反馈','查看分数与解析'],
   ['coding','代码实操','在编辑器中动手'],
   ['code-review','代码评阅','反馈与参考实现'],
-  ['conclusion','本课总结','专业版与白话版'],
+  ['conclusion','本课总结','回忆评审与结论'],
 ];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export function stageBar(){return `<nav class="stage-bar" aria-label="学习关卡">${STAGES.map(([id,title],i)=>`<button data-stage="${id}"><span>${String(i+1).padStart(2,'0')}</span>${title}</button>`).join('')}</nav>`;}
