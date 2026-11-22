@@ -141,7 +141,7 @@
   },
   {
     "path": "public/index.html",
-    "sha256": "52cf1458b318595701f425ae4aae138fbb19d4a8c94308bf62d37d048c812d6c",
+    "sha256": "a95f04eaa872f326b07929571a6bc8206a92aa0098671c9d71222a191124dc02",
     "bytes": 5211
   },
   {
@@ -341,8 +341,8 @@
   },
   {
     "path": "public/updates.html",
-    "sha256": "7d2e1aaf4cf7626c5d5891a8674539aacda6fb2e5027f430c4f01766f3a79427",
-    "bytes": 12442
+    "sha256": "a9ea3320ba23947d04fa58206374e10b4bf38fce6ee6db8d2531dfc8f59d3935",
+    "bytes": 13637
   },
   {
     "path": "public/vendor/LICENSES.txt",
