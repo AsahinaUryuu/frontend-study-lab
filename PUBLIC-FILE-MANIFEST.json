@@ -21,8 +21,8 @@
   },
   {
     "path": "README.md",
-    "sha256": "ac635313704ca5d1d0f9039cefe3cd94ee860164698eaf214ffabd8af4c7e6fe",
-    "bytes": 6050
+    "sha256": "6602bdc34364459491a7ef64bdb00d194848828158c408e423281c4fd8a6ef3e",
+    "bytes": 6414
   },
   {
     "path": "lib/config.mjs",
@@ -91,13 +91,13 @@
   },
   {
     "path": "package.json",
-    "sha256": "13b60cc0a5ea6658bfe80256ba518d555a70f076158af2c7e3251e69c6a94cb8",
+    "sha256": "90996e71b3da51519a4a018c681282a95c163379ae3d0f10542145f77879feb9",
     "bytes": 304
   },
   {
     "path": "public/app.js",
-    "sha256": "f83600cb914a6dcbb77c1e44cb1a331165c0b2f54b040a8e3150db3185dc9407",
-    "bytes": 84928
+    "sha256": "f643cb6963ab3bb3121128bcf067fe8ac5dac9734b8c91031e438b8f37cffc1d",
+    "bytes": 86650
   },
   {
     "path": "public/backup-manager.css",
@@ -151,7 +151,7 @@
   },
   {
     "path": "public/index.html",
-    "sha256": "22468fd42290cccadcf15c69c6e83ec762eb4113bbb329c4ec3f0bcf66ccccde",
+    "sha256": "3b3e75851c62a88a1a0919b0860f33862c3bc83f8ca0f152a88c4708e472c838",
     "bytes": 5211
   },
   {
@@ -220,6 +220,11 @@
     "bytes": 1852
   },
   {
+    "path": "public/releases/1.15.0.md",
+    "sha256": "80779bbe8b4c6b8a9c948ecde4ac63b3c732270cc6836694e341891d26377fa9",
+    "bytes": 1787
+  },
+  {
     "path": "public/review-snapshot.js",
     "sha256": "7d19326727a61e4b6ca6f3e7645eedbf774ff04443bd264590fff6b588863832",
     "bytes": 1442
@@ -251,8 +256,8 @@
   },
   {
     "path": "public/style.css",
-    "sha256": "9cdbf1e909c3baa56234d1e0f292325e72672c80aebc64d9e5337a49f353413b",
-    "bytes": 50767
+    "sha256": "5735a1e4d60ee98fad3933e23693442ad4caa97c1d1cc6c145b0e59c55d4fc25",
+    "bytes": 54446
   },
   {
     "path": "public/tablet-ux.js",
@@ -265,9 +270,14 @@
     "bytes": 10643
   },
   {
+    "path": "public/textbook-companions.json",
+    "sha256": "c6289aebbe5bf90badf6c9463ad78e3bf124ba1f20aa88b80e687147e6e6d885",
+    "bytes": 212926
+  },
+  {
     "path": "public/textbook.js",
-    "sha256": "12a4bf2401764c6ea447b5ebc798e820da69e4a0d5456e9e4d11b705be07325c",
-    "bytes": 3516
+    "sha256": "3b29516fafcee54a4669546439e6d6f492cecb454a02947047ffb340376afa33",
+    "bytes": 6553
   },
   {
     "path": "public/textbook/basics.json",
@@ -356,8 +366,8 @@
   },
   {
     "path": "public/updates.html",
-    "sha256": "f377c597f3fce384438146642d4b6df63f1d771e400169bd91a8e4a4fc364ef6",
-    "bytes": 15272
+    "sha256": "707660356f0e0faf2acaeb6874efd3ad484d7dd976f8a2b3d2b2b220d8117160",
+    "bytes": 16969
   },
   {
     "path": "public/vendor/LICENSES.txt",
@@ -411,7 +421,7 @@
   },
   {
     "path": "server.mjs",
-    "sha256": "774b637bf2cf2a05859bba30dd3a05feb86cb8f154322e87f272a12968778f91",
+    "sha256": "4a3912b300c1ee2abab5500662224822af2ce511409919033725e9cab710a9fb",
     "bytes": 9288
   },
   {
@@ -426,8 +436,8 @@
   },
   {
     "path": "tests/challenge-guide.test.mjs",
-    "sha256": "0fd729381e62d6463ee68d02592568e0891873d4239f7470f889421b3e320d8b",
-    "bytes": 5593
+    "sha256": "d0737f7540f34f0b4e09288418cf958031a88b50a4e6af9a77a5d207bb33a345",
+    "bytes": 5609
   },
   {
     "path": "tests/cloud-progress.test.mjs",
@@ -583,6 +593,11 @@
     "path": "tests/teaching-integration.test.mjs",
     "sha256": "04ef8ac25a619a6ebd4f8944056ec3f68643eb1174663bd7983e486f2a83d0ba",
     "bytes": 2895
+  },
+  {
+    "path": "tests/textbook-companions.test.mjs",
+    "sha256": "c2a1555874a9de3ba20271de2dfc39ee5d9c7e35961359e53da60dac309f06df",
+    "bytes": 6190
   },
   {
     "path": "tests/textbook.test.mjs",

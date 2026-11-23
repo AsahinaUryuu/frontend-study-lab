@@ -89,7 +89,7 @@ test('challengeGuideMarkup 渲染人话任务书、验收清单、按需折叠�
   assert.match(projectHtml, /本关验收清单/);
 });
 
-test('/api/health 返回 1.14.0 且 /challenge-guides.json 可正常提供静态 JSON', async () => {
+test('/api/health 返回有效版本号且 /challenge-guides.json 可正常提供静态 JSON', async () => {
   const app = createApp();
   await new Promise(resolve => app.listen(0, '127.0.0.1', resolve));
   try {
@@ -98,7 +98,7 @@ test('/api/health 返回 1.14.0 且 /challenge-guides.json 可正常提供静态
     assert.equal(healthRes.status, 200);
     const health = await healthRes.json();
     assert.equal(health.ok, true);
-    assert.equal(health.version, '1.14.0');
+    assert.match(health.version, /^\d+\.\d+\.\d+$/);
 
     const guideRes = await fetch(`http://127.0.0.1:${port}/challenge-guides.json`);
     assert.equal(guideRes.status, 200);
